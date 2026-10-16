@@ -3,7 +3,9 @@ import { usePage } from '@inertiajs/react';
 import AppLogoIcon from '@/components/app-logo-icon';
 
 export default function AppLogo() {
-    const { name } = usePage().props;
+    // Generic eksplisit: augmentasi global InertiaConfig tidak menembus
+    // irisan PageProps & SharedPageProps di Inertia 3.7.
+    const { name } = usePage<{ name: string }>().props;
 
     return (
         <>

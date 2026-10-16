@@ -9,17 +9,17 @@
 
 ## Ringkasan
 
-| # | Pertanyaan | Keputusan (satu baris) |
-|---|---|---|
-| 1 | Struktur tier | 2 tier di MVP (Basic/Pro), **PoC masuk Basic**, Enterprise ditunda sampai v2 |
-| 2 | Channel OTP | WhatsApp OTP default + fallback SMS; email opsional |
-| 3 | Price list | **Per tenant di MVP**, skema disiapkan untuk override per outlet |
-| 4 | Model billing | Invoice manual per periode + pay link, bukan auto-charge |
-| 5 | Provider WA | Meta WhatsApp Cloud API (resmi), hindari gateway unofficial |
-| 6 | Retensi foto PoC | 12 bulan (lifecycle auto-purge), metadata approval permanen |
-| 7 | Timeout approval | Default 2 jam, configurable 1–24 jam, 1 reminder |
-| 8 | Target adopsi | 20 tenant bayar & MRR ±Rp4–5jt akhir bulan ke-3 (hipotesis, review D+30) |
-| 9 | Harga nominal | Basic Rp149rb/bln, Pro Rp499rb/bln, annual = 2 bulan gratis |
+| #   | Pertanyaan       | Keputusan (satu baris)                                                       |
+| --- | ---------------- | ---------------------------------------------------------------------------- |
+| 1   | Struktur tier    | 2 tier di MVP (Basic/Pro), **PoC masuk Basic**, Enterprise ditunda sampai v2 |
+| 2   | Channel OTP      | WhatsApp OTP default + fallback SMS; email opsional                          |
+| 3   | Price list       | **Per tenant di MVP**, skema disiapkan untuk override per outlet             |
+| 4   | Model billing    | Invoice manual per periode + pay link, bukan auto-charge                     |
+| 5   | Provider WA      | Meta WhatsApp Cloud API (resmi), hindari gateway unofficial                  |
+| 6   | Retensi foto PoC | 12 bulan (lifecycle auto-purge), metadata approval permanen                  |
+| 7   | Timeout approval | Default 2 jam, configurable 1–24 jam, 1 reminder                             |
+| 8   | Target adopsi    | 20 tenant bayar & MRR ±Rp4–5jt akhir bulan ke-3 (hipotesis, review D+30)     |
+| 9   | Harga nominal    | Basic Rp149rb/bln, Pro Rp499rb/bln, annual = 2 bulan gratis                  |
 
 ---
 
@@ -28,22 +28,23 @@
 **Keputusan:** Luncurkan **Basic + Pro saja**. Enterprise ditunda sampai fitur B2B (v2) benar-benar ada. Dan **Proof-of-Condition pindah ke Basic** — revisi terbesar dari usulan PRD.
 
 **Alasan PoC harus di Basic:**
-- PRD sendiri menyatakan diferensiasi *hanya* mungkin lewat fitur yang menyerang 3 masalah utama. Kalau diferensiator dikunci di Pro, calon tenant single-outlet — segmen yang paling mudah diakuisisi — hanya melihat POS generic yang sama dengan kompetitor yang sudah matang. Funnel konversi jadi didorong fitur komoditas. Kontradiksi dengan tesis PRD sendiri.
+
+- PRD sendiri menyatakan diferensiasi _hanya_ mungkin lewat fitur yang menyerang 3 masalah utama. Kalau diferensiator dikunci di Pro, calon tenant single-outlet — segmen yang paling mudah diakuisisi — hanya melihat POS generic yang sama dengan kompetitor yang sudah matang. Funnel konversi jadi didorong fitur komoditas. Kontradiksi dengan tesis PRD sendiri.
 - Sengketa pakaian rusak (Problem #2) dialami sama beratnya oleh single-outlet. Pak Rudi butuh PoC bukan kalah penting dari Bu Sari.
 - Biaya PoC kecil (foto + pesan WA); menguncinya di tier mahal bukan perlindungan margin, tapi pembuangan nilai jual.
 
-**Prinsip tier:** *jual skala bisnis, bukan nilai inti.* Batas tier mengikuti ukuran bisnis (jumlah outlet, jumlah user, kebutuhan konsolidasi) — bukan mengunci fitur core di tier termurah.
+**Prinsip tier:** _jual skala bisnis, bukan nilai inti._ Batas tier mengikuti ukuran bisnis (jumlah outlet, jumlah user, kebutuhan konsolidasi) — bukan mengunci fitur core di tier termurah.
 
-| | **Basic** — Rp149rb/bln | **Pro** — Rp499rb/bln |
-|---|---|---|
-| Outlet | 1 | ≤5 |
-| User | 2 (owner + 1 kasir) | Tak terbatas |
-| Order end-to-end, WA notif, laporan harian, deposit | ✓ | ✓ |
-| **Proof-of-Condition** | ✓ (cap 100 foto/bln) | ✓ tanpa cap |
-| Audit trail per order | ✓ (di Order Detail) | ✓ + halaman Audit Log penuh |
-| RBAC, multi-outlet, laporan konsolidasi | — | ✓ |
+|                                                     | **Basic** — Rp149rb/bln | **Pro** — Rp499rb/bln       |
+| --------------------------------------------------- | ----------------------- | --------------------------- |
+| Outlet                                              | 1                       | ≤5                          |
+| User                                                | 2 (owner + 1 kasir)     | Tak terbatas                |
+| Order end-to-end, WA notif, laporan harian, deposit | ✓                       | ✓                           |
+| **Proof-of-Condition**                              | ✓ (cap 100 foto/bln)    | ✓ tanpa cap                 |
+| Audit trail per order                               | ✓ (di Order Detail)     | ✓ + halaman Audit Log penuh |
+| RBAC, multi-outlet, laporan konsolidasi             | —                       | ✓                           |
 
-Cap foto 100/bln hampir tidak akan tersentuh (10% order high-risk × laundry kecil ≈ 20–30 foto/bln) tapi memberi jalur upsell yang jujur. Enterprise tetap *di-reserve namanya* untuk rilis v2 — jangan jual tier yang fiturnya belum ada; itu janji kosong yang menyita support.
+Cap foto 100/bln hampir tidak akan tersentuh (10% order high-risk × laundry kecil ≈ 20–30 foto/bln) tapi memberi jalur upsell yang jujur. Enterprise tetap _di-reserve namanya_ untuk rilis v2 — jangan jual tier yang fiturnya belum ada; itu janji kosong yang menyita support.
 
 **Dampak:** matriks feature-flag (FR-5.5) kecil dan mudah dites solo dev. Halaman pricing jujur dan sederhana.
 
@@ -54,6 +55,7 @@ Cap foto 100/bln hampir tidak akan tersentuh (10% order high-risk × laundry kec
 **Keputusan:** OTP via **WhatsApp** (authentication template), fallback **SMS**. Email opsional, bukan kanal utama.
 
 **Alasan:**
+
 - Persona PRD hidup di WA ("terbiasa WhatsApp Business"). Open rate WA jauh di atas email untuk demografi ini; email sering tidak aktif dipakai pemilik laundry.
 - **Nomor HP adalah kunci identitas produk ini** — customer dicari by nomor HP, notifikasi dikirim ke nomor HP. Memverifikasi nomor sejak registrasi jauh lebih bernilai daripada memverifikasi email.
 - Satu vendor WA untuk OTP + notifikasi order + link PoC = satu integrasi, satu hubungan vendor, satu model biaya.
@@ -66,12 +68,13 @@ Cap foto 100/bln hampir tidak akan tersentuh (10% order high-risk × laundry kec
 **Keputusan:** **Seragam per tenant di MVP.** Skema data disiapkan agar per-outlet bisa ditambah belakangan tanpa rework.
 
 **Alasan:**
+
 - Mayoritas tenant awal single-outlet — price list per-outlet adalah dead weight untuk mereka, hanya menambah kompleksitas UI dan onboarding.
 - G1 menjanjikan setup <30 menit. Satu price list untuk diisi vs N price list — ini langsung memengaruhi janji onboarding.
 - Untuk bisnis 2–5 outlet, harga seragam adalah praktik umum; harga beda per outlet (mall vs residential) adalah pengecualian, bukan default. Kalau ada Pro customer yang menuntut, itu validasi baru — bukan asumsi awal.
 - **Jebakan yang dihindari:** ini bukan "simple sekarang, migrasi mahal nanti". Pola yang benar: `PriceListItem` pakai `tenant_id` sekarang; nanti tambah tabel `PriceOverride (tenant_id, outlet_id, price_list_item_id, price)` — additif, tanpa migrasi data lama.
 
-**Dampak:** S10 (Price List) di design brief tidak butuh tab per outlet di MVP. FR-4.2 dijawab: *tidak wajib di MVP*.
+**Dampak:** S10 (Price List) di design brief tidak butuh tab per outlet di MVP. FR-4.2 dijawab: _tidak wajib di MVP_.
 
 ---
 
@@ -80,8 +83,9 @@ Cap foto 100/bln hampir tidak akan tersentuh (10% order high-risk × laundry kec
 **Keputusan:** **Invoice manual per periode** dengan pay link (VA/QRIS/e-wallet), reminder H-3 & H-0, expired → read-only sesuai FR-5.4, reaktivasi otomatis via webhook gateway. Opsi annual tersedia.
 
 **Alasan:**
+
 - Auto-charge kartu (tokenization) di Indonesia punya success rate rendah — penetrasi kartu rendah, dunning (kartu expired, 3DS gagal) adalah mesin support ticket. Solo dev tidak seharusnya membangun dunning di MVP.
-- Metode bayar dominan pasar ini adalah VA, QRIS, e-wallet — semuanya *pull* (customer yang bayar), bukan *push* (merchant menarik). Model invoice mencocokkan perilaku bayar nyata SMB Indonesia.
+- Metode bayar dominan pasar ini adalah VA, QRIS, e-wallet — semuanya _pull_ (customer yang bayar), bukan _push_ (merchant menarik). Model invoice mencocokkan perilaku bayar nyata SMB Indonesia.
 - FR-5.3 (reminder H-3) dan FR-5.4 (read-only) yang sudah ada di PRD memang didesain untuk model ini.
 - Edge case Section 8 (callback gagal, cron cek ulang) tetap dibutuhkan tapi lebih sederhana: status hanya aktif atas webhook sukses, tidak pernah asumsi.
 - **Opsi annual** memotong frekuensi penagihan dan churn sekaligus.
@@ -95,6 +99,7 @@ Auto-charge (kartu token / e-wallet direct debit) ditunda ke v2 jika data menunj
 **Keputusan:** **Meta WhatsApp Cloud API** (resmi, self-serve, tanpa perantara BSP) + satu vendor SMS lokal untuk fallback.
 
 **Alasan:**
+
 - Wablas/Fonnte murah dan mudah — tapi dibangun di atas area abu-abu ToS WA dengan risiko **ban nomor pengirim**. Untuk produk berbayar B2B itu bukan risiko teknis biasa: **link approval PoC dikirim via WA**. Kalau nomor keban, seluruh pipeline high-risk macet dan diferensiator mati. Dependensi eksistensial tidak boleh berdiri di atas kanal yang melanggar ToS.
 - FR-7.3 butuh template dengan variabel (nama outlet, nomor order) — Cloud API memang didesain untuk ini (template kategori utility, biaya conversation murah).
 - **Catatan eksekusi:** verifikasi bisnis Meta + approval template bisa makan waktu — mulai proses verifikasi di minggu pertama development, bukan menjelang launch.
@@ -106,8 +111,9 @@ Auto-charge (kartu token / e-wallet direct debit) ditunda ke v2 jika data menunj
 **Keputusan:** Foto disimpan **12 bulan**, lalu auto-purge/arsip via lifecycle policy object storage. **Log approval (metadata) disimpan permanen** di database.
 
 **Alasan:**
+
 - Sengketa muncul dalam hitungan hari–minggu, bukan tahun. 12 bulan menutup klaim "baju saya bulan lalu" dengan margin lega, dan menyamai siklus billing annual.
-- Yang membuktikan secara hukum-praktis bukan hanya foto, tapi *rekaman bahwa approval terjadi* (timestamp, status, wa_message_ref) — itu baris DB berukuran bytes, simpan selamanya. Foto adalah bulk-nya; pisahkan keduanya.
+- Yang membuktikan secara hukum-praktis bukan hanya foto, tapi _rekaman bahwa approval terjadi_ (timestamp, status, wa_message_ref) — itu baris DB berukuran bytes, simpan selamanya. Foto adalah bulk-nya; pisahkan keduanya.
 - Biaya: foto terkompresi (max 1280px, JPEG ±200–400KB) × 10% order ≈ ~1GB/tahun per tenant sibuk — receh. Tapi pasang lifecycle policy **sejak hari pertama**: sekali set, nol maintenance.
 - Untuk Enterprise/v2 (klien hotel), retensi diperpanjang bisa jadi fitur berbayar.
 
@@ -118,8 +124,9 @@ Auto-charge (kartu token / e-wallet direct debit) ditunda ke v2 jika data menunj
 **Keputusan:** **Default 2 jam** (configurable 1–24 jam per tenant), dengan **1 reminder WA** di tengah window. Setelah timeout: flag `customer_no_response`, kasir lanjut manual via ConfirmDialog yang menyebut konsekuensinya (design principle P2).
 
 **Alasan:**
+
 - 24 jam (usulan PRD) terlalu lama: layanan reguler = 2 hari (FR-6.5), express = 1 hari. Timeout 24 jam memakan setengah hingga seluruh SLA — order stuck adalah pelanggaran janji waktu ke pelanggan yang tidak bersalah.
-- Foto + timestamp tetap menjadi bukti kondisi awal *apa pun* status approvalnya — approval hanya meng-gate mulai proses. Jadi timeout pendek berisiko rendah.
+- Foto + timestamp tetap menjadi bukti kondisi awal _apa pun_ status approvalnya — approval hanya meng-gate mulai proses. Jadi timeout pendek berisiko rendah.
 - Flag `customer_no_response` justru **membuktikan pelanggan diberi kesempatan** — menguntungkan owner saat sengketa, bukan merugikan.
 - Jangan kaitkan timeout ke jam operasional outlet — over-engineering untuk MVP.
 
@@ -142,16 +149,18 @@ Semua angka adalah **hipotesis eksplisit**, bukan komitmen — fungsinya supaya 
 ## Q9 — Pricing nominal + revisi wajib ke PRD
 
 **Keputusan:**
+
 - **Basic: Rp149.000/bln** — annual Rp1.490.000 (≈2 bulan gratis).
 - **Pro: Rp499.000/bln** (≤5 outlet) — annual Rp4.990.000. Add-on **Rp75.000/outlet/bln** di atas 5 (aktif bersama Enterprise di v2).
 - **Trial: 14 hari, semua fitur Pro, 1 outlet, maksimal 30 order.** Tanpa tier gratis — free tier mendatangkan pencari gratisan dan tetap menanggung biaya pesan WA.
 
 **Alasan harga:**
+
 - Anchor ke **nilai yang dihindari, bukan ke harga kompetitor**: satu sengketa terhindar (refund paksa Rp50–500rb) atau satu transaksi tak tercatat per hari (≈Rp600rb–1,5jt/bln) sudah mengembalikan biaya Pro. Race-to-bottom melawan kompetitor matang adalah perang yang tidak bisa dimenangkan solo dev.
 - Kurva nilai per outlet masuk akal: owner 3 outlet bayar Rp499rb (≈Rp166rb/outlet) — lebih murah per outlet dari Basic, insentif upgrade alami.
 - Annual memotong frekuensi penagihan (Q4) dan churn sekaligus.
 
-**⚠️ Revisi wajib ke PRD — FR-1.5 kontradiktif:** FR-1.5 melarang tenant trial membuat order sampai subscription aktif. Kalau trial tidak bisa membuat order, trial tidak memberikan pengalaman nilai apa pun — konversi 20% di Q8 mustahil tercapai. FR-1.5 direvisi menjadi: *tenant trial bisa membuat order dengan cap 30 order; yang diblokir hanyalah tenant "unpaid" pasca-trial.* Prasyarat funnel, bukan detail kecil.
+**⚠️ Revisi wajib ke PRD — FR-1.5 kontradiktif:** FR-1.5 melarang tenant trial membuat order sampai subscription aktif. Kalau trial tidak bisa membuat order, trial tidak memberikan pengalaman nilai apa pun — konversi 20% di Q8 mustahil tercapai. FR-1.5 direvisi menjadi: _tenant trial bisa membuat order dengan cap 30 order; yang diblokir hanyalah tenant "unpaid" pasca-trial._ Prasyarat funnel, bukan detail kecil.
 
 ---
 

@@ -33,20 +33,20 @@ Satu deploy, satu database, tanpa microservice. Halaman pelanggan (S1/S2) dilaya
 
 ## §2 Keputusan Arsitektur Kunci
 
-| # | Keputusan | Pilihan | Alasan | Sumber |
-|---|---|---|---|---|
-| A1 | Multi-tenancy | Single DB, kolom `tenant_id` + global scope — **bukan** multi-database/domain routing | Isolasi FR-2.1 tercapai tanpa package; volume MVP kecil; backup/restore tetap sederhana | PRD 6.2 |
-| A2 | Resolusi tenant | Dari **user yang login** (`user.tenant_id`), bukan subdomain | Semua pengguna tenant login; tidak ada surface domain untuk salah-resolve | turunan FR-2.1 |
-| A3 | Halaman publik (S1/S2) | **Signed URL** (token), tanpa login & tanpa resolusi tenant | Pelanggan tidak punya akun (NG4); signed URL mengikat ke 1 order/proof spesifik | FR-9.3 |
-| A4 | API | Tidak ada REST API publik — Inertia + Wayfinder saja | NG1 web-only, NG4 tanpa app dedicated; satu sumber route | PRD Non-Goals |
-| A5 | Queue/cache/session | Driver **database**, tanpa Redis | Volume MVP kecil; mengurangi satu proses infra + satu titik gagal | prinsip solo dev |
-| A6 | Payment | Xendit Invoice (pay link) + webhook + cron verify 5 menit | Q4 — invoice manual, tanpa tokenisasi kartu | DECISIONS Q4 |
-| A7 | WhatsApp | Meta Cloud API via HTTP client (`Http::`), tanpa SDK | Q5 — resmi, template variable; SDK tidak diperlukan | DECISIONS Q5 |
-| A8 | Uang & berat | **Integer** — rupiah penuh (`price`), gram (`weight_grams`) | Float membunuh akurasi laporan; IDR tanpa sen di praktik | R-CODE-006 |
-| A9 | Status order | PHP backed enum + satu pintu transisi | R-BE-007 — tidak ada `update(['status'])` tersebar | R-BE-007 |
-| A10 | RBAC | Enum `role` + Laravel Policies — tanpa package permission | 3 role saja (FR-3.1); package permission = overkill | FR-3.1 |
-| A11 | Foto PoC | Object storage + lifecycle purge 12 bulan; watermark canvas client-side, metadata diverifikasi server | Q6 — biaya storage terkendali sejak hari pertama | DECISIONS Q6 |
-| A12 | Price list | `PriceListItem.tenant_id` (seragam per tenant); `PriceOverride` hanya placeholder v2 | Q3 — additif, tanpa migrasi data nanti | DECISIONS Q3 |
+| #   | Keputusan              | Pilihan                                                                                               | Alasan                                                                                  | Sumber           |
+| --- | ---------------------- | ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ---------------- |
+| A1  | Multi-tenancy          | Single DB, kolom `tenant_id` + global scope — **bukan** multi-database/domain routing                 | Isolasi FR-2.1 tercapai tanpa package; volume MVP kecil; backup/restore tetap sederhana | PRD 6.2          |
+| A2  | Resolusi tenant        | Dari **user yang login** (`user.tenant_id`), bukan subdomain                                          | Semua pengguna tenant login; tidak ada surface domain untuk salah-resolve               | turunan FR-2.1   |
+| A3  | Halaman publik (S1/S2) | **Signed URL** (token), tanpa login & tanpa resolusi tenant                                           | Pelanggan tidak punya akun (NG4); signed URL mengikat ke 1 order/proof spesifik         | FR-9.3           |
+| A4  | API                    | Tidak ada REST API publik — Inertia + Wayfinder saja                                                  | NG1 web-only, NG4 tanpa app dedicated; satu sumber route                                | PRD Non-Goals    |
+| A5  | Queue/cache/session    | Driver **database**, tanpa Redis                                                                      | Volume MVP kecil; mengurangi satu proses infra + satu titik gagal                       | prinsip solo dev |
+| A6  | Payment                | Xendit Invoice (pay link) + webhook + cron verify 5 menit                                             | Q4 — invoice manual, tanpa tokenisasi kartu                                             | DECISIONS Q4     |
+| A7  | WhatsApp               | Meta Cloud API via HTTP client (`Http::`), tanpa SDK                                                  | Q5 — resmi, template variable; SDK tidak diperlukan                                     | DECISIONS Q5     |
+| A8  | Uang & berat           | **Integer** — rupiah penuh (`price`), gram (`weight_grams`)                                           | Float membunuh akurasi laporan; IDR tanpa sen di praktik                                | R-CODE-006       |
+| A9  | Status order           | PHP backed enum + satu pintu transisi                                                                 | R-BE-007 — tidak ada `update(['status'])` tersebar                                      | R-BE-007         |
+| A10 | RBAC                   | Enum `role` + Laravel Policies — tanpa package permission                                             | 3 role saja (FR-3.1); package permission = overkill                                     | FR-3.1           |
+| A11 | Foto PoC               | Object storage + lifecycle purge 12 bulan; watermark canvas client-side, metadata diverifikasi server | Q6 — biaya storage terkendali sejak hari pertama                                        | DECISIONS Q6     |
+| A12 | Price list             | `PriceListItem.tenant_id` (seragam per tenant); `PriceOverride` hanya placeholder v2                  | Q3 — additif, tanpa migrasi data nanti                                                  | DECISIONS Q3     |
 
 ---
 
@@ -64,11 +64,12 @@ BelongsToTenant (concern di semua model operasional)
 ```
 
 **Tiga lapis pertahanan isolasi (semua wajib, bukan pilihan):**
+
 1. **Query layer** — global scope (A1) mencegah lupa `where tenant_id`.
 2. **Authorization layer** — Policy memvalidasi `outlet_id` terhadap assignment user per request; manipulasi URL → **403** (FR-3.3).
 3. **Test layer** — setiap endpoint baru wajib test negatif isolasi (R-QA-006).
 
-**Pengecualian context tenant:** route webhook (Xendit), route publik signed (S1/S2), dan job antrean berjalan di *system context* — mereka **tidak** memakai `CurrentTenant`; akses data dilakukan langsung per model dengan `tenant_id` eksplisit. Model operasional yang ter-scope concern: `Outlet, Customer, PriceListItem, Order, OrderItem, ProofOfCondition, Notification, AuditLog`. Yang di luar: `Tenant, SubscriptionPlan, TenantSubscription, Payment, User` (User terikat tenant via kolom, tanpa global scope agar auth tetap bisa bekerja).
+**Pengecualian context tenant:** route webhook (Xendit), route publik signed (S1/S2), dan job antrean berjalan di _system context_ — mereka **tidak** memakai `CurrentTenant`; akses data dilakukan langsung per model dengan `tenant_id` eksplisit. Model operasional yang ter-scope concern: `Outlet, Customer, PriceListItem, Order, OrderItem, ProofOfCondition, Notification, AuditLog`. Yang di luar: `Tenant, SubscriptionPlan, TenantSubscription, Payment, User` (User terikat tenant via kolom, tanpa global scope agar auth tetap bisa bekerja).
 
 ---
 
@@ -157,17 +158,17 @@ User (created_by) 1─* Order
 
 **Keputusan skema yang mengikat implementasi:**
 
-| Hal | Keputusan |
-|---|---|
-| Uang | Integer rupiah (`price`, `total_price`, `deposit_balance`) — tanpa float/desimal |
-| Berat | `weight_grams` integer — `1.5 kg` disimpan `1500` |
-| Order status | Enum `OrderStatus`: `diterima, dicuci, dikeringkan, disetrika, siap_diambil, selesai` — 6 nilai, persis FR-6.2 |
-| High-risk gating | Bukan status order — `ProofOfCondition.approval_status` (`pending/approved/timeout`) yang meng-gate transisi `diterima → dicuci` |
-| Customer unik | `tenant_id + phone` unik — pencarian kasir by no. HP (design brief F2) |
-| Idempotensi payment | `gateway_transaction_id` unik — webhook ganda aman |
-| AuditLog | `before_value/after_value` JSON; ditulis via `AuditLogger`, dibaca di Order Detail (P2) |
-| PriceOverride | **Tidak dibuat di MVP** — hanya pola terdokumentasi (Q3) |
-| Tenant status | `trial → active → expired (read-only) / suspended` |
+| Hal                 | Keputusan                                                                                                                        |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Uang                | Integer rupiah (`price`, `total_price`, `deposit_balance`) — tanpa float/desimal                                                 |
+| Berat               | `weight_grams` integer — `1.5 kg` disimpan `1500`                                                                                |
+| Order status        | Enum `OrderStatus`: `diterima, dicuci, dikeringkan, disetrika, siap_diambil, selesai` — 6 nilai, persis FR-6.2                   |
+| High-risk gating    | Bukan status order — `ProofOfCondition.approval_status` (`pending/approved/timeout`) yang meng-gate transisi `diterima → dicuci` |
+| Customer unik       | `tenant_id + phone` unik — pencarian kasir by no. HP (design brief F2)                                                           |
+| Idempotensi payment | `gateway_transaction_id` unik — webhook ganda aman                                                                               |
+| AuditLog            | `before_value/after_value` JSON; ditulis via `AuditLogger`, dibaca di Order Detail (P2)                                          |
+| PriceOverride       | **Tidak dibuat di MVP** — hanya pola terdokumentasi (Q3)                                                                         |
+| Tenant status       | `trial → active → expired (read-only) / suspended`                                                                               |
 
 ---
 
@@ -247,11 +248,11 @@ Upload gagal (koneksi lemah): retry otomatis, draft foto lokal (design brief §8
 
 **Scheduler (routes/console.php):**
 
-| Jadwal | Job | Keterangan |
-|---|---|---|
-| tiap 5 menit | `VerifyPendingPayment` | pending > 15 menit → cek ke API gateway (edge case PRD §8) |
-| tiap 5 menit | `ExpireProofApprovals` | approval pending > timeout tenant → `timeout` |
-| harian 07:00 | `SendSubscriptionReminders` | H-3 & H-0 via WA (+ email bila ada) — FR-5.3 |
+| Jadwal       | Job                         | Keterangan                                                 |
+| ------------ | --------------------------- | ---------------------------------------------------------- |
+| tiap 5 menit | `VerifyPendingPayment`      | pending > 15 menit → cek ke API gateway (edge case PRD §8) |
+| tiap 5 menit | `ExpireProofApprovals`      | approval pending > timeout tenant → `timeout`              |
+| harian 07:00 | `SendSubscriptionReminders` | H-3 & H-0 via WA (+ email bila ada) — FR-5.3               |
 
 **Webhook** — `POST /webhooks/xendit`: tanpa session, verifikasi signature, idempoten by `gateway_transaction_id`, balas cepat (2xx) lalu proses. Tidak pernah mengaktifkan fitur berdasarkan asumsi sukses.
 
@@ -259,11 +260,11 @@ Upload gagal (koneksi lemah): retry otomatis, draft foto lokal (design brief §8
 
 ## §10 Storage Media
 
-| Data | Lokasi | Retensi |
-|---|---|---|
-| Foto PoC | Object storage, path `tenant/{id}/poc/{order}/…` | **12 bulan**, lifecycle purge di level bucket (Q6) — set sejak hari pertama |
-| Metadata approval | MySQL — permanen | `ProofOfCondition` + log audit |
-| Session/cache/queue | MySQL (driver database) | default |
+| Data                | Lokasi                                           | Retensi                                                                     |
+| ------------------- | ------------------------------------------------ | --------------------------------------------------------------------------- |
+| Foto PoC            | Object storage, path `tenant/{id}/poc/{order}/…` | **12 bulan**, lifecycle purge di level bucket (Q6) — set sejak hari pertama |
+| Metadata approval   | MySQL — permanen                                 | `ProofOfCondition` + log audit                                              |
+| Session/cache/queue | MySQL (driver database)                          | default                                                                     |
 
 Foto tersimpan terkompresi (hasil canvas client-side, diverifikasi server saat upload: mime, ukuran ≤ ±1MB, dimensi). Dilarang menyimpan foto di disk lokal server — deployment harus stateless (lihat §13).
 
@@ -282,13 +283,13 @@ Foto tersimpan terkompresi (hasil canvas client-side, diverifikasi server saat u
 
 ## §12 Strategi Testing (PHPUnit, R-QA-003/004)
 
-| Lapis | Cakupan | Contoh |
-|---|---|---|
-| Feature (utama) | endpoint per endpoint, pakai factory | simpan order menghitung total dari price list |
-| Isolasi (wajib per endpoint baru) | user lintas tenant/outlet → 403 | kasir Outlet A request order Outlet B |
-| State machine | transisi legal/ilegal, rollback ter-audit | `selesai → dicuci` ditolak |
-| Integration provider | Http::fake untuk Xendit & Cloud API | webhook duplikat tidak menciptakan 2 activation |
-| Unit (seepam) | enum transisi, formatter uang/berat | `formatIDR(150000)` |
+| Lapis                             | Cakupan                                   | Contoh                                          |
+| --------------------------------- | ----------------------------------------- | ----------------------------------------------- |
+| Feature (utama)                   | endpoint per endpoint, pakai factory      | simpan order menghitung total dari price list   |
+| Isolasi (wajib per endpoint baru) | user lintas tenant/outlet → 403           | kasir Outlet A request order Outlet B           |
+| State machine                     | transisi legal/ilegal, rollback ter-audit | `selesai → dicuci` ditolak                      |
+| Integration provider              | Http::fake untuk Xendit & Cloud API       | webhook duplikat tidak menciptakan 2 activation |
+| Unit (seepam)                     | enum transisi, formatter uang/berat       | `formatIDR(150000)`                             |
 
 Konvensi: `RefreshDatabase`, factory + state existing, `php artisan make:test --phpunit`. Tidak ada test yang di-skip demi lolos gate (R-QA-005).
 
@@ -312,6 +313,6 @@ Setiap item di daftar ini adalah keputusan, bukan kelalaian — menambahkannya b
 
 ## Log Perubahan
 
-| Versi | Tanggal | Perubahan |
-|---|---|---|
-| v1.0 | 2026-09-22 | Versi awal — 14 keputusan arsitektur (A1–A12), multi-tenancy 3 lapis, 5 subsistem kunci, queue/scheduler/webhook, strategi testing & milestone. |
+| Versi | Tanggal    | Perubahan                                                                                                                                       |
+| ----- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| v1.0  | 2026-09-22 | Versi awal — 14 keputusan arsitektur (A1–A12), multi-tenancy 3 lapis, 5 subsistem kunci, queue/scheduler/webhook, strategi testing & milestone. |

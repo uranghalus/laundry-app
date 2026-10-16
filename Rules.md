@@ -8,48 +8,50 @@
 
 ## §0 Kamus RFC 2119
 
-| Kata | Makna mengikat |
-|---|---|
-| **WAJIB** | Aturan mutlak. Pelanggaran = kode ditolak, tanpa pengecualian. |
-| **HARUS** | Wajib kecuali ada alasan teknis terdokumentasi di PR/commit message. |
-| **SEBAIKNYA** | Praktik yang disarankan; boleh dilanggar dengan pertimbangan eksplisit. |
-| **TIDAK BOLEH** | Larangan mutlak. |
+| Kata            | Makna mengikat                                                          |
+| --------------- | ----------------------------------------------------------------------- |
+| **WAJIB**       | Aturan mutlak. Pelanggaran = kode ditolak, tanpa pengecualian.          |
+| **HARUS**       | Wajib kecuali ada alasan teknis terdokumentasi di PR/commit message.    |
+| **SEBAIKNYA**   | Praktik yang disarankan; boleh dilanggar dengan pertimbangan eksplisit. |
+| **TIDAK BOLEH** | Larangan mutlak.                                                        |
 
 ---
 
 ## §1 Tata Kelola Dokumen
 
-**R-GOV-001 — Hierarki konflik.** Jika ada pertentangan antar dokumen, urutan kekuatan: `PRD` & `DECISIONS.md` (keputusan produk) → `ARCHITECTURE.md` (keputusan teknis — cara membangun: multi-tenancy, subsistem, queue/scheduler) → `DESIGN-BRIEF` (keputusan desain) → `Rules.md` (cara menulis kode) → **gaya kode existing di repo** (acuan paling konkret untuk file yang disentuh). *Verifikasi: saat ragu, ikuti tingkat yang lebih tinggi dan catat konfliknya.*
+**R-GOV-001 — Hierarki konflik.** Jika ada pertentangan antar dokumen, urutan kekuatan: `PRD` & `DECISIONS.md` (keputusan produk) → `ARCHITECTURE.md` (keputusan teknis — cara membangun: multi-tenancy, subsistem, queue/scheduler) → `DESIGN-BRIEF` (keputusan desain) → `Rules.md` (cara menulis kode) → **gaya kode existing di repo** (acuan paling konkret untuk file yang disentuh). _Verifikasi: saat ragu, ikuti tingkat yang lebih tinggi dan catat konfliknya._
 
-**R-GOV-002 — Rules.md tidak membuat keputusan produk.** Aturan di sini hanya mengatur *cara coding*. Ide fitur/perubahan perilaku tidak boleh masuk lewat kode — harus lewat `DECISIONS.md` dulu (lihat R-PROC-001). *Verifikasi: review diff.*
+**R-GOV-002 — Rules.md tidak membuat keputusan produk.** Aturan di sini hanya mengatur _cara coding_. Ide fitur/perubahan perilaku tidak boleh masuk lewat kode — harus lewat `DECISIONS.md` dulu (lihat R-PROC-001). _Verifikasi: review diff._
 
-**R-GOV-003 — Satu gaya, nol pengecualian.** Kode baru WAJIB tidak bisa dibedakan dari kode existing. Sebelum membuat file, WAJIB membaca 2–3 file sejenis di folder tujuan dan meniru struktur, penamaan, dan polanya. *Verifikasi: reviewer tidak bisa menebak file mana yang baru.*
+**R-GOV-003 — Satu gaya, nol pengecualian.** Kode baru WAJIB tidak bisa dibedakan dari kode existing. Sebelum membuat file, WAJIB membaca 2–3 file sejenis di folder tujuan dan meniru struktur, penamaan, dan polanya. _Verifikasi: reviewer tidak bisa menebak file mana yang baru._
 
 ---
 
 ## §2 Gaya Kode Umum
 
 **R-CODE-001 — Format dari tool, bukan tangan.**
+
 - PHP: format **hanya** via Pint (`pint.json` preset laravel). Setelah mengubah file PHP: `vendor/bin/pint --dirty --format agent`.
 - TS/TSX: format **hanya** via vite-plus fmt (printWidth 80, tabWidth 4, singleQuote, semi — lihat `vite.config.ts`). Jalankan `npm run check` / `check:fix`.
-TIDAK BOLEH memformat manual atau menonaktifkan formatter. *Verifikasi: `composer lint:check` dan `npm run check` hijau.*
+  TIDAK BOLEH memformat manual atau menonaktifkan formatter. _Verifikasi: `composer lint:check` dan `npm run check` hijau._
 
-**R-CODE-002 — Penamaan deskriptif.** Nama WAJIB menjelaskan maksud (`isRegisteredForDiscounts`, bukan `discount()`). TIDAK BOLEH singkatan tidak baku, kecuali konvensi umum (`id`, `url`). *Verifikasi: dibaca ulang 1 minggu kemudian tetap jelas.*
+**R-CODE-002 — Penamaan deskriptif.** Nama WAJIB menjelaskan maksud (`isRegisteredForDiscounts`, bukan `discount()`). TIDAK BOLEH singkatan tidak baku, kecuali konvensi umum (`id`, `url`). _Verifikasi: dibaca ulang 1 minggu kemudian tetap jelas._
 
-**R-CODE-003 — Satu function, satu tanggung jawab.** Jika nama function butuh kata "dan", pecah. Function WAJIB pendek dan datar; nesting dalam jika/loop lebih dari 2 tingkat SEBAIKNYA diekstrak. *Verifikasi: review.*
+**R-CODE-003 — Satu function, satu tanggung jawab.** Jika nama function butuh kata "dan", pecah. Function WAJIB pendek dan datar; nesting dalam jika/loop lebih dari 2 tingkat SEBAIKNYA diekstrak. _Verifikasi: review._
 
-**R-CODE-004 — Zero dead code.** Kode yang tidak dipakai WAJIB dihapus, TIDAK BOLEH dikomentari "untuk jaga-jaga". Git menyimpan sejarah. *Verifikasi: tidak ada blok kode terkomentar di diff.*
+**R-CODE-004 — Zero dead code.** Kode yang tidak dipakai WAJIB dihapus, TIDAK BOLEH dikomentari "untuk jaga-jaga". Git menyimpan sejarah. _Verifikasi: tidak ada blok kode terkomentar di diff._
 
-**R-CODE-005 — DRY.** Logic yang sama muncul ≥2 kali WAJIB diekstrak: PHP → method class / `app/Concerns`, TS → `resources/js/lib/` atau hook. *Verifikasi: cari duplikat sebelum menulis ulang.*
+**R-CODE-005 — DRY.** Logic yang sama muncul ≥2 kali WAJIB diekstrak: PHP → method class / `app/Concerns`, TS → `resources/js/lib/` atau hook. _Verifikasi: cari duplikat sebelum menulis ulang._
 
-**R-CODE-006 — Tidak ada magic value.** Angka/string yang membawa makna bisnis (harga, status, batas kuota, timeout) WAJIB berupa enum/konstanta/config — backend pakai PHP enum atau `config/`, frontend pakai konstanta bertipe di `resources/js/lib/` atau `types`. *Verifikasi: grep nilai literal di logic.*
+**R-CODE-006 — Tidak ada magic value.** Angka/string yang membawa makna bisnis (harga, status, batas kuota, timeout) WAJIB berupa enum/konstanta/config — backend pakai PHP enum atau `config/`, frontend pakai konstanta bertipe di `resources/js/lib/` atau `types`. _Verifikasi: grep nilai literal di logic._
 
 **R-CODE-007 — Type safety penuh.**
+
 - PHP: type hint + return type WAJIB di semua parameter & method; PHPDoc array-shape untuk array kompleks; constructor property promotion. Lolos `composer types:check` (PHPStan).
 - TS: mode `strict` TIDAK BOLEH dilemahkan; TIDAK BOLEH `any`, TIDAK BOLEH `@ts-ignore`/`!` non-null assertion — pakai tipe benar atau `unknown` + narrowing. Lolos `npm run types:check`.
-*Verifikasi: kedua typechecker hijau.*
+  _Verifikasi: kedua typechecker hijau._
 
-**R-CODE-008 — Bahasa komentar: Bahasa Indonesia.** Semua komentar baru WAJIB berbahasa Indonesia (seluruh dokumen proyek berbahasa Indonesia; pembaca utamanya owner). Komentar bawaan starter kit yang berbahasa Inggris tidak wajib diterjemahkan, cukup saat file disentuh. *Verifikasi: konsistensi dalam satu file.*
+**R-CODE-008 — Bahasa komentar: Bahasa Indonesia.** Semua komentar baru WAJIB berbahasa Indonesia (seluruh dokumen proyek berbahasa Indonesia; pembaca utamanya owner). Komentar bawaan starter kit yang berbahasa Inggris tidak wajib diterjemahkan, cukup saat file disentuh. _Verifikasi: konsistensi dalam satu file._
 
 ---
 
@@ -57,7 +59,7 @@ TIDAK BOLEH memformat manual atau menonaktifkan formatter. *Verifikasi: `compose
 
 ### Comment wajib (aturan inti Anda)
 
-**R-BE-001 — Setiap function/method WAJIB punya PHPDoc tujuan.** Satu kalimat yang menjawab *apa yang dilakukan & kenapa ada* — bukan mengulang nama function atau menjelaskan *bagaimana*. Tanpa kecuali, termasuk yang sepele. Exception/return non-trivial dicatat di baris berikutnya.
+**R-BE-001 — Setiap function/method WAJIB punya PHPDoc tujuan.** Satu kalimat yang menjawab _apa yang dilakukan & kenapa ada_ — bukan mengulang nama function atau menjelaskan _bagaimana_. Tanpa kecuali, termasuk yang sepele. Exception/return non-trivial dicatat di baris berikutnya.
 
 ```php
 // ❌ SALAH — tanpa doc, atau doc yang tidak bermakna
@@ -76,25 +78,26 @@ public function rollback(Order $order, User $actor): void
     // ...
 }
 ```
-*Verifikasi: setiap function punya doc yang menjawab "kenapa".*
+
+_Verifikasi: setiap function punya doc yang menjawab "kenapa"._
 
 ### Struktur
 
-**R-BE-002 — Buat file via artisan.** Model, controller, migration, request, test WAJIB lewat `php artisan make:*` (dengan `--no-interaction`). TIDAK BOLEH copy-paste file sejenis. *Verifikasi: namespace & struktur bawaan Laravel.*
+**R-BE-002 — Buat file via artisan.** Model, controller, migration, request, test WAJIB lewat `php artisan make:*` (dengan `--no-interaction`). TIDAK BOLEH copy-paste file sejenis. _Verifikasi: namespace & struktur bawaan Laravel._
 
-**R-BE-003 — Controller tipis.** Controller HANYA: menerima request → validasi (FormRequest terpisah) → delegasi ke service/action/model → return `Inertia::render()` atau redirect. Logic bisnis TIDAK BOLEH di controller. *Verifikasi: isi controller < ±40 baris per action.*
+**R-BE-003 — Controller tipis.** Controller HANYA: menerima request → validasi (FormRequest terpisah) → delegasi ke service/action/model → return `Inertia::render()` atau redirect. Logic bisnis TIDAK BOLEH di controller. _Verifikasi: isi controller < ±40 baris per action._
 
-**R-BE-004 — Isolasi tenant mutlak.** Semua query data operasional (outlet, order, customer, staff, laporan) WAJIB ter-scope `tenant_id` (global scope atau explicit). Validasi `outlet_id` terhadap assignment user WAJIB di server per request — 403, bukan cuma disembunyikan di UI (PRD FR-2.1, FR-3.3). *Verifikasi: test negatif per endpoint (R-QA-006).*
+**R-BE-004 — Isolasi tenant mutlak.** Semua query data operasional (outlet, order, customer, staff, laporan) WAJIB ter-scope `tenant_id` (global scope atau explicit). Validasi `outlet_id` terhadap assignment user WAJIB di server per request — 403, bukan cuma disembunyikan di UI (PRD FR-2.1, FR-3.3). _Verifikasi: test negatif per endpoint (R-QA-006)._
 
-**R-BE-005 — Audit trail untuk aksi kritikal.** Perubahan harga manual, void transaksi, hapus order, rollback status, override approval WAJIB menulis `AuditLog` (user_id, timestamp, before/after). Ini fondasi fraud detection v2 — wajib sejak MVP (FR-3.4). *Verifikasi: setiap endpoint kritikal punya assertion log di test.*
+**R-BE-005 — Audit trail untuk aksi kritikal.** Perubahan harga manual, void transaksi, hapus order, rollback status, override approval WAJIB menulis `AuditLog` (user_id, timestamp, before/after). Ini fondasi fraud detection v2 — wajib sejak MVP (FR-3.4). _Verifikasi: setiap endpoint kritikal punya assertion log di test._
 
-**R-BE-006 — Harga & total dihitung server-side.** Total order WAJIB dihitung dari price list di server. TIDAK BOLEH memercayai angka harga/total dari client (FR-6.1). *Verifikasi: tidak ada field harga yang di-accept langsung dari request tanpa validasi terhadap price list.*
+**R-BE-006 — Harga & total dihitung server-side.** Total order WAJIB dihitung dari price list di server. TIDAK BOLEH memercayai angka harga/total dari client (FR-6.1). _Verifikasi: tidak ada field harga yang di-accept langsung dari request tanpa validasi terhadap price list._
 
-**R-BE-007 — Transisi status lewat satu pintu.** Perubahan status order (`diterima → … → selesai`) WAJIB lewat enum + method transisi tunggal yang memvalidasi transisi legal; TIDAK BOLEH `update(['status' => ...])` tersebar. *Verifikasi: satu-satunya tempat yang menulis kolom status.*
+**R-BE-007 — Transisi status lewat satu pintu.** Perubahan status order (`diterima → … → selesai`) WAJIB lewat enum + method transisi tunggal yang memvalidasi transisi legal; TIDAK BOLEH `update(['status' => ...])` tersebar. _Verifikasi: satu-satunya tempat yang menulis kolom status._
 
-**R-BE-008 — Schema lewat migration.** Perubahan database WAJIB lewat migration baru. Migration yang sudah ter-merge TIDAK BOLEH diedit. Setiap model baru WAJIB punya factory. *Verifikasi: `php artisan migrate:fresh --seed` di environment bersih lulus.*
+**R-BE-008 — Schema lewat migration.** Perubahan database WAJIB lewat migration baru. Migration yang sudah ter-merge TIDAK BOLEH diedit. Setiap model baru WAJIB punya factory. _Verifikasi: `php artisan migrate:fresh --seed` di environment bersih lulus._
 
-**R-BE-009 — Konfigurasi via config/env.** Nilai yang bergantung deployment (kredensial gateway, provider WA, timeout approval) WAJIB via `config/` + `.env`. TIDAK BOLEH hardcode credential atau URL produksi di kode. *Verifikasi: grep di review.*
+**R-BE-009 — Konfigurasi via config/env.** Nilai yang bergantung deployment (kredensial gateway, provider WA, timeout approval) WAJIB via `config/` + `.env`. TIDAK BOLEH hardcode credential atau URL produksi di kode. _Verifikasi: grep di review._
 
 ---
 
@@ -116,92 +119,93 @@ function StatusBadge({ status }: { status: OrderStatus }) {
     return <Badge>{status}</Badge>;
 }
 ```
-*Verifikasi: setiap deklarasi function/component punya JSDoc bermakna.*
+
+_Verifikasi: setiap deklarasi function/component punya JSDoc bermakna._
 
 ### Keputusan arsitektur Anda (mengikat)
 
-**R-FE-002 — Reusable-first.** Markup yang muncul ≥2 kali WAJIB menjadi komponen reusable di `resources/js/components/` — dilarang copy-paste JSX. Tujuan: basis kode kecil, ringan di disk, konsisten. Komponen satu-halaman diletakkan lokal di `pages/` sampai terbukti dipakai ulang, lalu dinaikkan. *Verifikasi: tidak ada JSX duplikat lintas file.*
+**R-FE-002 — Reusable-first.** Markup yang muncul ≥2 kali WAJIB menjadi komponen reusable di `resources/js/components/` — dilarang copy-paste JSX. Tujuan: basis kode kecil, ringan di disk, konsisten. Komponen satu-halaman diletakkan lokal di `pages/` sampai terbukti dipakai ulang, lalu dinaikkan. _Verifikasi: tidak ada JSX duplikat lintas file._
 
-**R-FE-003 — Page tipis.** File di `resources/js/pages/` HANYA komposisi komponen + data dari props Inertia. Logic reusable → `hooks/`; formatter/helper → `lib/`; komponen presentasional → `components/`. TIDAK BOLEH fetch/logic bisnis di page. *Verifikasi: page bisa dibaca seperti daftar section.*
+**R-FE-003 — Page tipis.** File di `resources/js/pages/` HANYA komposisi komponen + data dari props Inertia. Logic reusable → `hooks/`; formatter/helper → `lib/`; komponen presentasional → `components/`. TIDAK BOLEH fetch/logic bisnis di page. _Verifikasi: page bisa dibaca seperti daftar section._
 
-**R-FE-004 — Routing & form via Wayfinder + Inertia.** Import controller dari `@/actions/...` dan named route dari `@/routes/...`; form pakai komponen `<Form>` Inertia v3. TIDAK BOLEH hardcode URL string atau pakai axios/fetch manual untuk route yang ada Wayfinder-nya. *Verifikasi: tidak ada string '/orders' di JSX.*
+**R-FE-004 — Routing & form via Wayfinder + Inertia.** Import controller dari `@/actions/...` dan named route dari `@/routes/...`; form pakai komponen `<Form>` Inertia v3. TIDAK BOLEH hardcode URL string atau pakai axios/fetch manual untuk route yang ada Wayfinder-nya. _Verifikasi: tidak ada string '/orders' di JSX._
 
-**R-FE-005 — State server = props Inertia.** Data dari server mengalir lewat props; TIDAK BOLEH diduplikasi ke store global tanpa alasan terukur. State lokal UI (form, modal) pakai `useState` — TIDAK BOLEH menambah state management library. *Verifikasi: tidak ada dependency state baru di package.json.*
+**R-FE-005 — State server = props Inertia.** Data dari server mengalir lewat props; TIDAK BOLEH diduplikasi ke store global tanpa alasan terukur. State lokal UI (form, modal) pakai `useState` — TIDAK BOLEH menambah state management library. _Verifikasi: tidak ada dependency state baru di package.json._
 
-**R-FE-006 — Styling hanya Tailwind + token.** Class Tailwind dengan token dari `resources/css/app.css` (CSS variables Tailwind v4). TIDAK BOLEH: inline `style={}`, file CSS baru per halaman, library UI kedua. Warna/hex WAJIB lewat token theme — dilarang menulis hex langsung di class. *Verifikasi: grep hex di tsx = 0.*
+**R-FE-006 — Styling hanya Tailwind + token.** Class Tailwind dengan token dari `resources/css/app.css` (CSS variables Tailwind v4). TIDAK BOLEH: inline `style={}`, file CSS baru per halaman, library UI kedua. Warna/hex WAJIB lewat token theme — dilarang menulis hex langsung di class. _Verifikasi: grep hex di tsx = 0._
 
-**R-FE-007 — Ikon hanya `lucide-react`.** TIDAK BOLEH menambah icon library lain atau emoji sebagai ikon fungsional (brief §2). *Verifikasi: import ikon konsisten.*
+**R-FE-007 — Ikon hanya `lucide-react`.** TIDAK BOLEH menambah icon library lain atau emoji sebagai ikon fungsional (brief §2). _Verifikasi: import ikon konsisten._
 
-**R-FE-008 — Format angka & uang lewat helper bersama.** Uang `formatIDR()`, berat, tanggal — satu implementasi di `lib/`, tabular-nums, format Indonesia (`Rp 150.000`). TIDAK BOLEH format manual per komponen (brief §3). *Verifikasi: satu sumber helper.*
+**R-FE-008 — Format angka & uang lewat helper bersama.** Uang `formatIDR()`, berat, tanggal — satu implementasi di `lib/`, tabular-nums, format Indonesia (`Rp 150.000`). TIDAK BOLEH format manual per komponen (brief §3). _Verifikasi: satu sumber helper._
 
-**R-FE-009 — Aksesibilitas non-negotiable.** `Label htmlFor` terhubung, `alt` bermakna, ikon-only button punya `aria-label`, error form terkait via `aria-describedby`, target sentuh ≥44px di alur kasir. *Verifikasi: checklist per komponen baru (brief §10).*
+**R-FE-009 — Aksesibilitas non-negotiable.** `Label htmlFor` terhubung, `alt` bermakna, ikon-only button punya `aria-label`, error form terkait via `aria-describedby`, target sentuh ≥44px di alur kasir. _Verifikasi: checklist per komponen baru (brief §10)._
 
-**R-FE-010 — Satu file satu komponen.** Default export satu component per file, nama file kebab-case (konvensi starter: `status-badge.tsx`). *Verifikasi: konsisten dengan existing `components/`.*
+**R-FE-010 — Satu file satu komponen.** Default export satu component per file, nama file kebab-case (konvensi starter: `status-badge.tsx`). _Verifikasi: konsisten dengan existing `components/`._
 
 ---
 
 ## §5 Tata Kelola Komponen — shadcn/ui
 
-**R-UI-001 — Primitive hanya dari shadcn/ui.** Komponen dasar (button, input, dialog, select, dll) WAJIB ditambah via CLI: `npx shadcn@latest add <nama>` — terpasang di `resources/js/components/ui/` sesuai `components.json` (style `new-york`). TIDAK BOLEH menulis primitive sendiri dari nol atau menambah library UI ketiga. *Verifikasi: setiap file di `components/ui/` punya asal CLI.*
+**R-UI-001 — Primitive hanya dari shadcn/ui.** Komponen dasar (button, input, dialog, select, dll) WAJIB ditambah via CLI: `npx shadcn@latest add <nama>` — terpasang di `resources/js/components/ui/` sesuai `components.json` (style `new-york`). TIDAK BOLEH menulis primitive sendiri dari nol atau menambah library UI ketiga. _Verifikasi: setiap file di `components/ui/` punya asal CLI._
 
-**R-UI-002 — `components/ui/*` adalah zona dilarang-edit.** File hasil CLI TIDAK BOLEH diedit manual (vite lint pun mengabaikannya). Kustomisasi visual WAJIB lewat: (a) CSS variables/token di `resources/css/app.css`, atau (b) komponen domain wrapper. *Verifikasi: diff tidak menyentuh `components/ui/*`.*
+**R-UI-002 — `components/ui/*` adalah zona dilarang-edit.** File hasil CLI TIDAK BOLEH diedit manual (vite lint pun mengabaikannya). Kustomisasi visual WAJIB lewat: (a) CSS variables/token di `resources/css/app.css`, atau (b) komponen domain wrapper. _Verifikasi: diff tidak menyentuh `components/ui/*`._
 
 **R-UI-003 — Komponen domain membungkus primitive.** Komponen spesifik laundry WAJIB meng-wrap primitive shadcn (dengan variant via `class-variance-authority`), bukan markup raw. Daftar WAJIB ada dan WAJIB dipakai ulang (R-FE-002) — sesuai design brief §7:
 
-| Komponen domain | Membungkus | Catatan variant |
-|---|---|---|
-| `StatusBadge` | `Badge` | 6 status pipeline + `Menunggu Persetujuan`; selalu ikon+label |
-| `CustomerPicker` | `Command`/`Combobox` (via CLI saat dibutuhkan) | search by no. HP; state kosong/hasil/tidak-ditemukan |
-| `WeightInput` | `Input` + keypad | unit kg/pcs |
-| `CameraCapture` | native `getUserMedia` + `Button` | idle/aktif/upload/retry/gagal |
-| `PhotoCard` | `Card` | watermark/pending/approved/timeout |
-| `StickyActionBar` | `Button` | sticky bar order create |
-| `ConfirmDialog` | `AlertDialog` | wajib sebut konsekuensi + jejak audit |
-| `TierGate` | `Tooltip` + lock | inline lock, tanpa modal upsell |
-| `EmptyState` | — | with-CTA / informational |
-| `OfflineBanner` | `Alert` | koneksi hilang |
-| `Timeline` | `Separator`/custom | done/current/pending/rolled-back |
-| `PlanCard` | `Card` | current/recommended/locked |
+| Komponen domain   | Membungkus                                     | Catatan variant                                               |
+| ----------------- | ---------------------------------------------- | ------------------------------------------------------------- |
+| `StatusBadge`     | `Badge`                                        | 6 status pipeline + `Menunggu Persetujuan`; selalu ikon+label |
+| `CustomerPicker`  | `Command`/`Combobox` (via CLI saat dibutuhkan) | search by no. HP; state kosong/hasil/tidak-ditemukan          |
+| `WeightInput`     | `Input` + keypad                               | unit kg/pcs                                                   |
+| `CameraCapture`   | native `getUserMedia` + `Button`               | idle/aktif/upload/retry/gagal                                 |
+| `PhotoCard`       | `Card`                                         | watermark/pending/approved/timeout                            |
+| `StickyActionBar` | `Button`                                       | sticky bar order create                                       |
+| `ConfirmDialog`   | `AlertDialog`                                  | wajib sebut konsekuensi + jejak audit                         |
+| `TierGate`        | `Tooltip` + lock                               | inline lock, tanpa modal upsell                               |
+| `EmptyState`      | —                                              | with-CTA / informational                                      |
+| `OfflineBanner`   | `Alert`                                        | koneksi hilang                                                |
+| `Timeline`        | `Separator`/custom                             | done/current/pending/rolled-back                              |
+| `PlanCard`        | `Card`                                         | current/recommended/locked                                    |
 
-Toast memakai `sonner` yang sudah terpasang; DataTable pakai `Table` (via CLI) → jadi `CardList` di mobile. Sebelum membuat komponen apa pun: cek tabel di atas + `components/ui/` + `components/` dulu. *Verifikasi: tidak ada komponen domain yang tidak terdaftar tanpa alasan.*
+Toast memakai `sonner` yang sudah terpasang; DataTable pakai `Table` (via CLI) → jadi `CardList` di mobile. Sebelum membuat komponen apa pun: cek tabel di atas + `components/ui/` + `components/` dulu. _Verifikasi: tidak ada komponen domain yang tidak terdaftar tanpa alasan._
 
-**R-UI-004 — State adalah prop, bukan komponen baru.** `loading`, `disabled`, `error` WAJIB jadi prop variant komponen yang sama. TIDAK BOLEH membuat `LoadingButton` terpisah dari `Button`. *Verifikasi: jumlah file komponen proporsional dengan jumlah konsep, bukan state.*
+**R-UI-004 — State adalah prop, bukan komponen baru.** `loading`, `disabled`, `error` WAJIB jadi prop variant komponen yang sama. TIDAK BOLEH membuat `LoadingButton` terpisah dari `Button`. _Verifikasi: jumlah file komponen proporsional dengan jumlah konsep, bukan state._
 
-**R-UI-005 — Overlay/portal hanya via primitive Radix bawaan shadcn** (`Dialog`, `Sheet`, `DropdownMenu`, `Tooltip`). TIDAK BOLEH implementasi modal/dropdown manual. *Verifikasi: tidak ada `createPortal` di components/*
+**R-UI-005 — Overlay/portal hanya via primitive Radix bawaan shadcn** (`Dialog`, `Sheet`, `DropdownMenu`, `Tooltip`). TIDAK BOLEH implementasi modal/dropdown manual. _Verifikasi: tidak ada `createPortal` di components/_
 
 ---
 
 ## §6 Quality Gates — Definition of Done
 
-**R-QA-001 — Backend selesai berarti:** `composer test` hijau (pint --test + PHPStan + PHPUnit). *Verifikasi: output.*
+**R-QA-001 — Backend selesai berarti:** `composer test` hijau (pint --test + PHPStan + PHPUnit). _Verifikasi: output._
 
-**R-QA-002 — Frontend selesai berarti:** `npm run check` + `npm run types:check` hijau. *Verifikasi: output.*
+**R-QA-002 — Frontend selesai berarti:** `npm run check` + `npm run types:check` hijau. _Verifikasi: output._
 
-**R-QA-003 — Perubahan behavior/logic WAJIB ada test** (PHPUnit, feature test dulu); pure copy/styling tidak wajib. Test baru dibuat via `php artisan make:test --phpunit`. *Verifikasi: coverage kasus yang berubah.*
+**R-QA-003 — Perubahan behavior/logic WAJIB ada test** (PHPUnit, feature test dulu); pure copy/styling tidak wajib. Test baru dibuat via `php artisan make:test --phpunit`. _Verifikasi: coverage kasus yang berubah._
 
-**R-QA-004 — Test pakai factory + state existing;** TIDAK BOLEH membuat model manual bertumpuk di test. Faker via `fake()`. *Verifikasi: baca test.*
+**R-QA-004 — Test pakai factory + state existing;** TIDAK BOLEH membuat model manual bertumpuk di test. Faker via `fake()`. _Verifikasi: baca test._
 
-**R-QA-005 — TIDAK BOLEH menonaktifkan/skip test, lint, atau typecheck demi lolos gate.** Jika gate gagal, perbaiki kodenya. *Verifikasi: diff tidak menyentuh konfigurasi QA.*
+**R-QA-005 — TIDAK BOLEH menonaktifkan/skip test, lint, atau typecheck demi lolos gate.** Jika gate gagal, perbaiki kodenya. _Verifikasi: diff tidak menyentuh konfigurasi QA._
 
-**R-QA-006 — Setiap endpoint baru di sistem multi-tenant WAJIB punya test negatif isolasi** (kasir Outlet A tidak bisa akses Outlet B → 403) — turunan langsung R-BE-004. *Verifikasi: daftar test.*
+**R-QA-006 — Setiap endpoint baru di sistem multi-tenant WAJIB punya test negatif isolasi** (kasir Outlet A tidak bisa akses Outlet B → 403) — turunan langsung R-BE-004. _Verifikasi: daftar test._
 
 ---
 
 ## §7 Proses & Dokumentasi
 
-**R-PROC-001 — Keputusan baru masuk `DECISIONS.md` dulu**, baru dikode. Kode tidak boleh mendahului keputusan produk. *Verifikasi: riwayat DECISIONS.md.*
+**R-PROC-001 — Keputusan baru masuk `DECISIONS.md` dulu**, baru dikode. Kode tidak boleh mendahului keputusan produk. _Verifikasi: riwayat DECISIONS.md._
 
-**R-PROC-002 — Mengubah Rules.md WAJIB menaikkan versi + mencatat di §9 changelog.** *Verifikasi: changelog.*
+**R-PROC-002 — Mengubah Rules.md WAJIB menaikkan versi + mencatat di §9 changelog.** _Verifikasi: changelog._
 
-**R-PROC-003 — TIDAK BOLEH membuat file dokumentasi baru** (README tambahan, catatan, dsb.) tanpa diminta eksplisit. *Verifikasi: daftar file root tetap ramping.*
+**R-PROC-003 — TIDAK BOLEH membuat file dokumentasi baru** (README tambahan, catatan, dsb.) tanpa diminta eksplisit. _Verifikasi: daftar file root tetap ramping._
 
-**R-PROC-004 — Jika Rules.md diam, gaya existing menang** (turunan R-GOV-003). Kode lama tidak perlu direfactor massal, TAPI file yang disentuh WAJIB disesuaikan ke aturan ini saat itu juga (boy-scout, cakupan file yang disentuh saja). *Verifikasi: diff terbatas.*
+**R-PROC-004 — Jika Rules.md diam, gaya existing menang** (turunan R-GOV-003). Kode lama tidak perlu direfactor massal, TAPI file yang disentuh WAJIB disesuaikan ke aturan ini saat itu juga (boy-scout, cakupan file yang disentuh saja). _Verifikasi: diff terbatas._
 
 ---
 
 ## §8 Log Perubahan
 
-| Versi | Tanggal | Perubahan |
-|---|---|---|
-| v1.0 | 2026-09-22 | Versi awal — 45 aturan ber-ID: tata kelola, gaya kode, backend, frontend, shadcn/ui, QA, proses. |
-| v1.1 | 2026-09-22 | Menambahkan `ARCHITECTURE.md` ke sumber dokumen dan hierarki konflik R-GOV-001 (posisi: setelah DECISIONS, sebelum DESIGN-BRIEF). |
+| Versi | Tanggal    | Perubahan                                                                                                                         |
+| ----- | ---------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| v1.0  | 2026-09-22 | Versi awal — 45 aturan ber-ID: tata kelola, gaya kode, backend, frontend, shadcn/ui, QA, proses.                                  |
+| v1.1  | 2026-09-22 | Menambahkan `ARCHITECTURE.md` ke sumber dokumen dan hierarki konflik R-GOV-001 (posisi: setelah DECISIONS, sebelum DESIGN-BRIEF). |

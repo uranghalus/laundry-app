@@ -9,7 +9,9 @@ type Props = {
 };
 
 export function AppShell({ children, variant = 'sidebar' }: Props) {
-    const isOpen = usePage().props.sidebarOpen;
+    // Generic eksplisit: augmentasi global tidak menembus irisan tipe
+    // PageProps & SharedPageProps di Inertia 3.7.
+    const isOpen = usePage<{ sidebarOpen: boolean }>().props.sidebarOpen;
 
     if (variant === 'header') {
         return (

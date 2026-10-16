@@ -5,39 +5,63 @@
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
+    /*
+     * DESIGN-BRIEF §3 — Tipografi.
+     * Plus Jakarta Sans (Tokotype, OFL): nol biaya lisensi, geometris-humanist,
+     * terbaca di layar HP kecil milik Persona A, identitas lokal.
+     */
     --font-sans:
-        'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+        'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
 
+    /* DESIGN-BRIEF §3 — Radius: 8px input/tombol, 12px kartu, 999px badge. */
+    --radius: 0.5rem;
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
     --radius-sm: calc(var(--radius) - 4px);
+    --radius-card: 0.75rem;
+
+    /*
+     * DESIGN-BRIEF §3 — skala tipografi marketing.
+     * Brief §3 menetapkan 12/14/16/20/24/32 untuk aplikasi; halaman publik
+     * memakai token yang sama dengan batas atas yang diperpanjang (fluid),
+     * tanpa mengubah token warna maupun radius (§3).
+     */
+    --text-display-1: clamp(2.5rem, 6vw, 4.5rem);
+    --text-display-2: clamp(2rem, 4.5vw, 3.25rem);
+    --text-display-3: clamp(1.5rem, 3vw, 2.25rem);
+    --text-display-1--line-height: 1.05;
+    --text-display-2--line-height: 1.15;
+    --text-display-3--line-height: 1.25;
+
+    /*
+     * DESIGN-BRIEF §3 — Palet.
+     * Warna status (stone/sky/cyan/violet/green/amber/red) memakai skala
+     * default Tailwind karena brief memilih nilai yang persis sama;
+     * hanya `brand` (teal) yang menjadi scale baru.
+     */
+    --color-brand-50: #e6f4f2;
+    --color-brand-700: #0f766e;
+    --color-brand-900: #0c5f59;
 
     --color-background: var(--background);
     --color-foreground: var(--foreground);
-
     --color-card: var(--card);
     --color-card-foreground: var(--card-foreground);
-
     --color-popover: var(--popover);
     --color-popover-foreground: var(--popover-foreground);
-
     --color-primary: var(--primary);
     --color-primary-foreground: var(--primary-foreground);
-
     --color-secondary: var(--secondary);
     --color-secondary-foreground: var(--secondary-foreground);
-
     --color-muted: var(--muted);
     --color-muted-foreground: var(--muted-foreground);
-
     --color-accent: var(--accent);
     --color-accent-foreground: var(--accent-foreground);
-
     --color-destructive: var(--destructive);
     --color-destructive-foreground: var(--destructive-foreground);
 
@@ -61,75 +85,94 @@
     --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/*
+ * DESIGN-BRIEF §3 — mode terang.
+ * Background warm gray (bukan cool gray): laundry adalah bisnis rumah tangga.
+ */
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --destructive-foreground: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.87 0 0);
-    --chart-1: oklch(0.646 0.222 41.116);
-    --chart-2: oklch(0.6 0.118 184.704);
-    --chart-3: oklch(0.398 0.07 227.392);
-    --chart-4: oklch(0.828 0.189 84.429);
-    --chart-5: oklch(0.769 0.188 70.08);
-    --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.87 0 0);
+    --background: #fafaf9;
+    --foreground: #1c1917;
+    --card: #ffffff;
+    --card-foreground: #1c1917;
+    --popover: #ffffff;
+    --popover-foreground: #1c1917;
+
+    --primary: #0f766e;
+    --primary-foreground: #ffffff;
+
+    --secondary: #f5f5f4;
+    --secondary-foreground: #1c1917;
+    --muted: #f5f5f4;
+    --muted-foreground: #57534e;
+    --accent: #e6f4f2;
+    --accent-foreground: #0c5f59;
+
+    --destructive: #b91c1c;
+    --destructive-foreground: #ffffff;
+
+    --border: #d6d3d1;
+    --input: #d6d3d1;
+    --ring: #0f766e;
+
+    --chart-1: #0f766e;
+    --chart-2: #0284c7;
+    --chart-3: #7c3aed;
+    --chart-4: #b45309;
+    --chart-5: #b91c1c;
+
+    --sidebar: #ffffff;
+    --sidebar-foreground: #1c1917;
+    --sidebar-primary: #0f766e;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #e6f4f2;
+    --sidebar-accent-foreground: #0c5f59;
+    --sidebar-border: #d6d3d1;
+    --sidebar-ring: #0f766e;
 }
 
+/*
+ * DESIGN-BRIEF §3 — mode gelap.
+ * Warm deep neutral, bukan hitam murni; teal tetap terbaca sebagai aksi utama.
+ */
 .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.145 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.145 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.985 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.396 0.141 25.723);
-    --destructive-foreground: oklch(0.637 0.237 25.331);
-    --border: oklch(0.269 0 0);
-    --input: oklch(0.269 0 0);
-    --ring: oklch(0.439 0 0);
-    --chart-1: oklch(0.488 0.243 264.376);
-    --chart-2: oklch(0.696 0.17 162.48);
-    --chart-3: oklch(0.769 0.188 70.08);
-    --chart-4: oklch(0.627 0.265 303.9);
-    --chart-5: oklch(0.645 0.246 16.439);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.985 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(0.269 0 0);
-    --sidebar-ring: oklch(0.439 0 0);
+    --background: #0c0a09;
+    --foreground: #f5f5f4;
+    --card: #1c1917;
+    --card-foreground: #f5f5f4;
+    --popover: #1c1917;
+    --popover-foreground: #f5f5f4;
+
+    --primary: #0f766e;
+    --primary-foreground: #ffffff;
+
+    --secondary: #292524;
+    --secondary-foreground: #f5f5f4;
+    --muted: #292524;
+    --muted-foreground: #a8a29e;
+    --accent: #134e4a;
+    --accent-foreground: #e6f4f2;
+
+    --destructive: #b91c1c;
+    --destructive-foreground: #ffffff;
+
+    --border: #292524;
+    --input: #292524;
+    --ring: #0f766e;
+
+    --chart-1: #0f766e;
+    --chart-2: #0284c7;
+    --chart-3: #7c3aed;
+    --chart-4: #b45309;
+    --chart-5: #b91c1c;
+
+    --sidebar: #1c1917;
+    --sidebar-foreground: #f5f5f4;
+    --sidebar-primary: #0f766e;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #134e4a;
+    --sidebar-accent-foreground: #e6f4f2;
+    --sidebar-border: #292524;
+    --sidebar-ring: #0f766e;
 }
 
 @layer base {
@@ -139,5 +182,80 @@
 
     body {
         @apply bg-background text-foreground;
+    }
+
+    /*
+     * DESIGN-BRIEF §3 — angka uang & nomor order wajib tabular-nums
+     * agar Rupiah sejajar vertikal di tabel laporan.
+     */
+    table,
+    [data-numeric] {
+        font-variant-numeric: tabular-nums;
+    }
+}
+
+/*
+ * Gerak masuk saat scroll — tanpa dependency JS (lihat keputusan Q6a).
+ * Native CSS scroll-driven animation; dimatikan total bila pengguna
+ * meminta reduced motion (DESIGN-BRIEF §10 a11y).
+ */
+@keyframes reveal-up {
+    from {
+        opacity: 0;
+        transform: translateY(1.5rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@utility reveal {
+    animation: reveal-up both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 35%;
+}
+
+/* `@utility` tidak boleh bersarang di dalam media query, jadi penolakan
+   reduced-motion ditulis sebagai selector biasa yang muncul setelahnya. */
+@media (prefers-reduced-motion: reduce) {
+    .reveal {
+        animation: none;
+    }
+}
+
+/*
+ * Permukaan browser yang jarang distyling (craft floor): seleksi teks, caret,
+ * dan scrollbar ikut palet brand — sinyal termurah bahwa halaman ini dibangun,
+ * bukan dirakit.
+ */
+::selection {
+    background-color: #0f766e;
+    color: #ffffff;
+}
+
+.dark ::selection {
+    background-color: #e6f4f2;
+    color: #0c5f59;
+}
+
+input,
+textarea {
+    caret-color: #0f766e;
+}
+
+.dark input,
+.dark textarea {
+    caret-color: #5eead4;
+}
+
+@keyframes shiny-text {
+    0% {
+        background-position: 150% center;
+    }
+
+    100% {
+        background-position: -50% center;
     }
 }

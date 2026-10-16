@@ -1,4 +1,5 @@
 import { usePage } from '@inertiajs/react';
+import type { Auth } from '@/types/auth';
 import { ChevronsUpDown } from 'lucide-react';
 import {
     DropdownMenu,
@@ -16,7 +17,9 @@ import { UserMenuContent } from '@/components/user-menu-content';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 export function NavUser() {
-    const { auth } = usePage().props;
+    // Generic eksplisit: augmentasi global tidak menembus irisan tipe
+    // PageProps & SharedPageProps di Inertia 3.7.
+    const { auth } = usePage<{ auth: Auth }>().props;
     const { state } = useSidebar();
     const isMobile = useIsMobile();
 
