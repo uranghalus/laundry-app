@@ -25,12 +25,12 @@ import { cn } from '@/lib/utils';
 /**
  * Panggung kanan hero — rantai bukti yang bisa ditonton ATAU dipegang.
  *
- * Dibangun ulang dari mockup statis menjadi walkthrough interaktif 4 langkah
- * (foto → stempel watermark + jejak audit → WhatsApp → disetujui) tanpa
- * mengulang kegagalan versi lama yang "padat dan berantakan": SATU kartu
- * tetap menjadi tulang punggung, semua blok selalu menempati ruangnya, dan
- * tiap langkah HANYA mengubah penekanan (ring teal), kemunculan elemen, serta
- * pill status — nol pergeseran layout, nol kontrol yang berjejer di dalam kartu.
+ * SATU kartu detail order menampilkan seluruh rantai bukti sekaligus dan
+ * selalu UTUH: foto berwatermark, gelembung persetujuan WhatsApp, dan baris
+ * jejak audit tidak pernah menghilang — nol ruang kosong di dalam kartu, nol
+ * pergeseran layout di layar mana pun. Loop 4 langkah hanya memindahkan
+ * penekanan (ring teal), mencap watermark, dan menukar pill status (Menunggu
+ * → Disetujui); tidak ada kontrol yang berjejer di dalam kartu.
  *
  * Interaksi yang tersedia pengunjung:
  * - Rail langkah di bawah kartu: klik/keyboard untuk melompat ke langkah mana
@@ -76,14 +76,17 @@ const PROOF_EASE = [0.16, 1, 0.3, 1] as const;
 /**
  * Foto kondisi berwatermark — jantung rantai bukti (FR-9.1/FR-9.2).
  *
- * Dibuat dari scene gradien berlapis agar terbaca sebagai foto nyata yang
- * berwarna, bukan kotak abu-abu dengan ikon. Watermark dimount ulang per
- * loop supaya gerak cap hanya berjalan tepat sekali saat langkah "Stempel"
- * dicapai, bukan berulang tiap render.
+ * Scene digambar sebagai TUMPUKAN PAKAIAN MELIPAT (rose di atas biru) di
+ * atas latar kain berlipat — terbaca sebagai foto laundry sungguhan yang
+ * berwarna, bukan siluet kaos raksasa yang mendominasi kartu. Rasio 16/10
+ * supaya foto adalah konten, bukan halaman.
+ *
+ * Watermark SELALU tampil (ia menempel di file, bukan muncul di antarmuka);
+ * gerak "cap" hanya diputar ulang saat loop melewati langkah Stempel.
  *
  * @param isActive             - Langkah "Foto" sedang aktif: foto diberi ring penekanan teal.
- * @param isStamped            - Langkah "Stempel" tercapai: watermark tampil dengan gerak cap.
- * @param prefersReducedMotion - Bila true, watermark langsung utuh tanpa gerak cap.
+ * @param isStamped            - Loop melewati langkah Stempel: cap watermark bergerak turun.
+ * @param prefersReducedMotion - Bila true, cap langsung utuh tanpa gerak.
  */
 function GarmentPhoto({
     isActive,
@@ -97,50 +100,109 @@ function GarmentPhoto({
     return (
         <div
             className={cn(
-                'relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-gradient-to-br from-rose-200 via-rose-300 to-rose-400 transition-shadow duration-300',
+                'relative aspect-[16/10] w-full overflow-hidden rounded-lg bg-gradient-to-br from-rose-200 via-rose-100 to-sky-100 transition-shadow duration-300',
                 isActive && 'ring-brand-700/30 dark:ring-brand-50/25 ring-2',
             )}
         >
-            {/* Siluet dress di atas latar kain. */}
+            {/*
+             * Tumpukan pakaian melipat — dua potong bersih (blus biru di
+             * bawah, dress rose di atas) dengan lipatan dan kerah V. Warna
+             * cerahnya yang membuat panggung terasa hidup.
+             */}
             <svg
                 aria-hidden="true"
-                className="absolute inset-0 m-auto size-2/3 drop-shadow-sm"
+                className="absolute inset-0 size-full"
                 fill="none"
-                viewBox="0 0 64 64"
+                viewBox="0 0 160 100"
             >
+                {/* Lipatan kain latar. */}
                 <path
-                    className="fill-rose-600/60"
-                    d="M22 8l-8 6 4 8 4-3v33h20V19l4 3 4-8-8-6-4 4h-8l-4-4z"
+                    d="M-10 26 C 40 18, 100 36, 170 24"
+                    stroke="#ffffff"
+                    strokeOpacity="0.4"
+                    strokeWidth="7"
+                />
+                <path
+                    d="M-10 66 C 50 58, 110 76, 170 62"
+                    stroke="#ffffff"
+                    strokeOpacity="0.28"
+                    strokeWidth="9"
+                />
+                {/* Bayangan lembut di bawah tumpukan. */}
+                <ellipse
+                    cx="80"
+                    cy="84"
+                    fill="#0f172a"
+                    fillOpacity="0.14"
+                    rx="44"
+                    ry="6"
+                />
+                {/* Potongan bawah — blus biru langit. */}
+                <rect
+                    fill="#38bdf8"
+                    fillOpacity="0.9"
+                    height="17"
+                    rx="5"
+                    width="84"
+                    x="38"
+                    y="63"
+                />
+                <path
+                    d="M60 63v17M100 63v17"
+                    stroke="#0369a1"
+                    strokeOpacity="0.35"
+                    strokeWidth="1.5"
+                />
+                {/* Potongan atas — dress rose dengan kerah V. */}
+                <rect
+                    fill="#fb7185"
+                    fillOpacity="0.95"
+                    height="20"
+                    rx="5"
+                    width="72"
+                    x="44"
+                    y="43"
+                />
+                <path
+                    d="M74 43l6 7 6-7"
+                    stroke="#9f1239"
+                    strokeOpacity="0.45"
+                    strokeLinecap="round"
+                    strokeWidth="2"
+                />
+                <path
+                    d="M58 43v20M102 43v20"
+                    stroke="#be123c"
+                    strokeOpacity="0.35"
+                    strokeWidth="1.5"
                 />
             </svg>
 
             {/* Kilau kain — highlight lembut supaya terasa seperti foto asli. */}
             <div
                 aria-hidden="true"
-                className="absolute inset-0 bg-[radial-gradient(circle_at_30%_25%,rgb(255_255_255/0.45),transparent_55%)]"
+                className="absolute inset-0 bg-[radial-gradient(circle_at_32%_22%,rgb(255_255_255/0.5),transparent_58%)]"
             />
 
             {/*
-             * Watermark otomatis (FR-9.2) — menempel di file, bukan di
-             * antarmuka. Muncul sebagai cap: opak sejak frame pertama lalu
-             * mereda dari skala/miring, meniru stempel yang mendarat.
+             * Watermark otomatis (FR-9.2) — selalu menempel di file. Dimount
+             * ulang per siklus loop hanya untuk memutar gerak cap yang
+             * menghentak turun saat langkah Stempel dicapai.
              */}
-            {isStamped ? (
-                <motion.span
-                    animate={{ opacity: 1, rotate: 0, scale: 1 }}
-                    className="absolute inset-x-0 bottom-0 bg-stone-900/70 px-2 py-1 text-center text-[0.6rem] leading-tight text-stone-50"
-                    data-numeric
-                    initial={
-                        prefersReducedMotion
-                            ? { opacity: 1 }
-                            : { opacity: 1, rotate: -2.5, scale: 1.3 }
-                    }
-                    key="watermark-stamped"
-                    transition={{ duration: 0.34, ease: PROOF_EASE }}
-                >
-                    12/03/2026 14:32 · RC-2418 · dress sutra
-                </motion.span>
-            ) : null}
+            <motion.span
+                animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                className="absolute inset-x-0 bottom-0 bg-stone-900/70 px-2 py-1 text-center text-[0.58rem] leading-tight text-stone-50"
+                data-numeric
+                initial={
+                    isStamped && !prefersReducedMotion
+                        ? { opacity: 1, rotate: -2.5, scale: 1.25 }
+                        : { opacity: 1 }
+                }
+                key={isStamped ? 'watermark-stamped' : 'watermark-plain'}
+                transition={{ duration: 0.32, ease: PROOF_EASE }}
+            >
+                12/03/2026 14:32 · RC-2418 · dress sutra
+            </motion.span>
         </div>
     );
 }
@@ -289,7 +351,6 @@ export default function HeroStage() {
 
     const isApproved = activeStep === PROOF_STEPS.length - 1;
     const isAuditShown = activeStep >= 1;
-    const isBubbleShown = activeStep >= 2;
 
     /**
      * Respons atas perubahan preferensi reduced motion di tengah sesi:
@@ -437,11 +498,14 @@ export default function HeroStage() {
              */}
             <div className="relative">
                 {/*
-                 * Chip statistik melayang — duduk di ruang kosong kiri kartu
-                 * (bukan di atasnya), sehingga tidak pernah menutupi konten.
-                 * Hanya tampil di lg ke atas.
+                 * Chip statistik melayang — sengaja menimpa sudut kiri-atas
+                 * foto (layered etalase), bukan ruang kosong: menempel jelas
+                 * di atas bidang berwarna sehingga tak pernah hilang putih-
+                 * di-putih, dan hanya menutupi area ilustrasi — teks header,
+                 * watermark, serta isi kartu tetap bebas. `pointer-events-none`
+                 * agar tilt kartu di bawahnya tetap hidup.
                  */}
-                <div className="pointer-events-none absolute bottom-10 -left-4 hidden w-44 lg:block">
+                <div className="pointer-events-none absolute top-16 -left-6 z-10 hidden w-40 lg:block">
                     <div className="bg-card rounded-xl border p-3 shadow-[0_16px_32px_-16px_rgb(12_95_89/0.25)]">
                         <p className="text-foreground text-2xl font-bold tracking-tight">
                             <CountUp
@@ -545,36 +609,19 @@ export default function HeroStage() {
                     />
 
                     {/*
-                     * Persetujuan pelanggan lewat WhatsApp (FR.9.3) — muncul
-                     * di langkah WA, lalu meta berubah dari "Terkirim" (centang
-                     * ganda khas WhatsApp) menjadi bukti persetujuan.
+                     * Persetujuan pelanggan lewat WhatsApp (FR.9.3) — selalu
+                     * tampil (ruang tak pernah kosong); langkah WA hanya
+                     * menyalakan ring penekanan, dan meta berganti dari
+                     * "Terkirim" (centang ganda khas WhatsApp) menjadi bukti
+                     * persetujuan di langkah akhir.
                      */}
                     <div className="mt-3 flex justify-end">
-                        <motion.div
-                            animate={{
-                                opacity: isBubbleShown ? 1 : 0,
-                                filter: prefersReducedMotion
-                                    ? 'blur(0px)'
-                                    : isBubbleShown
-                                      ? 'blur(0px)'
-                                      : 'blur(4px)',
-                                y: prefersReducedMotion
-                                    ? 0
-                                    : isBubbleShown
-                                      ? 0
-                                      : 8,
-                            }}
+                        <div
                             className={cn(
                                 'max-w-[85%] rounded-xl rounded-br-sm bg-green-100 px-3 py-2 transition-shadow duration-300 dark:bg-green-950',
                                 activeStep === 2 &&
                                     'ring-brand-700/30 dark:ring-brand-50/25 ring-2',
                             )}
-                            initial={false}
-                            transition={
-                                isBubbleShown
-                                    ? { duration: 0.34, ease: PROOF_EASE }
-                                    : { duration: 0.18, ease: 'easeIn' }
-                            }
                         >
                             <p className="text-xs leading-snug text-green-950 dark:text-green-100">
                                 Bu, foto kondisi awal dress sutra sudah saya
@@ -600,30 +647,21 @@ export default function HeroStage() {
                                     </>
                                 )}
                             </p>
-                        </motion.div>
+                        </div>
                     </div>
 
                     {/*
-                     * Jejak audit (FR-3.4) — terungkap bersamaan cap
-                     * watermark: sebab (stempel) dan akibat (tercatat) dalam
-                     * satu denyut, dengan ring penekanan di langkahnya.
+                     * Jejak audit (FR-3.4) — selalu tampil sebagai baris
+                     * permanen kartu; ring penekanan menyala tepat di langkah
+                     * Stempel, bersamaan cap watermark (sebab dan akibat
+                     * dalam satu denyut).
                      */}
-                    <motion.div
-                        animate={{
-                            opacity: isAuditShown ? 1 : 0,
-                            y: prefersReducedMotion ? 0 : isAuditShown ? 0 : 6,
-                        }}
+                    <div
                         className={cn(
                             'border-border mt-3 flex items-center gap-2 rounded-lg border-t px-1 pt-3 transition-shadow duration-300',
                             activeStep === 1 &&
                                 'ring-brand-700/25 dark:ring-brand-50/20 ring-2',
                         )}
-                        initial={false}
-                        transition={
-                            isAuditShown
-                                ? { duration: 0.3, ease: PROOF_EASE }
-                                : { duration: 0.16, ease: 'easeIn' }
-                        }
                     >
                         {activeStep === 1 && !prefersReducedMotion ? (
                             <motion.span
@@ -658,7 +696,7 @@ export default function HeroStage() {
                             <Clock aria-hidden="true" className="size-3" />1
                             menit
                         </span>
-                    </motion.div>
+                    </div>
                 </motion.div>
             </div>
 

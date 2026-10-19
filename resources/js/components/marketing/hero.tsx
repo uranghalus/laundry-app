@@ -13,9 +13,10 @@ import { register } from '@/routes';
  *
  * Mode Persuade: mekanismenya harus terlihat di detik pertama, bukan sekadar
  * diklaim. Sisi kanan karena itu bukan screenshot dashboard, melainkan
- * satu mockup kartu order statis yang memperlihatkan seluruh rantai bukti
+ * satu mockup kartu order yang selalu menampilkan seluruh rantai bukti
  * sekaligus — foto berwatermark, persetujuan WhatsApp, jejak audit — di atas
- * medan partikel (ReactBits) yang tenang.
+ * medan partikel (ReactBits) yang tenang; loop tenang di belakangnya hanya
+ * memindahkan sorotan antar bukti dan bisa dijeda pengunjung.
  *
  * Kolom kiri sengaja TIDAK memakai kicker atau eyebrow di atas heading: heading
  * harus membawa bobotnya sendiri. Fakta trial yang biasanya duduk di kicker

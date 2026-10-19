@@ -1,0 +1,421 @@
+{
+  "schemaVersion": 2,
+  "colors": {
+    "colorMeta": {
+      "primary": {
+        "name": "Teal Air Bersih",
+        "value": "#0f766e",
+        "role": "brand-700 · semua yang interaktif",
+        "usage": "CTA utama, link, fokus, state aktif. Tidak pernah sebagai latar.",
+        "vibe": "Tenang, bersih, bisa dipercaya — seperti air yang benar-benar jernih."
+      },
+      "brand-tint": {
+        "name": "Teal Kabut",
+        "value": "#f0fdfa",
+        "role": "brand-50 · latar lembut",
+        "usage": "Badge, hover sekunder, ikon di dalam kartu.",
+        "vibe": "Hadir tanpa bersaing."
+      },
+      "brand-deep": {
+        "name": "Teal Malam",
+        "value": "#134e4a",
+        "role": "brand-900 · kedalaman",
+        "usage": "Hover CTA, header kartu bukti, watermark.",
+        "vibe": "Berat dan mantap."
+      },
+      "background": {
+        "name": "Putih Cucian",
+        "value": "#ffffff",
+        "role": "bg-page terang",
+        "usage": "Latar halaman marketing.",
+        "vibe": "Bersih seperti cucian yang sudah selesai."
+      },
+      "surface-muted": {
+        "name": "Putih Abu",
+        "value": "#f8fafc",
+        "role": "bg-surface sekunder",
+        "usage": "Zona form, kartu pendukung, header kartu bukti.",
+        "vibe": "Netral, sedikit lebih rendah."
+      },
+      "ink": {
+        "name": "Tinta Malam",
+        "value": "#0f172a",
+        "role": "teks utama",
+        "usage": "Judul, angka, isi paragraf penting.",
+        "vibe": "Tegas, kontras penuh."
+      },
+      "ink-muted": {
+        "name": "Tinta Kabut",
+        "value": "#475569",
+        "role": "teks sekunder",
+        "usage": "Label, deskripsi, meta, catatan kaki.",
+        "vibe": "Tenang, tidak menjerit."
+      },
+      "border": {
+        "name": "Garis Tenang",
+        "value": "#e2e8f0",
+        "role": "pemisah",
+        "usage": "Semua garis 1px antar blok, baris, seksi.",
+        "vibe": "Anatomi utama, bukan dekorasi."
+      },
+      "success": {
+        "name": "Hijau Bersih",
+        "value": "#15803d",
+        "role": "status selesai",
+        "usage": "Selesai, disetujui, saldo masuk.",
+        "vibe": "Tuntas."
+      },
+      "warning": {
+        "name": "Amber Tunggu",
+        "value": "#b45309",
+        "role": "status menunggu",
+        "usage": "Menunggu persetujuan, antrian.",
+        "vibe": "Sabar, bukan panik."
+      },
+      "error": {
+        "name": "Merah Tandai",
+        "value": "#b91c1c",
+        "role": "status gagal",
+        "usage": "Error validasi, aksi destruktif.",
+        "vibe": "Serius, jarang dipakai."
+      },
+      "dark-background": {
+        "name": "Navy Malam",
+        "value": "#020617",
+        "role": "bg-page gelap",
+        "usage": "Latar mode gelap.",
+        "vibe": "Gelap tapi tidak hitam pekat."
+      },
+      "dark-surface": {
+        "name": "Navy Kartu",
+        "value": "#0f172a",
+        "role": "bg-card gelap",
+        "usage": "Kartu dan header kartu di mode gelap.",
+        "vibe": "Konsisten dengan ink terang."
+      },
+      "dark-border": {
+        "name": "Garis Malam",
+        "value": "#1e293b",
+        "role": "pemisah gelap",
+        "usage": "Garis di mode gelap.",
+        "vibe": "Terlihat, tapi tidak mencolok."
+      }
+    },
+    "tonalRamp": {
+      "primary": {
+        "0": "#f0fdfa", "10": "#ccfbf1", "20": "#99f6e4", "30": "#5eead4",
+        "40": "#2dd4bf", "50": "#14b8a6", "60": "#0d9488", "70": "#0f766e",
+        "80": "#115e59", "90": "#134e4a", "95": "#042f2e"
+      },
+      "success": {
+        "0": "#f0fdf4", "10": "#dcfce7", "20": "#bbf7d0", "30": "#86efac",
+        "40": "#4ade80", "50": "#22c55e", "60": "#16a34a", "70": "#15803d",
+        "80": "#166534", "90": "#14532d", "95": "#052e16"
+      },
+      "warning": {
+        "0": "#fffbeb", "10": "#fef3c7", "20": "#fde68a", "30": "#fcd34d",
+        "40": "#fbbf24", "50": "#f59e0b", "60": "#d97706", "70": "#b45309",
+        "80": "#92400e", "90": "#78350f", "95": "#451a03"
+      },
+      "error": {
+        "0": "#fef2f2", "10": "#fee2e2", "20": "#fecaca", "30": "#fca5a5",
+        "40": "#f87171", "50": "#ef4444", "60": "#dc2626", "70": "#b91c1c",
+        "80": "#991b1b", "90": "#7f1d1d", "95": "#450a0a"
+      },
+      "background": {
+        "0": "#ffffff", "10": "#f8fafc", "20": "#f1f5f9", "30": "#e2e8f0",
+        "40": "#cbd5e1", "50": "#94a3b8", "60": "#64748b", "70": "#475569",
+        "80": "#334155", "90": "#1e293b", "100": "#0f172a"
+      }
+    }
+  },
+  "typography": {
+    "display": {
+      "name": "Plus Jakarta Sans",
+      "family": "'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif",
+      "weights": [600, 800],
+      "sizes": ["36px", "48px", "56px"],
+      "lineHeights": ["1.05", "1.10", "1.15"],
+      "letterSpacings": ["-0.02em", "-0.01em"],
+      "usage": "H1 hero, angka besar, label kartu bukti. Selalu dengan font-variation-settings 'opsz' 32."
+    },
+    "heading": {
+      "name": "Plus Jakarta Sans",
+      "family": "'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif",
+      "weights": [700],
+      "sizes": ["24px", "30px"],
+      "lineHeights": ["1.20", "1.25"],
+      "letterSpacings": ["-0.01em"],
+      "usage": "Judul seksi dan sub-judul kartu besar."
+    },
+    "heading2": {
+      "name": "Plus Jakarta Sans",
+      "family": "'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif",
+      "weights": [700],
+      "sizes": ["20px"],
+      "lineHeights": ["1.25"],
+      "letterSpacings": ["0"],
+      "usage": "Judul kartu."
+    },
+    "body": {
+      "name": "Inter",
+      "family": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "weights": [400, 600],
+      "sizes": ["16px", "18px"],
+      "lineHeights": ["1.5", "1.6"],
+      "letterSpacings": ["0"],
+      "usage": "Deskripsi, lead paragraph, testimoni. Frasa bukti ditebalkan 600."
+    },
+    "bodySmall": {
+      "name": "Inter",
+      "family": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "weights": [400, 500],
+      "sizes": ["14px"],
+      "lineHeights": ["1.5"],
+      "letterSpacings": ["0"],
+      "usage": "Label, teks pendukung."
+    },
+    "label": {
+      "name": "Inter",
+      "family": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "weights": [500, 600],
+      "sizes": ["14px"],
+      "lineHeights": ["1.5"],
+      "letterSpacings": ["0"],
+      "usage": "Label form, tombol, badge."
+    },
+    "caption": {
+      "name": "Inter",
+      "family": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "weights": [500],
+      "sizes": ["12px"],
+      "lineHeights": ["1.5"],
+      "letterSpacings": ["0"],
+      "usage": "Timestamp, meta, catatan kaki."
+    },
+    "micro": {
+      "name": "Inter",
+      "family": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "weights": [500],
+      "sizes": ["12px"],
+      "lineHeights": ["1.4"],
+      "letterSpacings": ["0.01em"],
+      "usage": "Meta baris audit, angka kecil di kartu bukti."
+    },
+    "mono": {
+      "name": "JetBrains Mono",
+      "family": "'JetBrains Mono', ui-monospace, monospace",
+      "weights": [400],
+      "sizes": ["14px"],
+      "lineHeights": ["1.5"],
+      "letterSpacings": ["0"],
+      "usage": "Kode, URL unduhan, nilai teknis."
+    }
+  },
+  "shadows": {
+    "card": {
+      "name": "shadow-card",
+      "value": "0 4px 20px -2px rgb(0 0 0 / 0.06)",
+      "usage": "Kartu biasa, fitur, testimoni, harga non-populer. Satu per kartu."
+    },
+    "raised": {
+      "name": "shadow-card-lg",
+      "value": "0 10px 28px -6px rgb(0 0 0 / 0.10)",
+      "usage": "Hanya objek yang benar-benar di atas: kartu bukti hero, harga populer."
+    },
+    "none": {
+      "name": "shadow-none",
+      "value": "none",
+      "usage": "Zona form, kartu di dalam kartu, konten yang tidak perlu terangkat."
+    }
+  },
+  "motion": {
+    "durations": {
+      "pageTransition": "500ms",
+      "modalOpen": "200ms",
+      "modalClose": "160ms",
+      "hover": "150ms",
+      "press": "80ms",
+      "reveal": "700ms",
+      "stepDwell": "1100ms / 1100ms / 1400ms / 2200ms"
+    },
+    "easings": {
+      "standard": "cubic-bezier(0.16, 1, 0.3, 1)",
+      "emphasized": "cubic-bezier(0.7, 0, 0.84, 0)",
+      "decelerate": "cubic-bezier(0, 0, 0.2, 1)",
+      "accelerate": "cubic-bezier(0.4, 0, 1, 1)"
+    },
+    "springConfigs": {
+      "soft": "stiffness 120, damping 20, mass 1 — reveal seksi, kartu masuk.",
+      "medium": "stiffness 200, damping 24, mass 1 — langkah kartu bukti, chip bukti.",
+      "snappy": "stiffness 400, damping 30, mass 1 — hover tombol, tekan, pill status."
+    },
+    "durationsMs": {
+      "pageTransition": 500,
+      "modalOpen": 200,
+      "modalClose": 160,
+      "hover": 150,
+      "press": 80,
+      "reveal": 700,
+      "stampPulse": 450,
+      "creditCount": 900
+    },
+    "easingsCubicBezier": {
+      "standard": [0.16, 1, 0.3, 1],
+      "emphasized": [0.7, 0, 0.84, 0],
+      "decelerate": [0, 0, 0.2, 1],
+      "accelerate": [0.4, 0, 1, 1]
+    },
+    "springs": {
+      "soft": { "stiffness": 120, "damping": 20, "mass": 1 },
+      "medium": { "stiffness": 200, "damping": 24, "mass": 1 },
+      "snappy": { "stiffness": 400, "damping": 30, "mass": 1 }
+    },
+    "reducedMotion": "Jika prefers-reduced-motion aktif: putar-otomatis mati, kartu bukti mulai di langkah akhir, semua reveal langsung tampil (tanpa translate), pulse/berdenyut dimatikan. Kontrol putar manual tetap dihormati."
+  },
+  "breakpoints": {
+    "xs": { "value": "480px", "use": "Ponsel kecil: hero 1 kolom, CTA selebar layar." },
+    "sm": { "value": "640px", "use": "Ponsel: form satu kolom, padding px-4 → sm:px-6." },
+    "md": { "value": "768px", "use": "Tablet: kartu fitur & alur jadi 3 kolom, grid 2 kolom." },
+    "lg": { "value": "1024px", "use": "Desktop: hero 2 kolom, pricing 3 kolom, container px-8." },
+    "xl": { "value": "1280px", "use": "Desktop lebar: container max-w-6xl tetap terkunci." }
+  },
+  "components": [
+    {
+      "id": "ds-button",
+      "name": "Tombol",
+      "description": "Aksi utama halaman. Satu primary per halaman; label verba yang menjelaskan hasil, bukan perintah kosong.",
+      "variants": [
+        { "name": "primary", "description": "Isi teal solid, teks putih. Untuk aksi yang harus menang." },
+        { "name": "secondary", "description": "Outline teal, transparan. Untuk aksi kedua yang tidak boleh bersaing." },
+        { "name": "onDark", "description": "Isi teal terang di atas kartu gelap." }
+      ],
+      "a11y": "Target sentuh ≥ 44px tinggi. focus-visible:ring-2 ring-brand-700 ring-offset-2 (ring-brand-50 di kartu gelap). Label berisi hasil aksi.",
+      "css": ".ds-button { display:inline-flex; align-items:center; justify-content:center; gap:8px; border-radius:6px; padding:14px 24px; font-family:'Plus Jakarta Sans',ui-sans-serif,sans-serif; font-weight:600; font-size:14px; line-height:1.5; cursor:pointer; transition:background-color 150ms cubic-bezier(0.16,1,0.3,1), color 150ms cubic-bezier(0.16,1,0.3,1); border:0; } .ds-button--primary { background:#0f766e; color:#ffffff; } .ds-button--primary:hover { background:#134e4a; } .ds-button--secondary { background:transparent; color:#0f766e; box-shadow:inset 0 0 0 1px #0f766e; } .ds-button--secondary:hover { background:#f0fdfa; } .ds-button--onDark { background:#f0fdfa; color:#134e4a; } .ds-button--onDark:hover { background:#ffffff; } .ds-button:focus-visible { outline:2px solid #0f766e; outline-offset:2px; } .ds-button[disabled] { opacity:0.6; cursor:not-allowed; }",
+      "tokens": { "radius": "6px", "padding": "14px 24px", "font": "label", "duration": "150ms", "focus": "2px #0f766e + offset 2px" }
+    },
+    {
+      "id": "ds-input",
+      "name": "Input",
+      "description": "Field form dengan label terlihat (tidak pernah placeholder-only) dan pesan error di bawah.",
+      "variants": [
+        { "name": "default", "description": "Border netral, fokus ring teal." },
+        { "name": "invalid", "description": "Border & ring merah + pesan error." },
+        { "name": "disabled", "description": "Latar muted, teks redup." }
+      ],
+      "a11y": "Label selalu tampil dan terhubung lewat for/id. Pesan error memakai aria-describedby. focus-visible ring 2px teal dengan offset 1px.",
+      "css": ".ds-field { display:flex; flex-direction:column; gap:6px; } .ds-field__label { font-family:Inter,ui-sans-serif,sans-serif; font-size:14px; font-weight:500; color:#0f172a; } .ds-field__input { border-radius:6px; border:1px solid #e2e8f0; background:#ffffff; padding:12px 16px; font-family:Inter,ui-sans-serif,sans-serif; font-size:16px; line-height:1.5; color:#0f172a; transition:border-color 150ms cubic-bezier(0.16,1,0.3,1); } .ds-field__input::placeholder { color:#475569; opacity:0.6; } .ds-field__input:focus-visible { outline:none; border-color:#0f766e; box-shadow:0 0 0 2px #0f766e, 0 0 0 3px #ffffff; } .ds-field--invalid .ds-field__input { border-color:#b91c1c; } .ds-field--invalid .ds-field__input:focus-visible { box-shadow:0 0 0 2px #b91c1c, 0 0 0 3px #ffffff; } .ds-field__error { font-family:Inter,ui-sans-serif,sans-serif; font-size:14px; color:#b91c1c; } .ds-field__input:disabled { background:#f8fafc; color:#475569; opacity:0.7; }",
+      "tokens": { "radius": "6px", "border": "1px #e2e8f0", "focus": "2px #0f766e", "font": "16px Inter" }
+    },
+    {
+      "id": "ds-feature-card",
+      "name": "Kartu Fitur",
+      "description": "Blok fitur dengan ikon teal, judul, deskripsi, dan baris meta terpisah garis. Anatomi wajib setiap kartu fitur/produk.",
+      "variants": [
+        { "name": "default", "description": "Latar putih, border netral, shadow-card." },
+        { "name": "muted", "description": "Latar surface-muted untuk kartu pendukung." }
+      ],
+      "a11y": "Ikon aria-hidden (dekoratif). Judul memakai heading semantik. Seluruh kartu boleh jadi target link dengan focus-visible ring 2px teal.",
+      "css": ".ds-card { border-radius:12px; border:1px solid #e2e8f0; background:#ffffff; box-shadow:0 4px 20px -2px rgb(0 0 0 / 0.06); padding:24px; display:flex; flex-direction:column; gap:12px; } .ds-card--muted { background:#f8fafc; box-shadow:none; } .ds-card__icon { width:40px; height:40px; display:flex; align-items:center; justify-content:center; border-radius:6px; background:#f0fdfa; color:#0f766e; } .ds-card__title { font-family:'Plus Jakarta Sans',ui-sans-serif,sans-serif; font-size:20px; font-weight:700; line-height:1.25; color:#0f172a; margin:0; } .ds-card__desc { font-family:Inter,ui-sans-serif,sans-serif; font-size:16px; line-height:1.5; color:#475569; margin:0; } .ds-card__meta { display:flex; justify-content:space-between; align-items:center; border-top:1px solid #e2e8f0; padding-top:12px; margin-top:auto; } .ds-card__meta-label { font-family:Inter,ui-sans-serif,sans-serif; font-size:14px; font-weight:500; color:#475569; } .ds-card__meta-value { font-family:'Plus Jakarta Sans',ui-sans-serif,sans-serif; font-size:16px; font-weight:700; color:#0f172a; font-variant-numeric:tabular-nums; }",
+      "tokens": { "radius": "12px", "border": "1px #e2e8f0", "shadow": "shadow-card", "padding": "24px", "iconBg": "#f0fdfa", "iconColor": "#0f766e" }
+    },
+    {
+      "id": "ds-proof-card",
+      "name": "Kartu Bukti (signature)",
+      "description": "Komponen tanda tangan: satu-satunya 'produk hidup' di hero. Memutar alur bukti kirim foto → stempel waktu → estimasi → WA → disetujui, dalam satu bidang tanpa layout shift. Semua blok selalu mengisi ruang; langkah hanya mengubah penekanan (opacity + ring).",
+      "variants": [
+        { "name": "light", "description": "Latar putih, header surface-muted, watermark brand-900 opacity 0.4." },
+        { "name": "dark", "description": "Latar navy, watermark brand-50 opacity 0.25, teks putih." }
+      ],
+      "a11y": "Watermark angka aria-hidden. Langkah aktif memakai aria-current='step'. Kontrol rail punya aria-live polite untuk status 'Sedang diputar / Dijeda'. Hormati prefers-reduced-motion: mulai di langkah akhir, putar-otomatis mati. Target rail ≥ 44px.",
+      "css": ".ds-proof { position:relative; overflow:hidden; border-radius:12px; border:1px solid #e2e8f0; background:#ffffff; box-shadow:0 10px 28px -6px rgb(0 0 0 / 0.10); } .ds-proof__watermark { position:absolute; top:50%; right:24px; transform:translateY(-50%); font-family:'Plus Jakarta Sans',ui-sans-serif,sans-serif; font-size:160px; font-weight:900; line-height:1; color:#134e4a; opacity:0.4; pointer-events:none; user-select:none; } .ds-proof--dark .ds-proof__watermark { color:#f0fdfa; opacity:0.25; } .ds-proof__header { display:flex; align-items:center; gap:12px; background:#f8fafc; border-bottom:1px solid #e2e8f0; padding:16px; } .ds-proof--dark { border-color:#1e293b; background:#0f172a; } .ds-proof--dark .ds-proof__header { background:#134e4a; border-bottom-color:#1e293b; } .ds-proof__avatar { width:40px; height:40px; border-radius:6px; object-fit:cover; } .ds-proof__name { font-family:Inter,ui-sans-serif,sans-serif; font-size:14px; font-weight:600; color:#0f172a; } .ds-proof--dark .ds-proof__name { color:#ffffff; } .ds-proof__row { display:grid; grid-template-columns:90px 1fr 76px; align-items:center; gap:12px; padding:12px 16px; transition:opacity 450ms cubic-bezier(0.16,1,0.3,1); } .ds-proof__row--dim { opacity:0.45; } .ds-proof__row--active { box-shadow:inset 0 0 0 1px #0f766e; } .ds-proof__label { font-family:Inter,ui-sans-serif,sans-serif; font-size:14px; font-weight:500; color:#475569; } .ds-proof__value { font-family:'Plus Jakarta Sans',ui-sans-serif,sans-serif; font-size:16px; font-weight:600; color:#0f172a; font-variant-numeric:tabular-nums; } .ds-proof__stamp { justify-self:end; font-family:Inter,ui-sans-serif,sans-serif; font-size:12px; font-weight:500; color:#475569; font-variant-numeric:tabular-nums; }",
+      "tokens": { "radius": "12px", "shadow": "shadow-card-lg", "watermark": "160px / 900 / #134e4a / 0.4", "rowGap": "12px", "focusRing": "1px #0f766e inset", "duration": "450ms" }
+    },
+    {
+      "id": "ds-status-pill",
+      "name": "Pill Status",
+      "description": "Status data pada kartu bukti. Selalu pasangan bg+text lengkap plus varian gelap — tidak pernah teks berwarna saja.",
+      "variants": [
+        { "name": "waiting", "description": "Menunggu: amber. Dipakai sebelum persetujuan pelanggan." },
+        { "name": "approved", "description": "Disetujui: hijau. Tujuan akhir alur." },
+        { "name": "neutral", "description": "Netral: teal tint. Untuk tag fitur/bukti, bukan status data." }
+      ],
+      "a11y": "Teks status selalu terbaca (bukan warna saja). Jika status berubah otomatis, umumkan lewat container aria-live polite induknya.",
+      "css": ".ds-pill { display:inline-flex; align-items:center; gap:6px; border-radius:999px; padding:4px 10px; font-family:Inter,ui-sans-serif,sans-serif; font-size:12px; font-weight:500; white-space:nowrap; } .ds-pill--waiting { background:#fef3c7; color:#b45309; } .ds-pill--approved { background:#dcfce7; color:#15803d; } .ds-pill--neutral { background:#f0fdfa; color:#0f766e; box-shadow:inset 0 0 0 1px rgb(15 118 110 / 0.3); } .ds-pill__dot { width:6px; height:6px; border-radius:999px; background:currentColor; } .ds-pill--approved .ds-pill__dot { animation:ds-pill-pop 450ms cubic-bezier(0.16,1,0.3,1); } @keyframes ds-pill-pop { from { transform:scale(0.6); } to { transform:scale(1); } } @media (prefers-color-scheme: dark) { .ds-pill--waiting { background:#451a03; color:#fcd34d; } .ds-pill--approved { background:#052e16; color:#86efac; } .ds-pill--neutral { background:rgb(240 253 250 / 0.1); color:#f0fdfa; box-shadow:inset 0 0 0 1px rgb(240 253 250 / 0.3); } }",
+      "tokens": { "radius": "999px", "padding": "4px 10px", "dot": "6px", "duration": "450ms" }
+    },
+    {
+      "id": "ds-step-rail",
+      "name": "Rail Langkah",
+      "description": "Kontrol putar-otomatis di bawah kartu bukti: empat tombol langkah (Foto → Stempel → WA → Disetujui) dan tombol jeda/putar. Pemilihan manual menghentikan putar-otomatis.",
+      "variants": [
+        { "name": "default", "description": "Di luar kartu, di bawahnya." },
+        { "name": "reducedMotion", "description": "Mulai di langkah 4, putar-otomatis mati, tombol putar tetap berfungsi." }
+      ],
+      "a11y": "Tombol langkah memakai aria-current='step' saat aktif dan aria-label berisi nama langkah. Tombol jeda memakai aria-pressed. Status pemutaran diumumkan lewat elemen aria-live='polite'. Putar-otomatis berhenti saat: hover rail (mouse), tab tersembunyi, kartu di luar viewport, atau pengguna memilih langkah manual.",
+      "css": ".ds-rail { display:flex; align-items:center; gap:8px; padding:12px 0; } .ds-rail__step { display:inline-flex; align-items:center; gap:6px; min-height:44px; padding:8px 12px; border-radius:999px; border:1px solid #e2e8f0; background:#ffffff; font-family:Inter,ui-sans-serif,sans-serif; font-size:14px; font-weight:500; color:#475569; cursor:pointer; transition:color 150ms cubic-bezier(0.16,1,0.3,1), border-color 150ms cubic-bezier(0.16,1,0.3,1); } .ds-rail__step:hover { color:#0f172a; } .ds-rail__step:focus-visible { outline:2px solid #0f766e; outline-offset:2px; } .ds-rail__step[aria-current='step'] { color:#0f172a; font-weight:600; border-color:#0f766e; } .ds-rail__indicator { width:8px; height:8px; border-radius:999px; background:currentColor; } .ds-rail__play { display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; margin-left:auto; border-radius:999px; border:1px solid #e2e8f0; background:#ffffff; color:#0f766e; cursor:pointer; } .ds-rail__play:focus-visible { outline:2px solid #0f766e; outline-offset:2px; }",
+      "tokens": { "target": "44px", "radius": "999px", "gap": "8px", "activeBorder": "#0f766e", "focus": "2px #0f766e + offset 2px" }
+    }
+  ],
+  "icons": {
+    "library": "lucide-react",
+    "usage": "Hanya lucide. Ukuran konsisten: 20px di label chip, 24–32px di kartu fitur, 40px di kartu harga. Tidak ada emoji, tidak ada SVG custom.",
+    "items": [
+      { "name": "Camera", "usage": "Langkah 1 bukti: kirim foto." },
+      { "name": "Clock", "usage": "Langkah 2 bukti: stempel waktu." },
+      { "name": "MessageCircle", "usage": "Langkah 3 bukti: kirim ke WhatsApp." },
+      { "name": "ShieldCheck", "usage": "Langkah 4 bukti: disetujui pelanggan." },
+      { "name": "Check", "usage": "Status selesai, isi bubble." },
+      { "name": "X", "usage": "Status ditolak, tutup." },
+      { "name": "Sparkles", "usage": "Penanda AI pada kartu fitur." },
+      { "name": "Play", "usage": "Tombol putar rail langkah." },
+      { "name": "Pause", "usage": "Tombol jeda rail langkah." }
+    ]
+  },
+  "themes": {
+    "light": {
+      "name": "Mode Terang (default)",
+      "background": "#ffffff",
+      "surface-muted": "#f8fafc",
+      "ink": "#0f172a",
+      "ink-muted": "#475569",
+      "border": "#e2e8f0",
+      "primary": "#0f766e",
+      "primary-contrast": "#ffffff",
+      "brand-tint": "#f0fdfa",
+      "brand-deep": "#134e4a",
+      "success": "#15803d",
+      "warning": "#b45309",
+      "error": "#b91c1c",
+      "shadow": "0 4px 20px -2px rgb(0 0 0 / 0.06)",
+      "shadow-raised": "0 10px 28px -6px rgb(0 0 0 / 0.10)"
+    },
+    "dark": {
+      "name": "Mode Gelap",
+      "background": "#020617",
+      "surface-muted": "#0f172a",
+      "ink": "#ffffff",
+      "ink-muted": "#94a3b8",
+      "border": "#1e293b",
+      "primary": "#f0fdfa",
+      "primary-contrast": "#134e4a",
+      "brand-tint": "rgb(240 253 250 / 0.1)",
+      "brand-deep": "#f0fdfa",
+      "success": "#86efac",
+      "warning": "#fcd34d",
+      "error": "#fca5a5",
+      "shadow": "0 4px 20px -2px rgb(0 0 0 / 0.4)",
+      "shadow-raised": "0 10px 28px -6px rgb(0 0 0 / 0.5)"
+    }
+  },
+  "narrative": {
+    "voice": "Tenang · Utilitarian · Industrial-hangat. Bahasa pemilik laundry: 'kilo', 'estimasi', 'disetujui pelanggan' — bukan 'input', 'status', 'konfirmasi'.",
+    "personality": "Produk ini tidak menjual kemewahan; ia menjual ketenangan. Setiap kata keterangan terdengar seperti rekan kerja yang sudah lama mengenal meja cuci: pendek, konkret, tanpa janji kosong. Buktinya diperlihatkan, bukan dijanjikan.",
+    "commitments": [
+      "Bukti, bukan janji — setiap klaim ditopang alur nyata.",
+      "Alur lengkap, bukan fitur — pengunjung menyusuri satu alur kerja.",
+      "Bahasa manusia — istilah yang diucapkan pemilik laundry.",
+      "Operator sebagai pahlawan — pemilik laundry tokoh utamanya."
+    ]
+  }
+}
