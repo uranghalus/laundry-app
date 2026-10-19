@@ -86,15 +86,30 @@ export default function MarketingHeader({
                         Punya 3+ outlet?
                     </a>
 
-                    <MarketingThemeSwitcher />
+                    {/*
+                     * Di bawah `md`, theme switcher dan "Masuk" pindah ke drawer.
+                     * Keduanya ikut membawa lebar CTA trial, dan pada 390px
+                     * baris ini meluber 48px ke luar layar — tombol "+
+                     * hamburger" jadi tidak pernah terjangkau.
+                     */}
+                    <MarketingThemeSwitcher className="hidden md:inline-flex" />
 
                     {isAuthenticated ? (
-                        <Button asChild size="sm">
+                        <Button
+                            asChild
+                            className="hidden md:inline-flex"
+                            size="sm"
+                        >
                             <Link href="/dashboard">Buka Dashboard</Link>
                         </Button>
                     ) : (
                         <>
-                            <Button asChild size="sm" variant="ghost">
+                            <Button
+                                asChild
+                                className="hidden md:inline-flex"
+                                size="sm"
+                                variant="ghost"
+                            >
                                 <Link href={login()}>Masuk</Link>
                             </Button>
                             <Button asChild size="sm">
@@ -167,6 +182,14 @@ export default function MarketingHeader({
                                     </Button>
                                 </div>
                             ) : null}
+
+                            {/* Tampilan tema pindah ke drawer agar header tidak meluber di HP. */}
+                            <div className="flex items-center justify-between gap-3 border-t px-3 py-3 md:hidden">
+                                <span className="text-muted-foreground text-sm font-medium">
+                                    Tampilan
+                                </span>
+                                <MarketingThemeSwitcher />
+                            </div>
                         </nav>
                     </motion.div>
                 ) : null}

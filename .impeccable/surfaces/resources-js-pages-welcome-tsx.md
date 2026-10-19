@@ -1,8 +1,8 @@
 ---
-version: 1
+version: 2
 slug: 'resources-js-pages-welcome-tsx'
 primary_target: 'resources/js/pages/welcome.tsx'
-related_targets: []
+related_targets: ['resources/js/components/marketing/hero.tsx']
 ---
 
 # Surface brief — `/` (welcome, halaman marketing Repica)
@@ -37,12 +37,18 @@ STORY: Pengunjung melihat loop bukti bekerja (foto→watermark→WA→setuju) da
 bahwa sengketa & fraud jadi terbukti bukan diklaim, membandingkan 2 harga jujur dalam satu
 viewport, lalu mendaftar atau bertanya via WA. Yang tersisa di kepala: "yang motret duluan".
 
-FIRST VIEWPORT (1440): Header 64px sticky blur. Kiri (7/12): chip fungsional trial, H1 2 baris
-±68px, sub 18px maks 52ch, CTA primer + WhatsApp, mikroline kepercayaan. Kanan (5/12): panel
-demo PoC terangkat di atas wash teal, memainkan langkah otomatis. Di bawahnya strip audiensi.
+FIRST VIEWPORT (1440): Header 64px sticky blur. Kiri (6/12): TIDAK ada kicker/eyebrow di atas
+heading (craft floor) — fakta trial pindah ke baris kecil di bawah CTA. H1 3 baris clamp(2.5rem,
+4.6vw, 4.25rem) tracking -0.03em, sub 18px maks 52ch, sebaris CTA pill (primer + WhatsApp,
+h-12 rounded-full), lalu baris fakta: pill trial "14 hari penuh fitur Pro" + mikroline isolasi
+tenant. Kanan (6/12): panggung komposisi — kartu PoC (19rem, ml-auto, loop otomatis) sebagai
+kartu besar, ditimpa dua kartu kecil miring ±1.5deg di sudut kirinya bawah (Jejak audit) dan
+kanan atas (Watermark), meniru komposisi kartu melayang yang saling tumpang tindih dari
+referensi ShopWave. Kartu pendamping pointer-events-none, hanya ≥lg. Di bawahnya strip audiensi.
 
 FORM: seed: none (unavailable — arah di-pin user: referensi ShopWave + judgment didelegasikan;
-concept-seed tidak dijalankan).
+concept-seed tidak dijalankan). Ekstensi section di permukaan mapan: dunia visual diwarisi,
+bukan identitas baru.
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the
 verdict, DESIGN.md, and every shipping raster carrying its provenance.
