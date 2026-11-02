@@ -7,68 +7,96 @@ import {
     Wallet,
 } from 'lucide-react';
 
+import { Container, SectionHeading } from '@/components/marketing/layout';
+
 /**
- * Band integrasi — kanal yang benar-benar terhubung, bukan grid logo kosmetik.
+ * Kanal yang benar-benar terhubung — bukan grid logo kosmetik.
  *
- * Semua item di sini adalah integrasi nyata dari keputusan PRD (Meta WhatsApp
- * Cloud API untuk OTP/notifikasi/PoC, Xendit untuk pay link VA/QRIS/e-wallet,
- * SMS fallback). Nama kanal ditampilkan sebagai chip ikon + label yang jujur.
+ * Semua item berasal dari keputusan PRD: Meta WhatsApp Cloud API untuk
+ * notifikasi dan persetujuan, Xendit untuk tautan pembayaran, serta SMS
+ * sebagai cadangan bila nomor pelanggan tidak punya WhatsApp.
  */
 const INTEGRATIONS = [
-    { icon: MessageCircle, label: 'WhatsApp Business', note: 'Meta Cloud API' },
-    { icon: Banknote, label: 'Xendit', note: 'Pay link invoice' },
-    { icon: QrCode, label: 'QRIS', note: 'Bayar subscription' },
+    {
+        icon: MessageCircle,
+        label: 'WhatsApp Business',
+        note: 'Meta Cloud API',
+    },
+    {
+        icon: Banknote,
+        label: 'Xendit',
+        note: 'Tautan pembayaran',
+    },
+    {
+        icon: QrCode,
+        label: 'QRIS',
+        note: 'Bayar langganan',
+    },
     {
         icon: Landmark,
         label: 'Virtual Account',
         note: 'Transfer terverifikasi',
     },
-    { icon: Wallet, label: 'E-wallet', note: 'OVO · GoPay · Dana' },
-    { icon: Smartphone, label: 'SMS fallback', note: 'Bila nomor tanpa WA' },
-];
+    {
+        icon: Wallet,
+        label: 'E-wallet',
+        note: 'OVO · GoPay · Dana',
+    },
+    {
+        icon: Smartphone,
+        label: 'SMS cadangan',
+        note: 'Bila nomor tanpa WA',
+    },
+] as const;
 
 /**
- * Band kanal. Dipisat tipis di atas band harga supaya keputusan memilih paket
- * tidak diinterupsi.
+ * Band integrasi di atas harga.
+ *
+ * Latar `bg-band` membungkus seluruh isi (judul dan daftar kanal) — versi
+ * sebelumnya meninggalkan `<div>` berwarna kosong sehingga teks jatuh di
+ * luar bidang. Daftar kanal disusun sebagai tabel garis rambut dua kolom
+ * agar terbaca seperti inventaris, bukan kumpulan badge.
  */
 export default function MarketingIntegrations() {
     return (
-        <section aria-label="Kanal terintegrasi">
-            <div className="mx-auto max-w-[1200px] px-4 py-16 sm:px-6 sm:py-20">
-                <div className="bg-brand-50 dark:bg-brand-900/20 rounded-card px-6 py-10 sm:px-12">
-                    <div className="max-w-xl">
-                        <h2 className="text-display-3 font-bold tracking-[-0.03em] text-balance">
-                            Terhubung dengan yang sudah Anda pakai
-                        </h2>
-                        <p className="text-muted-foreground mt-3 leading-relaxed">
-                            Tidak ada aplikasi baru untuk pelanggan — interaksi
-                            lewat WhatsApp. Tidak ada kartu kredit wajib — bayar
-                            lewat kanal yang biasa Anda pakai.
-                        </p>
-                    </div>
+        <section
+            aria-label="Integrasi dan kanal pembayaran"
+            className="border-border bg-band border-y"
+        >
+            <Container className="py-16 sm:py-24">
+                <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start lg:gap-16">
+                    <SectionHeading
+                        index="05"
+                        eyebrow="Integrasi"
+                        title="Terhubung dengan yang sudah Anda pakai"
+                        description="Tidak ada aplikasi baru untuk dipelajari. Konfirmasi pelanggan lewat WhatsApp, pembayaran lewat kanal yang sudah dikenal, semuanya masuk ke alur kerja Repica."
+                    />
 
-                    <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    <ul className="border-border bg-border grid gap-px overflow-hidden rounded-xl border sm:grid-cols-2">
                         {INTEGRATIONS.map((item) => (
                             <li
-                                className="bg-card flex items-center gap-3 rounded-xl border px-4 py-3"
                                 key={item.label}
+                                className="bg-background flex items-start gap-3 p-4"
                             >
-                                <span className="text-brand-700 dark:text-brand-50 bg-brand-50 dark:bg-brand-900/40 flex size-9 shrink-0 items-center justify-center rounded-lg">
-                                    <item.icon className="size-4" />
+                                <span className="border-border bg-card text-link flex size-9 shrink-0 items-center justify-center rounded-lg border">
+                                    <item.icon
+                                        className="size-4"
+                                        aria-hidden="true"
+                                    />
                                 </span>
-                                <div className="min-w-0">
-                                    <p className="truncate text-sm font-semibold">
+                                <span className="min-w-0">
+                                    <span className="text-ink block text-sm font-semibold tracking-[-0.01em]">
                                         {item.label}
-                                    </p>
-                                    <p className="text-muted-foreground truncate text-xs">
+                                    </span>
+                                    <span className="text-ink-soft mt-0.5 block text-xs leading-relaxed">
                                         {item.note}
-                                    </p>
-                                </div>
+                                    </span>
+                                </span>
                             </li>
                         ))}
                     </ul>
                 </div>
-            </div>
+            </Container>
         </section>
     );
 }

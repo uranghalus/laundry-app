@@ -1,216 +1,146 @@
 import { useState } from 'react';
 
-import { PIPELINE_STATUSES, getPipelineStatus } from '@/lib/pipeline-status';
+import { Container, SectionHeading } from '@/components/marketing/layout';
 import { cn } from '@/lib/utils';
+import { PIPELINE_STATUSES } from '@/lib/pipeline-status';
 
-/** Baris order ilustrasi untuk tabel alur kerja. Data sintetis, dilabeli. */
-const ORDERS = [
-    {
-        id: '#RC-2418',
-        customer: 'Bu Rina',
-        outlet: 'Melati',
-        status: 'siap_diambil',
-        placed: '12 Mar',
-        pickup: '14 Mar',
-    },
-    {
-        id: '#RC-2417',
-        customer: 'Pak Doni',
-        outlet: 'Melati',
-        status: 'dicuci',
-        placed: '12 Mar',
-        pickup: '15 Mar',
-    },
-    {
-        id: '#RC-2416',
-        customer: 'Mbak Ayu',
-        outlet: 'Cempaka',
-        status: 'menunggu_persetujuan',
-        placed: '12 Mar',
-        pickup: '—',
-    },
-    {
-        id: '#RC-2415',
-        customer: 'Pak Hendra',
-        outlet: 'Cempaka',
-        status: 'disetrika',
-        placed: '11 Mar',
-        pickup: '14 Mar',
-    },
-    {
-        id: '#RC-2414',
-        customer: 'Bu Sari',
-        outlet: 'Melati',
-        status: 'selesai',
-        placed: '11 Mar',
-        pickup: '13 Mar',
-    },
-] as const;
-
-/** Filter status yang tersedia pada tabel; `semua` menampilkan seluruh baris. */
+/**
+ * Opsi filter pipeline. `semua` mengembalikan keenam tahap.
+ */
 const FILTERS = [
     { key: 'semua', label: 'Semua' },
-    { key: 'dicuci', label: 'Dicuci' },
-    { key: 'siap_diambil', label: 'Siap Diambil' },
-    { key: 'selesai', label: 'Selesai' },
+    ...PIPELINE_STATUSES.map((status) => ({
+        key: status.key,
+        label: status.label,
+    })),
 ] as const;
 
 /**
- * Band alur kerja — kiri narasi, kanan tabel order yang BENAR-BENAR berfungsi.
+ * Satu kartu tahap pipeline di atas band navy.
  *
- * Filter status memfilter baris secara nyata (bukan hiasan), dan setiap badge
- * status memakai kosakata bersama `lib/pipeline-status.ts` (prinsip P3: warna,
- * ikon, dan kata identik dengan aplikasi, WA, dan halaman approval).
+ * Kartu tidak interaktif — penyaringan dilakukan tombol filter di atasnya.
+ * Sebelumnya kartu diberi `role="region"` dan `tabIndex`, yang membuat enam
+ * perhentian Tab tambahan tanpa aksi apa pun; sekarang semantiknya kembali
+ * menjadi `<article>` biasa.
+ *
+ * @param status - Definisi status dari `PIPELINE_STATUSES`.
+ * @param order - Nomor urut tahap (1–6) untuk penanda ledger.
  */
-export default function MarketingPipeline() {
-    const [activeFilter, setActiveFilter] =
-        useState<(typeof FILTERS)[number]['key']>('semua');
-
-    const visibleOrders =
-        activeFilter === 'semua'
-            ? ORDERS
-            : ORDERS.filter((order) => order.status === activeFilter);
+function StageCard({
+    status,
+    order,
+}: {
+    status: (typeof PIPELINE_STATUSES)[number];
+    order: number;
+}) {
+    const Icon = status.icon;
 
     return (
-        <section className="bg-muted/40 border-y" id="alur">
-            <div className="mx-auto grid max-w-[1200px] items-center gap-10 px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-2 lg:gap-14">
-                <div>
-                    <h2 className="text-display-3 font-bold tracking-[-0.03em] text-balance">
-                        Satu klik kasir, pelanggan langsung tahu
-                    </h2>
-                    <p className="text-muted-foreground mt-4 max-w-lg text-lg leading-relaxed">
-                        Status mengikuti alur tetap — Diterima sampai Selesai.
-                        Setiap perubahan mengirim WhatsApp otomatis, dan filter
-                        di tabel ini benar-benar bekerja; coba saja.
-                    </p>
-
-                    <ol className="mt-8 space-y-3">
-                        {PIPELINE_STATUSES.slice(0, 3).map((status, index) => (
-                            <li
-                                className="flex items-center gap-3"
-                                key={status.key}
-                            >
-                                <span
-                                    aria-hidden="true"
-                                    className={cn(
-                                        'size-2.5 shrink-0 rounded-full',
-                                        status.dotClass,
-                                    )}
-                                />
-                                <span className="text-sm font-semibold">
-                                    {status.label}
-                                </span>
-                                <span className="text-muted-foreground text-sm">
-                                    {index === 0
-                                        ? '— foto kondisi awal bila berisiko tinggi'
-                                        : index === 1
-                                          ? '— WhatsApp "order dibuat" terkirim'
-                                          : '— WhatsApp terkirim otomatis'}
-                                </span>
-                            </li>
-                        ))}
-                        <li className="text-muted-foreground flex items-center gap-3 pl-5 text-sm">
-                            + 3 tahap lagi sampai Selesai
-                        </li>
-                    </ol>
-                </div>
-
-                <div className="bg-card rounded-card border p-5 shadow-[0_24px_48px_-32px_rgb(28_25_23/0.4)]">
-                    <div
-                        aria-label="Filter status order"
-                        className="flex flex-wrap gap-2"
-                        role="group"
-                    >
-                        {FILTERS.map((filter) => (
-                            <button
-                                aria-pressed={activeFilter === filter.key}
-                                className={cn(
-                                    'min-h-11 rounded-full px-4 text-sm font-medium transition-colors',
-                                    activeFilter === filter.key
-                                        ? 'bg-brand-700 dark:bg-brand-50 text-primary-foreground dark:text-brand-900'
-                                        : 'text-muted-foreground hover:bg-accent border',
-                                )}
-                                key={filter.key}
-                                onClick={() => setActiveFilter(filter.key)}
-                                type="button"
-                            >
-                                {filter.label}
-                            </button>
-                        ))}
-                    </div>
-
-                    <table className="mt-4 w-full text-sm">
-                        <caption className="sr-only">
-                            Daftar order dengan status yang dapat difilter
-                        </caption>
-                        <thead>
-                            <tr className="text-muted-foreground border-border border-b text-left text-xs">
-                                <th className="py-2 pr-2 font-medium">Order</th>
-                                <th className="py-2 pr-2 font-medium">
-                                    Pelanggan
-                                </th>
-                                <th className="py-2 pr-2 font-medium">
-                                    Outlet
-                                </th>
-                                <th className="py-2 font-medium">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-border divide-y">
-                            {visibleOrders.map((order) => {
-                                const status = getPipelineStatus(order.status);
-
-                                return (
-                                    <tr
-                                        className="hover:bg-accent/50 transition-colors"
-                                        key={order.id}
-                                    >
-                                        <td
-                                            className="py-2.5 pr-2 font-semibold tabular-nums"
-                                            data-numeric
-                                        >
-                                            {order.id}
-                                        </td>
-                                        <td className="py-2.5 pr-2">
-                                            {order.customer}
-                                        </td>
-                                        <td className="text-muted-foreground py-2.5 pr-2">
-                                            {order.outlet}
-                                        </td>
-                                        <td className="py-2.5">
-                                            {status ? (
-                                                <span
-                                                    className={cn(
-                                                        'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold',
-                                                        status.badgeClass,
-                                                    )}
-                                                >
-                                                    <status.icon className="size-3.5" />
-                                                    {status.label}
-                                                </span>
-                                            ) : null}
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                            {visibleOrders.length === 0 ? (
-                                <tr>
-                                    <td
-                                        className="text-muted-foreground py-6 text-center"
-                                        colSpan={4}
-                                    >
-                                        Tidak ada order dengan status ini
-                                    </td>
-                                </tr>
-                            ) : null}
-                        </tbody>
-                    </table>
-
-                    <p className="text-muted-foreground mt-4 text-xs">
-                        Data ilustrasi dengan kosakata status yang sama persis
-                        dengan aplikasi.
-                    </p>
-                </div>
+        <article className="bg-navy-soft/70 flex h-full flex-col gap-3 rounded-xl border border-white/15 p-5">
+            <div className="flex items-center justify-between">
+                <span className="text-brand-200 text-[11px] font-semibold tracking-[0.18em] tabular-nums">
+                    {String(order).padStart(2, '0')}
+                </span>
+                <span
+                    className={cn('size-2 rounded-full', status.dotClass)}
+                    aria-hidden="true"
+                />
             </div>
+
+            <Icon className="text-brand-200 size-5" aria-hidden="true" />
+
+            <h3 className="text-base font-semibold tracking-[-0.01em] text-white">
+                {status.label}
+            </h3>
+
+            <p className="text-sm leading-relaxed text-white/65">
+                {status.description}
+            </p>
+        </article>
+    );
+}
+
+/**
+ * Band `#cara-kerja`: enam tahap pipeline dengan penyaring yang benar-benar
+ * menyaring.
+ *
+ * Band ini salah satu dari dua momen navy penuh di halaman (satunya CTA
+ * penutup) — dipakai supaya alur operasional terasa seperti ruang kontrol,
+ * bukan bagian dekoratif lain.
+ *
+ * Filter memakai tombol `aria-pressed`, bukan radiogroup buatan: tombol
+ * sudah membawa semantik "aktif/tidak aktif" dan bisa dioperasikan dengan
+ * Tab + Enter tanpa implementasi panah khusus.
+ */
+export default function MarketingPipeline() {
+    const [active, setActive] = useState<string>('semua');
+
+    const visible = PIPELINE_STATUSES.map((status, index) => ({
+        status,
+        order: index + 1,
+    })).filter(({ status }) => active === 'semua' || status.key === active);
+
+    return (
+        <section
+            id="cara-kerja"
+            aria-labelledby="heading-cara-kerja"
+            className="bg-navy scroll-mt-20"
+        >
+            <Container className="py-16 sm:py-24">
+                <SectionHeading
+                    index="04"
+                    eyebrow="Cara kerja"
+                    title="Enam tahap, satu catatan yang tidak bisa diubah diam-diam"
+                    description="Setiap order bergerak dari diterima sampai diserahkan. Status, pelaku, dan waktunya tercatat di tempat yang sama."
+                    tone="dark"
+                />
+
+                <div
+                    role="group"
+                    aria-label="Saring tahap pipeline"
+                    className="mt-10 flex flex-wrap gap-2"
+                >
+                    {FILTERS.map((filter) => (
+                        <button
+                            key={filter.key}
+                            type="button"
+                            aria-pressed={active === filter.key}
+                            onClick={() => setActive(filter.key)}
+                            className={cn(
+                                'focus-visible:ring-brand-500 focus-visible:ring-offset-navy inline-flex min-h-9 items-center rounded-full border px-3.5 text-xs font-semibold transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-offset-2',
+                                active === filter.key
+                                    ? 'text-navy border-white bg-white'
+                                    : 'border-white/20 text-white/70 hover:border-white/40 hover:text-white',
+                            )}
+                        >
+                            {filter.label}
+                        </button>
+                    ))}
+                </div>
+
+                <ul
+                    aria-label="Tahap pipeline"
+                    className={cn(
+                        'mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3',
+                        visible.length === 1 &&
+                            'sm:grid-cols-1 lg:max-w-md lg:grid-cols-1',
+                    )}
+                >
+                    {visible.map(({ status, order }) => (
+                        <li key={status.key} className="h-full">
+                            <StageCard status={status} order={order} />
+                        </li>
+                    ))}
+                </ul>
+
+                <p
+                    aria-live="polite"
+                    className="text-brand-200/80 mt-6 text-xs tabular-nums"
+                >
+                    Menampilkan {visible.length} dari {PIPELINE_STATUSES.length}{' '}
+                    tahap
+                </p>
+            </Container>
         </section>
     );
 }

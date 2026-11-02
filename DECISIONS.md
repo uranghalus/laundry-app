@@ -9,17 +9,18 @@
 
 ## Ringkasan
 
-| #   | Pertanyaan       | Keputusan (satu baris)                                                       |
-| --- | ---------------- | ---------------------------------------------------------------------------- |
-| 1   | Struktur tier    | 2 tier di MVP (Basic/Pro), **PoC masuk Basic**, Enterprise ditunda sampai v2 |
-| 2   | Channel OTP      | WhatsApp OTP default + fallback SMS; email opsional                          |
-| 3   | Price list       | **Per tenant di MVP**, skema disiapkan untuk override per outlet             |
-| 4   | Model billing    | Invoice manual per periode + pay link, bukan auto-charge                     |
-| 5   | Provider WA      | Meta WhatsApp Cloud API (resmi), hindari gateway unofficial                  |
-| 6   | Retensi foto PoC | 12 bulan (lifecycle auto-purge), metadata approval permanen                  |
-| 7   | Timeout approval | Default 2 jam, configurable 1–24 jam, 1 reminder                             |
-| 8   | Target adopsi    | 20 tenant bayar & MRR ±Rp4–5jt akhir bulan ke-3 (hipotesis, review D+30)     |
-| 9   | Harga nominal    | Basic Rp149rb/bln, Pro Rp499rb/bln, annual = 2 bulan gratis                  |
+| #   | Pertanyaan         | Keputusan (satu baris)                                                       |
+| --- | ------------------ | ---------------------------------------------------------------------------- |
+| 1   | Struktur tier      | 2 tier di MVP (Basic/Pro), **PoC masuk Basic**, Enterprise ditunda sampai v2 |
+| 2   | Channel OTP        | WhatsApp OTP default + fallback SMS; email opsional                          |
+| 3   | Price list         | **Per tenant di MVP**, skema disiapkan untuk override per outlet             |
+| 4   | Model billing      | Invoice manual per periode + pay link, bukan auto-charge                     |
+| 5   | Provider WA        | Meta WhatsApp Cloud API (resmi), hindari gateway unofficial                  |
+| 6   | Retensi foto PoC   | 12 bulan (lifecycle auto-purge), metadata approval permanen                  |
+| 7   | Timeout approval   | Default 2 jam, configurable 1–24 jam, 1 reminder                             |
+| 8   | Target adopsi      | 20 tenant bayar & MRR ±Rp4–5jt akhir bulan ke-3 (hipotesis, review D+30)     |
+| 9   | Harga nominal      | Basic Rp149rb/bln, Pro Rp499rb/bln, annual = 2 bulan gratis                  |
+| 10  | Desain welcome `/` | Arah **"Segar Premium"** (premium fresh); overhaul total + token baru        |
 
 ---
 
@@ -161,6 +162,45 @@ Semua angka adalah **hipotesis eksplisit**, bukan komitmen — fungsinya supaya 
 - Annual memotong frekuensi penagihan (Q4) dan churn sekaligus.
 
 **⚠️ Revisi wajib ke PRD — FR-1.5 kontradiktif:** FR-1.5 melarang tenant trial membuat order sampai subscription aktif. Kalau trial tidak bisa membuat order, trial tidak memberikan pengalaman nilai apa pun — konversi 20% di Q8 mustahil tercapai. FR-1.5 direvisi menjadi: _tenant trial bisa membuat order dengan cap 30 order; yang diblokir hanyalah tenant "unpaid" pasca-trial._ Prasyarat funnel, bukan detail kecil.
+
+---
+
+## Q10 — Desain welcome publik `/`: kunci arah "Segar Premium" (2026-10-30)
+
+**Keputusan:** Arah desain halaman **welcome publik `/`** dikunci **"Segar Premium"** (premium fresh). Semua token, aturan a11y, tipografi, motif, dan urutan band di bawah mengikat implementasi. Keputusan dicatat ke `DECISIONS.md` ini via proses revisi dokumen sesuai **R-PROC-001**.
+
+**Token warna:**
+
+| Token     | Nilai                 | Fungsi / batasan                                            |
+| --------- | --------------------- | ----------------------------------------------------------- |
+| ground    | `#FBFCFE`             | latar dasar halaman                                         |
+| band-tint | `#F0F7FF` / `#EAF3FE` | band mengambang                                             |
+| brand-500 | `#63ADF2`             | aksen SAJA — 2.39:1 di atas putih, tidak pernah jadi teks   |
+| brand-600 | `#2563EB`             | action ink/fill CTA — 5.17:1, lolos AA                      |
+| brand-900 | `#0B3E7A`             | field gelap CTA footer                                      |
+| ink       | `#0F172A`             | teks utama                                                  |
+| muted     | `#64748B`             | teks sekunder — koreksi dari nilai lama `#6484B` yang salah |
+| kartu     | `#FFFFFF`             | permukaan kartu                                             |
+
+**Dua terjemahan a11y mengikat:**
+
+1. Headline tetap slate `#0F172A`; `#63ADF2` hanya dipakai sebagai underline aksen.
+2. Fill CTA selalu `#2563EB`.
+
+**Tipografi:** Plus Jakarta Sans; heading `font-bold tracking-[-0.02em]`; body `leading-relaxed`; semua angka `tabular-nums`; tanpa font mono.
+
+**Motif:** bento asimetris bintang, band mengambang, radius `2xl`–`3xl`, border tipis, wash partikel opacity rendah, CountUp sekali.
+
+**Lingkup (overhaul total):**
+
+- Semua `resources/js/components/marketing/*` ditulis ulang — tidak ada yang survive as-is.
+- `hero-stage.tsx` + glow blob dihapus.
+- Primitif baru: `proof-card`, `status-badge`, `wa-bubble`.
+- `app.css` di-re-token mengikuti tabel token di atas; `DESIGN.md` ditulis ulang.
+
+**Urutan band:** Hero → Audience Strip → Feature Bento (bintang) → Pipeline interaktif filterable → Integrations → Pricing (bento, Pro featured) → FAQ `<details>` natif → CTA footer.
+
+**Supersede:** `WELCOME-PAGE-REDESIGN.md` & `WELCOME-PAGE-REDESIGN-COLORFUL.md` dihapus dari repo atas konfirmasi user (2026-10-30). `DESIGN.md` lama (teal `#0f766e`) ditinggalkan — tidak jadi acuan implementasi.
 
 ---
 

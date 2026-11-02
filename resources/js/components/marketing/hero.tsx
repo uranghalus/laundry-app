@@ -1,112 +1,107 @@
 import { Link } from '@inertiajs/react';
-import { motion, useReducedMotion } from 'motion/react';
-import { ArrowRight, MessageCircle } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
-import HeroStage from '@/components/marketing/hero-stage';
-import SplitText from '@/components/marketing/split-text';
-import { Button } from '@/components/ui/button';
-import { WHATSAPP_URL } from '@/components/marketing/cta-footer';
+import { Eyebrow } from '@/components/marketing/layout';
+import { ProofArtifact } from '@/components/marketing/proof-artifact';
 import { register } from '@/routes';
 
 /**
- * Hero Repica — janji utama + bukti yang benar-benar bekerja.
+ * Fakta produk yang boleh tampil di bawah hero.
  *
- * Mode Persuade: mekanismenya harus terlihat di detik pertama, bukan sekadar
- * diklaim. Sisi kanan karena itu bukan screenshot dashboard, melainkan
- * satu mockup kartu order yang selalu menampilkan seluruh rantai bukti
- * sekaligus — foto berwatermark, persetujuan WhatsApp, jejak audit — di atas
- * medan partikel (ReactBits) yang tenang; loop tenang di belakangnya hanya
- * memindahkan sorotan antar bukti dan bisa dijeda pengunjung.
+ * Semua angka berasal dari PRD/DECISIONS (trial 14 hari, cap 30 order, enam
+ * status pipeline, retensi bukti 12 bulan) — tidak ada metrik traction
+ * rekaan.
+ */
+const HERO_FACTS = [
+    { value: '14 hari', label: 'uji coba penuh' },
+    { value: '30 order', label: 'selama trial' },
+    { value: '6 status', label: 'terpantau' },
+    { value: '12 bulan', label: 'bukti tersimpan' },
+] as const;
+
+/**
+ * Hero halaman marketing.
  *
- * Kolom kiri sengaja TIDAK memakai kicker atau eyebrow di atas heading: heading
- * harus membawa bobotnya sendiri. Fakta trial yang biasanya duduk di kicker
- * dipindahkan ke baris micro-fact di bawah CTA, tepat di sebelah aksi yang
- *Dijanjikan oleh baris itu.
+ * Komposisi: kolom kiri membawa klaim yang bisa dibela, kolom kanan membawa
+ * buktinya sebagai nota kondisi nyata. Di mobile nota tetap tampil (tidak
+ * disembunyikan) karena mayoritas pengunjung membuka halaman dari HP.
  *
- * Geraknya satu momenlop: SplitText untuk headline, loop PoC untuk bukti.
- * Tidak ada shimmer, tidak ada gradien teks.
+ * Tidak ada glow, partikel, atau parallax. Gerak satu-satunya adalah hover
+ * tombol dan transisi warna 200ms.
  *
- * @param isAuthenticated - Menentukan label CTA primer.
+ * @param isAuthenticated - Menentukan label CTA utama.
  */
 export default function MarketingHero({
-    isAuthenticated,
+    isAuthenticated = false,
 }: {
-    isAuthenticated: boolean;
+    isAuthenticated?: boolean;
 }) {
-    const prefersReducedMotion = useReducedMotion() ?? false;
-
     return (
-        <section className="relative overflow-hidden">
-            {/*
-             * Wash warna di belakang panggung — gradien radial, bukan lingkaran
-             * pekat, supaya tepinya tidak terbaca sebagai busur keras yang
-             * memotong header.
-             */}
-            <div
-                aria-hidden="true"
-                className="pointer-events-none absolute -top-24 right-[-10%] hidden size-[36rem] rounded-full bg-[radial-gradient(closest-side,#e6f4f2,transparent)] lg:block dark:bg-[radial-gradient(closest-side,rgba(15,118,110,0.18),transparent)]"
-            />
+        <section id="hero" className="border-border border-b">
+            <div className="mx-auto grid w-full max-w-[1200px] items-center gap-12 px-5 py-14 sm:px-8 sm:py-20 lg:grid-cols-[1.02fr_0.98fr] lg:gap-16 lg:py-24">
+                <div>
+                    <Eyebrow index="01">Bukti kondisi</Eyebrow>
 
-            <div className="relative mx-auto grid max-w-[1200px] items-center gap-12 px-4 pt-10 pb-16 sm:px-6 sm:pt-14 sm:pb-20 lg:grid-cols-12 lg:gap-8 lg:pb-20">
-                <div className="lg:col-span-6">
-                    <h1 className="text-[clamp(2.5rem,4.6vw,4.25rem)] leading-[1.04] font-bold tracking-[-0.03em] text-balance">
-                        <SplitText delay={0.1} text="Baju rusak? Tertukar?" />{' '}
-                        <SplitText
-                            className="text-brand-700 dark:text-brand-50"
-                            delay={0.5}
-                            text="Ada buktinya."
-                        />
+                    <h1 className="text-ink mt-6 text-[clamp(2.35rem,6.4vw,4.5rem)] leading-[1.02] font-bold tracking-[-0.035em] text-balance">
+                        Laundry Anda,{' '}
+                        <span className="decoration-brand-500 underline decoration-[3px] underline-offset-[7px]">
+                            dibuktikan
+                        </span>{' '}
+                        — bukan dijanjikan.
                     </h1>
 
-                    <p className="text-muted-foreground mt-6 max-w-lg text-lg leading-relaxed">
-                        Repica memotret kondisi setiap pakaian yang masuk,
-                        memberi stempel waktu, lalu meminta persetujuan
-                        pelanggan lewat WhatsApp. Staff tidak bisa mengubah
-                        harga atau membatalkan transaksi tanpa jejak.
+                    <p className="text-ink-soft mt-6 max-w-xl text-base leading-relaxed sm:text-lg">
+                        Foto kondisi awal ber-watermark, persetujuan pelanggan
+                        lewat WhatsApp, dan jejak audit untuk setiap aksi.
+                        Sengketa baju rusak berhenti jadi kata satu terhadap
+                        yang lain.
                     </p>
 
-                    <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                        <Button asChild size="lg">
-                            <Link href={register()}>
-                                Coba Gratis 14 Hari
-                                <ArrowRight className="ml-2 size-4" />
-                            </Link>
-                        </Button>
-
-                        <Button asChild size="lg" variant="outline">
-                            <a
-                                href={WHATSAPP_URL}
-                                rel="noopener noreferrer"
-                                target="_blank"
-                            >
-                                <MessageCircle className="mr-2 size-4" />
-                                Tanya via WhatsApp
-                            </a>
-                        </Button>
+                    <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+                        <Link
+                            href={register()}
+                            className="bg-action text-action-foreground hover:bg-action-hover focus-visible:ring-ring inline-flex h-12 items-center justify-center gap-2 rounded-lg px-6 text-sm font-semibold transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-offset-2"
+                        >
+                            {isAuthenticated
+                                ? 'Buka dashboard'
+                                : 'Coba gratis 14 hari'}
+                            <ArrowRight className="size-4" aria-hidden="true" />
+                        </Link>
+                        <a
+                            href="#cara-kerja"
+                            className="border-border text-ink hover:bg-band focus-visible:ring-ring inline-flex h-12 items-center justify-center rounded-lg border px-6 text-sm font-semibold transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-offset-2"
+                        >
+                            Lihat cara kerjanya
+                        </a>
                     </div>
 
-                    <p className="text-muted-foreground mt-5 text-sm">
-                        Data terisolasi per tenant · 1 outlet · maks. 30 order
-                        selama trial
+                    <p className="text-ink-soft mt-5 text-sm tabular-nums">
+                        Tanpa kartu kredit · batalkan kapan saja
                     </p>
                 </div>
 
-                <motion.div
-                    animate={
-                        prefersReducedMotion ? undefined : { opacity: 1, y: 0 }
-                    }
-                    className="lg:col-span-6"
-                    initial={
-                        prefersReducedMotion ? false : { opacity: 0, y: 24 }
-                    }
-                    transition={{
-                        duration: 0.7,
-                        ease: [0.16, 1, 0.3, 1],
-                        delay: 0.35,
-                    }}
-                >
-                    <HeroStage />
-                </motion.div>
+                <div className="lg:pl-4">
+                    <ProofArtifact />
+                </div>
+            </div>
+
+            {/* Strip instrumen: empat fakta produk, dipisah garis rambut. */}
+            <div className="border-border border-t">
+                <dl className="bg-border mx-auto grid w-full max-w-[1200px] grid-cols-2 gap-px px-5 sm:grid-cols-4 sm:px-8">
+                    {HERO_FACTS.map((fact) => (
+                        <div
+                            key={fact.label}
+                            className="bg-background flex flex-col py-5 sm:py-6"
+                        >
+                            <dt className="text-ink-soft order-2 mt-1 text-xs">
+                                {fact.label}
+                            </dt>
+                            <dd className="text-ink order-1 text-xl font-bold tracking-[-0.02em] tabular-nums sm:text-2xl">
+                                {fact.value}
+                            </dd>
+                        </div>
+                    ))}
+                </dl>
             </div>
         </section>
     );

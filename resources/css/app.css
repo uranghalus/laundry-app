@@ -9,16 +9,21 @@
 
 @theme {
     /*
-     * DESIGN-BRIEF §3 — Tipografi.
-     * Plus Jakarta Sans (Tokotype, OFL): nol biaya lisensi, geometris-humanist,
-     * terbaca di layar HP kecil milik Persona A, identitas lokal.
+     * Keputusan Q10 — Segar Premium (DECISIONS.md) 2026-10-30 — Tipografi.
+     * Plus Jakarta Sans tetap menjadi identitas (Q10 menegaskannya):
+     * geometris-humanist, terbaca di layar HP kecil, heading bold dengan
+     * tracking ketat di halaman marketing.
      */
     --font-sans:
         'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
 
-    /* DESIGN-BRIEF §3 — Radius: 8px input/tombol, 12px kartu, 999px badge. */
+    /*
+     * Keputusan Q10 — Segar Premium (DECISIONS.md) 2026-10-30 — Radius.
+     * 8px input/tombol, 12px kartu, 999px badge; radius kartu premium
+     * mengikuti motif bagian mengambang ("floating band").
+     */
     --radius: 0.5rem;
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -26,10 +31,10 @@
     --radius-card: 0.75rem;
 
     /*
-     * DESIGN-BRIEF §3 — skala tipografi marketing.
-     * Brief §3 menetapkan 12/14/16/20/24/32 untuk aplikasi; halaman publik
-     * memakai token yang sama dengan batas atas yang diperpanjang (fluid),
-     * tanpa mengubah token warna maupun radius (§3).
+     * Keputusan Q10 — Segar Premium (DECISIONS.md) 2026-10-30 — skala
+     * tipografi marketing. Token ini netral (tidak menyentuh warna atau
+     * radius): dibagikan dengan aplikasi, dibatasi ke atas secara fluid
+     * agar digunakan pada halaman welcome.
      */
     --text-display-1: clamp(2.5rem, 6vw, 4.5rem);
     --text-display-2: clamp(2rem, 4.5vw, 3.25rem);
@@ -39,14 +44,52 @@
     --text-display-3--line-height: 1.25;
 
     /*
-     * DESIGN-BRIEF §3 — Palet.
-     * Warna status (stone/sky/cyan/violet/green/amber/red) memakai skala
-     * default Tailwind karena brief memilih nilai yang persis sama;
-     * hanya `brand` (teal) yang menjadi scale baru.
+     * Repica — "Bukti Terkendali" (DESIGN.md v3, 2026-11-02) — skala merek
+     * kobalt. brand-600 (#266DD3) adalah action ink: fill CTA, teks link,
+     * dan ring fokus. Rasio terukur: #266DD3 di atas putih 4.99:1 (lolos AA
+     * body, tapi tipis); di atas band tint ia turun ke 4.14:1 sehingga teks
+     * biru di dalam band wajib memakai brand-700 (7.1:1). brand-500 hanya
+     * untuk garis, underline, dan dot — tidak pernah jadi teks.
      */
-    --color-brand-50: #e6f4f2;
-    --color-brand-700: #0f766e;
-    --color-brand-900: #0c5f59;
+    --color-brand-50: #f2f6fc;
+    --color-brand-100: #e1ebf9;
+    --color-brand-200: #c7daf4;
+    --color-brand-500: #4e8be6;
+    --color-brand-600: #266dd3;
+    --color-brand-700: #1e56a8;
+    --color-brand-900: #163e7a;
+
+    --color-success: #15803d;
+    --color-warning: #b45309;
+    --color-error: #b91c1c;
+
+    /*
+     * Token semantik: nilainya berganti di mode gelap, jadi komponen cukup
+     * memakai `bg-action`, `text-ink`, `bg-band` — tanpa `dark:` per warna.
+     */
+    --color-action: var(--action);
+    --color-action-hover: var(--action-hover);
+    --color-action-foreground: var(--action-foreground);
+    --color-link: var(--link);
+    --color-ink: var(--ink);
+    --color-ink-soft: var(--ink-soft);
+    --color-paper: var(--paper);
+    --color-band: var(--band);
+    --color-band-strong: var(--band-strong);
+    --color-navy: var(--navy);
+    --color-navy-soft: var(--navy-soft);
+    --color-success-tint: var(--success-tint);
+    --color-warning-tint: var(--warning-tint);
+    --color-error-tint: var(--error-tint);
+
+    /* Alias lama dipertahankan agar permukaan lain tidak pecah. */
+    --color-ground: var(--ground);
+    --color-band-tint: var(--band);
+    --color-band-tint-deep: var(--band-strong);
+
+    /* Elevasi: satu bayangan lembut per permukaan, tidak pernah ditumpuk. */
+    --shadow-band: 0 4px 24px -2px rgb(15 23 42 / 0.08);
+    --shadow-lift: 0 10px 28px -6px rgb(15 23 42 / 0.12);
 
     --color-background: var(--background);
     --color-foreground: var(--foreground);
@@ -86,93 +129,133 @@
 }
 
 /*
- * DESIGN-BRIEF §3 — mode terang.
- * Background warm gray (bukan cool gray): laundry adalah bisnis rumah tangga.
+ * Repica — "Bukti Terkendali" (DESIGN.md v3, 2026-11-02) — mode terang.
+ * Kanvas editorial hampir putih (#FCFCFD) dengan tinta slate; kobalt
+ * #266DD3 membawa semua aksi. Kertas hangat (#FAF8F4) hanya dipakai di
+ * dalam artefak bukti/nota, bukan sebagai latar halaman — supaya rasa
+ * "dokumen fisik" tetap jadi aksen, bukan suasana.
  */
 :root {
-    --background: #fafaf9;
-    --foreground: #1c1917;
-    --card: #ffffff;
-    --card-foreground: #1c1917;
-    --popover: #ffffff;
-    --popover-foreground: #1c1917;
+    --ground: #fcfcfd;
+    --band: #eef3fb;
+    --band-strong: #e1ebf9;
+    --paper: #faf8f4;
+    --navy: #0e1b2e;
+    --navy-soft: #16263d;
+    --ink: #0f172a;
+    --ink-soft: #475569;
+    --action: #266dd3;
+    --action-hover: #1e56a8;
+    --action-foreground: #ffffff;
+    --link: #1e56a8;
+    --success-tint: #dcfce7;
+    --warning-tint: #fef3c7;
+    --error-tint: #fee2e2;
 
-    --primary: #0f766e;
+    --background: #fcfcfd;
+    --foreground: #0f172a;
+    --card: #ffffff;
+    --card-foreground: #0f172a;
+    --popover: #ffffff;
+    --popover-foreground: #0f172a;
+
+    --primary: #266dd3;
     --primary-foreground: #ffffff;
 
-    --secondary: #f5f5f4;
-    --secondary-foreground: #1c1917;
-    --muted: #f5f5f4;
-    --muted-foreground: #57534e;
-    --accent: #e6f4f2;
-    --accent-foreground: #0c5f59;
+    --secondary: #e1ebf9;
+    --secondary-foreground: #1e56a8;
+
+    --muted: #eef3fb;
+    --muted-foreground: #64748b;
+    --accent: #eef3fb;
+    --accent-foreground: #1e56a8;
 
     --destructive: #b91c1c;
     --destructive-foreground: #ffffff;
 
-    --border: #d6d3d1;
-    --input: #d6d3d1;
-    --ring: #0f766e;
+    --border: #e3e8f0;
+    --input: #e3e8f0;
+    --ring: #266dd3;
 
-    --chart-1: #0f766e;
-    --chart-2: #0284c7;
-    --chart-3: #7c3aed;
+    --chart-1: #266dd3;
+    --chart-2: #1e56a8;
+    --chart-3: #4e8be6;
     --chart-4: #b45309;
     --chart-5: #b91c1c;
 
     --sidebar: #ffffff;
-    --sidebar-foreground: #1c1917;
-    --sidebar-primary: #0f766e;
+    --sidebar-foreground: #0f172a;
+    --sidebar-primary: #266dd3;
     --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #e6f4f2;
-    --sidebar-accent-foreground: #0c5f59;
-    --sidebar-border: #d6d3d1;
-    --sidebar-ring: #0f766e;
+    --sidebar-accent: #eef3fb;
+    --sidebar-accent-foreground: #1e56a8;
+    --sidebar-border: #e3e8f0;
+    --sidebar-ring: #266dd3;
 }
 
 /*
- * DESIGN-BRIEF §3 — mode gelap.
- * Warm deep neutral, bukan hitam murni; teal tetap terbaca sebagai aksi utama.
+ * Repica — "Bukti Terkendali" (DESIGN.md v3, 2026-11-02) — mode gelap.
+ * Slate-navy dingin agar satu dunia dengan kobalt. Fill aksi tetap #266DD3
+ * (putih di atasnya 4.99:1), sementara teks biru naik ke #8AB6F5 agar
+ * terbaca di latar gelap; brand-500 tidak pernah jadi teks di mode terang,
+ * dan di mode gelap ia hanya dipakai sebagai garis.
  */
 .dark {
-    --background: #0c0a09;
-    --foreground: #f5f5f4;
-    --card: #1c1917;
-    --card-foreground: #f5f5f4;
-    --popover: #1c1917;
-    --popover-foreground: #f5f5f4;
+    --ground: #070b12;
+    --band: #101a2b;
+    --band-strong: #16233a;
+    --paper: #141c28;
+    --navy: #0b1626;
+    --navy-soft: #121f33;
+    --ink: #f1f5f9;
+    --ink-soft: #94a3b8;
+    --action: #266dd3;
+    --action-hover: #3a7ee2;
+    --action-foreground: #ffffff;
+    --link: #8ab6f5;
+    --success-tint: #052e16;
+    --warning-tint: #451a03;
+    --error-tint: #450a0a;
 
-    --primary: #0f766e;
+    --background: #070b12;
+    --foreground: #f1f5f9;
+    --card: #0f172a;
+    --card-foreground: #f1f5f9;
+    --popover: #0f172a;
+    --popover-foreground: #f1f5f9;
+
+    --primary: #266dd3;
     --primary-foreground: #ffffff;
 
-    --secondary: #292524;
-    --secondary-foreground: #f5f5f4;
-    --muted: #292524;
-    --muted-foreground: #a8a29e;
-    --accent: #134e4a;
-    --accent-foreground: #e6f4f2;
+    --secondary: #16233a;
+    --secondary-foreground: #f1f5f9;
+
+    --muted: #16233a;
+    --muted-foreground: #94a3b8;
+    --accent: #163e7a;
+    --accent-foreground: #e1ebf9;
 
     --destructive: #b91c1c;
     --destructive-foreground: #ffffff;
 
-    --border: #292524;
-    --input: #292524;
-    --ring: #0f766e;
+    --border: #1e2a3d;
+    --input: #1e2a3d;
+    --ring: #8ab6f5;
 
-    --chart-1: #0f766e;
-    --chart-2: #0284c7;
-    --chart-3: #7c3aed;
+    --chart-1: #8ab6f5;
+    --chart-2: #4e8be6;
+    --chart-3: #c7daf4;
     --chart-4: #b45309;
     --chart-5: #b91c1c;
 
-    --sidebar: #1c1917;
-    --sidebar-foreground: #f5f5f4;
-    --sidebar-primary: #0f766e;
+    --sidebar: #0f172a;
+    --sidebar-foreground: #f1f5f9;
+    --sidebar-primary: #266dd3;
     --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #134e4a;
-    --sidebar-accent-foreground: #e6f4f2;
-    --sidebar-border: #292524;
-    --sidebar-ring: #0f766e;
+    --sidebar-accent: #163e7a;
+    --sidebar-accent-foreground: #e1ebf9;
+    --sidebar-border: #1e2a3d;
+    --sidebar-ring: #8ab6f5;
 }
 
 @layer base {
@@ -185,8 +268,9 @@
     }
 
     /*
-     * DESIGN-BRIEF §3 — angka uang & nomor order wajib tabular-nums
-     * agar Rupiah sejajar vertikal di tabel laporan.
+     * Keputusan Q10 — Segar Premium (DECISIONS.md) 2026-10-30: semua
+     * angka memakai tabular-nums agar Rupiah dan nomor order sejajar
+     * vertikal; halaman marketing memakainya lewat utility class.
      */
     table,
     [data-numeric] {
@@ -197,7 +281,7 @@
 /*
  * Gerak masuk saat scroll — tanpa dependency JS (lihat keputusan Q6a).
  * Native CSS scroll-driven animation; dimatikan total bila pengguna
- * meminta reduced motion (DESIGN-BRIEF §10 a11y).
+ * meminta reduced motion (a11y yang diikat oleh Q10 untuk halaman publik).
  */
 @keyframes reveal-up {
     from {
@@ -226,26 +310,26 @@
 }
 
 /*
- * Permukaan browser yang jarang distyling (craft floor): seleksi teks, caret,
- * dan scrollbar ikut palet brand — sinyal termurah bahwa halaman ini dibangun,
+ * Permukaan browser yang jarang distyling (craft floor): seleksi teks dan
+ * caret ikut palet brand — sinyal termurah bahwa halaman ini dibangun,
  * bukan dirakit.
  */
 ::selection {
-    background-color: #0f766e;
+    background-color: #266dd3;
     color: #ffffff;
 }
 
 .dark ::selection {
-    background-color: #e6f4f2;
-    color: #0c5f59;
+    background-color: #8ab6f5;
+    color: #0b1626;
 }
 
 input,
 textarea {
-    caret-color: #0f766e;
+    caret-color: #266dd3;
 }
 
 .dark input,
 .dark textarea {
-    caret-color: #5eead4;
+    caret-color: #8ab6f5;
 }

@@ -38,7 +38,7 @@ Undecided: detail UI tier gate, rentang timeout approval default 2 jam configura
 
 ## Brand Commitments
 
-Nama brand: Repica. Visual direction: "Mesin cuci yang tenang" — bersih, utilitarian, industrial-hangat. Referensi BukuWarung/BukuKas, Linear/Notion, WhatsApp Business. Palet utama deep teal #0F766E, stone warm, amber untuk high-risk/pending. Tipografi Plus Jakarta Sans. Tidak ada dark mode di MVP, tidak glassmorphism.
+Nama brand: Repica. Visual direction: "Bukti Terkendali" — kanvas editorial terang, garis rambut, artefak nota bukti kondisi, dan tepat dua bidang navy (Pipeline + CTA penutup). Referensi BukuWarung/BukuKas, Linear/Notion, WhatsApp Business. Palet utama kobalt #266DD3 (aksi) dengan #1E56A8 untuk teks di atas tint, netral slate, amber untuk high-risk/pending. Tipografi Plus Jakarta Sans. Mode terang dan gelap sama-sama didukung; tidak ada glassmorphism. Sumber kebenaran visual: DESIGN.md v3.
 
 ## Evidence on Hand
 

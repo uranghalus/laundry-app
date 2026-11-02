@@ -50,6 +50,21 @@ export default defineConfig({
             'resources/js/components/ui/*',
             'resources/js/routes/**',
             'resources/js/wayfinder/**',
+            // Bundel skill/agent pihak ketiga: bukan kode aplikasi, jangan
+            // dijadikan gerbang kualitas repo.
+            '.agent/**',
+            '.agents/**',
+            '.claude/**',
+            '.codex/**',
+            '.cursor/**',
+            '.freebuff/**',
+            '.github/**',
+            '.hermes/**',
+            '.junie/**',
+            '.opencode/**',
+            '.qoder/**',
+            '.qwen/**',
+            '.trae/**',
         ],
         options: {
             denyWarnings: true,

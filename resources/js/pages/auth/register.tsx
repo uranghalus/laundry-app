@@ -5,7 +5,13 @@ import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
@@ -24,7 +30,7 @@ export default function Register({ passwordRules }: Props) {
                 disableWhileProcessing
                 className="flex flex-col gap-6"
             >
-                {({ processing, errors, setData }) => (
+                {({ processing, errors }) => (
                     <>
                         <div className="grid gap-6">
                             <div className="grid gap-2">
@@ -60,7 +66,9 @@ export default function Register({ passwordRules }: Props) {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="phone">Nomor HP (WhatsApp)</Label>
+                                <Label htmlFor="phone">
+                                    Nomor HP (WhatsApp)
+                                </Label>
                                 <Input
                                     id="phone"
                                     type="tel"
@@ -72,8 +80,9 @@ export default function Register({ passwordRules }: Props) {
                                     inputMode="numeric"
                                 />
                                 <InputError message={errors.phone} />
-                                <p className="text-xs text-muted-foreground">
-                                    Kami akan mengirim OTP verifikasi via WhatsApp ke nomor ini
+                                <p className="text-muted-foreground text-xs">
+                                    Kami akan mengirim OTP verifikasi via
+                                    WhatsApp ke nomor ini
                                 </p>
                             </div>
 
@@ -110,28 +119,36 @@ export default function Register({ passwordRules }: Props) {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="business_type">Tipe Bisnis</Label>
+                                <Label htmlFor="business_type">
+                                    Tipe Bisnis
+                                </Label>
                                 <Select
                                     name="business_type"
-                                    onValueChange={(value) => setData('business_type', value)}
                                     defaultValue="single"
                                 >
                                     <SelectTrigger id="business_type">
                                         <SelectValue placeholder="Pilih tipe bisnis" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="single">Single Outlet (1 gerai)</SelectItem>
-                                        <SelectItem value="multi">Multi Outlet (2+ gerai)</SelectItem>
+                                        <SelectItem value="single">
+                                            Single Outlet (1 gerai)
+                                        </SelectItem>
+                                        <SelectItem value="multi">
+                                            Multi Outlet (2+ gerai)
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <InputError message={errors.business_type} />
-                                <p className="text-xs text-muted-foreground">
-                                    Single: 1 outlet, 2 user. Multi: 2-5 outlet, user tak terbatas.
+                                <p className="text-muted-foreground text-xs">
+                                    Single: 1 outlet, 2 user. Multi: 2-5 outlet,
+                                    user tak terbatas.
                                 </p>
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="outlet_name">Nama Outlet Pertama</Label>
+                                <Label htmlFor="outlet_name">
+                                    Nama Outlet Pertama
+                                </Label>
                                 <Input
                                     id="outlet_name"
                                     type="text"
@@ -144,7 +161,9 @@ export default function Register({ passwordRules }: Props) {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="outlet_address">Alamat Outlet</Label>
+                                <Label htmlFor="outlet_address">
+                                    Alamat Outlet
+                                </Label>
                                 <Input
                                     id="outlet_address"
                                     type="text"
@@ -157,7 +176,9 @@ export default function Register({ passwordRules }: Props) {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="outlet_whatsapp_number">Nomor WhatsApp Outlet</Label>
+                                <Label htmlFor="outlet_whatsapp_number">
+                                    Nomor WhatsApp Outlet
+                                </Label>
                                 <Input
                                     id="outlet_whatsapp_number"
                                     type="tel"
@@ -167,9 +188,12 @@ export default function Register({ passwordRules }: Props) {
                                     placeholder="081234567890"
                                     inputMode="numeric"
                                 />
-                                <InputError message={errors.outlet_whatsapp_number} />
-                                <p className="text-xs text-muted-foreground">
-                                    Digunakan untuk mengirim notifikasi ke pelanggan
+                                <InputError
+                                    message={errors.outlet_whatsapp_number}
+                                />
+                                <p className="text-muted-foreground text-xs">
+                                    Digunakan untuk mengirim notifikasi ke
+                                    pelanggan
                                 </p>
                             </div>
 
@@ -199,5 +223,6 @@ export default function Register({ passwordRules }: Props) {
 
 Register.layout = {
     title: 'Daftar Laundry SaaS',
-    description: 'Isi data di bawah untuk membuat akun dan memulai trial 14 hari gratis',
+    description:
+        'Isi data di bawah untuk membuat akun dan memulai trial 14 hari gratis',
 };

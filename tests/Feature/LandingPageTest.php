@@ -44,7 +44,7 @@ class LandingPageTest extends TestCase
         // elemen dari digitnya), tier Enterprise terkunci, dan kanal integrasi.
         $html = $response->getContent();
         $this->assertStringContainsString('Repica', $html);
-        $this->assertStringContainsString('Baju rusak', $html);
+        $this->assertStringContainsString('baju rusak', $html);
         $this->assertStringContainsString('149.000', $html);
         $this->assertStringContainsString('499.000', $html);
         $this->assertStringContainsString('Segera', $html);

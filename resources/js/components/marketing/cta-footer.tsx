@@ -1,187 +1,175 @@
 import { Link } from '@inertiajs/react';
-import { MessageCircle } from 'lucide-react';
+import { ArrowRight, MessageCircle } from 'lucide-react';
 
 import CountUp from '@/components/marketing/count-up';
+import { Container, Eyebrow } from '@/components/marketing/layout';
 import RepicaMark, { RepicaWordmark } from '@/components/marketing/repica-mark';
-import { Button } from '@/components/ui/button';
-import { login, register } from '@/routes';
+import { dashboard, register } from '@/routes';
 
-/** Nomor WhatsApp bisnis untuk jalur kedua (Persona B / non-teknis). */
+/**
+ * Nomor WhatsApp bisnis untuk jalur kedua (Persona B / non-teknis).
+ *
+ * TODO: ganti dengan nomor produksi sebelum rilis. Nilai ini masih contoh
+ * dan tidak boleh dipakai di kampanye nyata.
+ */
 export const WHATSAPP_URL = 'https://wa.me/6281234567890';
 
 /**
- * Counter penutup — fakta produk yang bisa dibela, bukan traction rekaan.
+ * Fakta penutup yang bisa dibela — bukan traction rekaan.
  *
- * Semua angka bersumber dari spesifikasi: G1 (setup <30 menit), 6 status
- * pipeline FR-6.2, audit trail FR-3.4 (100% aksi kritis), retensi bukti
- * DECISIONS Q6 (12 bulan). Dianimasikan sekali saat masuk viewport (CountUp).
+ * Semua angka berasal dari spesifikasi: setup di bawah 30 menit, enam tahap
+ * pipeline, seluruh aksi kritis tercatat, dan bukti kondisi disimpan 12
+ * bulan.
  */
 const FACTS = [
     {
         to: 30,
         prefix: '< ',
         suffix: ' menit',
-        label: 'setup sampai order pertama',
+        label: 'sampai order pertama',
     },
-    { to: 6, prefix: '', suffix: '', label: 'status terpantau otomatis' },
-    { to: 100, prefix: '', suffix: '%', label: 'aksi kritis tercatat' },
-    { to: 12, prefix: '', suffix: ' bulan', label: 'bukti kondisi tersimpan' },
+    {
+        to: 6,
+        prefix: '',
+        suffix: '',
+        label: 'tahap terpantau',
+    },
+    {
+        to: 100,
+        prefix: '',
+        suffix: '%',
+        label: 'aksi kritis tercatat',
+    },
+    {
+        to: 12,
+        prefix: '',
+        suffix: ' bulan',
+        label: 'bukti kondisi tersimpan',
+    },
 ];
 
 /**
- * Band CTA penutup yang drenched teal + footer.
+ * Band CTA penutup + footer.
  *
- * Ini satu-satunya bagian halaman yang "sepenuhnya berwarna" — momen klimaks
- * setelah seluruh argumen dibaca. Angka counter menghitung naik sekali; dua
- * aksi: daftar (primer) atau WhatsApp (sekunder).
+ * Ini momen navy penuh kedua (setelah band pipeline): seluruh isi CTA berada
+ * di dalam bidang navy, bukan teks putih di atas latar putih seperti versi
+ * sebelumnya. Dua aksi disediakan — daftar sebagai jalur utama, WhatsApp
+ * sebagai jalur manusia.
+ *
+ * @param isAuthenticated - Jika true, CTA utama menuju dashboard.
  */
-export default function MarketingCtaFooter() {
+export default function MarketingCtaFooter({
+    isAuthenticated = false,
+}: {
+    isAuthenticated?: boolean;
+}) {
     return (
         <footer>
-            <div className="mx-auto max-w-[1200px] px-4 sm:px-6">
-                <div className="from-brand-700 dark:from-brand-900 rounded-card to-brand-900 relative overflow-hidden bg-gradient-to-br px-6 py-14 text-center sm:px-12 sm:py-20 dark:to-stone-950">
-                    <div
-                        aria-hidden="true"
-                        className="pointer-events-none absolute -top-20 left-1/2 size-[28rem] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(255,255,255,0.12),transparent)]"
-                    />
+            <section
+                aria-labelledby="cta-heading"
+                className="bg-navy"
+                data-band="closing"
+            >
+                <Container className="py-16 sm:py-24">
+                    <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-16">
+                        <div>
+                            <Eyebrow index="08" tone="dark">
+                                Mulai
+                            </Eyebrow>
 
-                    <div className="relative">
-                        <h2 className="text-display-2 font-bold tracking-[-0.03em] text-balance text-white">
-                            Mulai 14 hari, tanpa kartu kredit
-                        </h2>
-                        <p className="mx-auto mt-4 max-w-xl leading-relaxed text-teal-50/90">
-                            Semua fitur Pro aktif selama percobaan, maksimal 30
-                            order — cukup untuk merasakan alur laundry harian
-                            Anda tanpa risiko.
-                        </p>
+                            <h2
+                                id="cta-heading"
+                                className="mt-5 text-3xl font-bold tracking-[-0.03em] text-balance text-white sm:text-4xl lg:text-[2.75rem] lg:leading-[1.05]"
+                            >
+                                Mulai dengan bukti, bukan keberanian.
+                            </h2>
 
-                        <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-                            <Button
-                                asChild
-                                className="text-brand-900 size-12 border-white bg-white px-6 hover:bg-teal-50"
-                                size="lg"
-                            >
-                                <Link href={register()}>Daftar Sekarang</Link>
-                            </Button>
-                            <Button
-                                asChild
-                                className="size-12 border-white/40 px-6 text-white hover:bg-white/10 hover:text-white"
-                                size="lg"
-                                variant="outline"
-                            >
+                            <p className="mt-5 max-w-md text-base leading-relaxed text-white/70">
+                                Trial 14 hari membuka seluruh alur: order, bukti
+                                kondisi, persetujuan WhatsApp, dan kas harian.
+                                Tanpa kartu kredit.
+                            </p>
+
+                            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                                <Link
+                                    href={
+                                        isAuthenticated
+                                            ? dashboard()
+                                            : register()
+                                    }
+                                    className="text-navy focus-visible:ring-brand-500 hover:bg-brand-50 focus-visible:ring-offset-navy inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-white px-6 text-sm font-semibold transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-offset-2"
+                                >
+                                    {isAuthenticated
+                                        ? 'Buka dashboard'
+                                        : 'Mulai trial 14 hari'}
+                                    <ArrowRight
+                                        className="size-4"
+                                        aria-hidden="true"
+                                    />
+                                </Link>
+
                                 <a
                                     href={WHATSAPP_URL}
                                     rel="noopener noreferrer"
                                     target="_blank"
+                                    className="focus-visible:ring-brand-500 focus-visible:ring-offset-navy inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-white/30 px-6 text-sm font-semibold text-white transition-colors duration-200 hover:border-white/60 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-offset-2"
                                 >
-                                    <MessageCircle className="mr-2 size-4" />
-                                    Tanya dulu via WhatsApp
+                                    <MessageCircle
+                                        className="size-4"
+                                        aria-hidden="true"
+                                    />
+                                    Hubungi via WhatsApp
                                 </a>
-                            </Button>
+                            </div>
+
+                            <p className="mt-5 text-xs leading-relaxed text-white/55 tabular-nums">
+                                Trial 14 hari · Tanpa kartu kredit · Cap 30
+                                order · Batalkan kapan saja
+                            </p>
                         </div>
 
-                        <dl className="mx-auto mt-12 grid max-w-3xl grid-cols-2 gap-x-6 gap-y-8 border-t border-white/15 pt-10 lg:grid-cols-4">
+                        <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-white/15 bg-white/15">
                             {FACTS.map((fact) => (
-                                <div key={fact.label}>
-                                    <dd
-                                        className="text-3xl font-bold tracking-tight text-white tabular-nums"
-                                        data-numeric
-                                    >
-                                        <CountUp
-                                            prefix={fact.prefix}
-                                            suffix={fact.suffix}
-                                            to={fact.to}
-                                        />
-                                    </dd>
-                                    <dt className="mt-1.5 text-sm text-teal-50/80">
+                                <div
+                                    key={fact.label}
+                                    className="bg-navy flex flex-col p-5 sm:p-6"
+                                >
+                                    <dt className="order-2 mt-1 text-xs leading-relaxed text-white/60">
                                         {fact.label}
                                     </dt>
+                                    <dd className="order-1 text-2xl font-bold tracking-[-0.02em] text-white tabular-nums sm:text-3xl">
+                                        <CountUp
+                                            to={fact.to}
+                                            prefix={fact.prefix}
+                                            suffix={fact.suffix}
+                                            separator="."
+                                        />
+                                    </dd>
                                 </div>
                             ))}
                         </dl>
                     </div>
-                </div>
-            </div>
+                </Container>
+            </section>
 
-            <div className="mx-auto max-w-[1200px] px-4 sm:px-6">
-                <div className="grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4">
-                    <div>
-                        <div className="text-brand-700 dark:text-brand-50 flex items-center gap-2">
-                            <RepicaMark className="size-6" />
-                            <RepicaWordmark
-                                className="text-foreground"
-                                showDescription={false}
-                            />
-                        </div>
-                        <p className="text-muted-foreground mt-3 text-sm leading-relaxed">
-                            Platform operasional laundry dengan bukti kondisi —
-                            dibuat untuk pemilik laundry di Indonesia.
-                        </p>
+            <div className="border-border bg-background border-t">
+                <Container className="flex flex-col items-start justify-between gap-4 py-8 sm:flex-row sm:items-center">
+                    <div className="flex items-center gap-2.5">
+                        <RepicaMark className="text-brand-600 dark:text-brand-500 size-6" />
+                        <RepicaWordmark
+                            showDescription={false}
+                            className="text-ink text-sm font-bold"
+                        />
+                        <span className="text-ink-soft text-xs">
+                            Manajemen laundry dengan bukti kondisi
+                        </span>
                     </div>
 
-                    <nav aria-label="Jelajah halaman">
-                        <h3 className="text-sm font-semibold">Jelajah</h3>
-                        <ul className="mt-3 space-y-2 text-sm">
-                            {[
-                                { href: '#fitur', label: 'Fitur' },
-                                { href: '#alur', label: 'Alur kerja' },
-                                { href: '#harga', label: 'Harga' },
-                                { href: '#faq', label: 'FAQ' },
-                            ].map((link) => (
-                                <li key={link.href}>
-                                    <a
-                                        className="text-muted-foreground hover:text-foreground transition-colors"
-                                        href={link.href}
-                                    >
-                                        {link.label}
-                                    </a>
-                                </li>
-                            ))}
-                        </ul>
-                    </nav>
-
-                    <nav aria-label="Akun">
-                        <h3 className="text-sm font-semibold">Akun</h3>
-                        <ul className="mt-3 space-y-2 text-sm">
-                            <li>
-                                <Link
-                                    className="text-muted-foreground hover:text-foreground transition-colors"
-                                    href={register()}
-                                >
-                                    Daftar
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    className="text-muted-foreground hover:text-foreground transition-colors"
-                                    href={login()}
-                                >
-                                    Masuk
-                                </Link>
-                            </li>
-                        </ul>
-                    </nav>
-
-                    <div>
-                        <h3 className="text-sm font-semibold">Kontak</h3>
-                        <a
-                            className="text-muted-foreground hover:text-foreground mt-3 inline-flex items-center gap-2 text-sm transition-colors"
-                            href={WHATSAPP_URL}
-                            rel="noopener noreferrer"
-                            target="_blank"
-                        >
-                            <MessageCircle className="size-4" />
-                            WhatsApp bisnis
-                        </a>
-                    </div>
-                </div>
-
-                <div className="text-muted-foreground flex flex-col items-center justify-between gap-3 border-t py-6 text-xs sm:flex-row">
-                    <p>© 2026 Repica. Seluruh hak cipta.</p>
-                    <p lang="id">
-                        Dibuat di Indonesia, untuk laundry Indonesia.
+                    <p className="text-ink-soft text-xs leading-relaxed tabular-nums">
+                        © {new Date().getFullYear()} Repica. Semua hak
+                        dilindungi.
                     </p>
-                </div>
+                </Container>
             </div>
         </footer>
     );
