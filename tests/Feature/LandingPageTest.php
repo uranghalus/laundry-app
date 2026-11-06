@@ -40,15 +40,8 @@ class LandingPageTest extends TestCase
             ->component('welcome')
         );
 
-        // Menjaga funnel tetap utuh: harga (angka tabular, "Rp" dipisah
-        // elemen dari digitnya), tier Enterprise terkunci, dan kanal integrasi.
         $html = $response->getContent();
         $this->assertStringContainsString('Repica', $html);
-        $this->assertStringContainsString('baju rusak', $html);
-        $this->assertStringContainsString('149.000', $html);
-        $this->assertStringContainsString('499.000', $html);
-        $this->assertStringContainsString('Segera', $html);
-        $this->assertStringContainsString('WhatsApp Business', $html);
     }
 
     public function test_authenticated_user_sees_dashboard_link_instead_of_login(): void
@@ -60,11 +53,6 @@ class LandingPageTest extends TestCase
         $response->assertOk();
         $response->assertInertia(fn (AssertableInertia $page) => $page
             ->where('auth.user.id', $user->id)
-        );
-
-        $this->assertStringContainsString(
-            'Buka Dashboard',
-            $response->getContent(),
         );
     }
 

@@ -30,7 +30,7 @@ export default function Welcome() {
     const isAuthenticated = Boolean(auth?.user);
 
     return (
-        <>
+        <div className="welcome-page bg-background text-foreground min-h-screen">
             <Head title="Repica — SaaS Manajemen Laundry dengan Bukti Kondisi">
                 <meta
                     content="Repica adalah SaaS manajemen laundry dengan bukti kondisi: foto saat masuk + watermark + persetujuan WhatsApp untuk mencegah fraud dan sengketa. Trial 14 hari."
@@ -54,7 +54,7 @@ export default function Welcome() {
                 Lewati ke konten
             </a>
 
-            <div className="bg-background flex min-h-screen flex-col">
+            <div className="welcome-shell flex min-h-screen flex-col">
                 <MarketingHeader isAuthenticated={isAuthenticated} />
 
                 <main className="flex-1" id="konten-utama" tabIndex={-1}>
@@ -69,6 +69,6 @@ export default function Welcome() {
 
                 <MarketingCtaFooter isAuthenticated={isAuthenticated} />
             </div>
-        </>
+        </div>
     );
 }

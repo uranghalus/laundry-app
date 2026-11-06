@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react';
 
 import { Link } from '@inertiajs/react';
-import { Menu, X } from 'lucide-react';
+import { ArrowRight, Menu, X } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 
 import RepicaMark, { RepicaWordmark } from '@/components/marketing/repica-mark';
 import MarketingThemeSwitcher from '@/components/marketing/theme-switcher';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 import { dashboard, login, register } from '@/routes';
+import { cn } from '@/lib/utils';
 
 /**
- * Anchor navigasi halaman publik. Urutannya mengikuti urutan band, dan
- * setiap `href` harus punya pasangan `id` pada band-nya.
+ * Anchor navigasi halaman publik (Keputusan Q10, DECISIONS.md): urutan
+ * bottom-to-top pembacaan halaman — fitur, cara kerja, harga, FAQ. Setiap
+ * `href` cocok dengan `id` pada band di `welcome.tsx`; semua band memakai
+ * `scroll-mt-20` agar tidak tertutup header sticky.
  */
 const NAV_LINKS = [
     { href: '#fitur', label: 'Fitur' },
@@ -20,273 +22,275 @@ const NAV_LINKS = [
     { href: '#faq', label: 'FAQ' },
 ] as const;
 
-/** Ring fokus bersama untuk semua kontrol header. */
-const FOCUS_RING =
-    'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background';
+/**
+ * Offset jarak aman di bawah header (h-16 = 64px) untuk menentukan section
+ * aktif saat digulir; menyatu dengan `scroll-mt-20` (80px) pada band.
+ */
+const ACTIVE_SECTION_OFFSET = 96;
 
 /**
- * Header halaman publik Repica.
+ * Ring fokus bersama untuk semua kontrol interaktif header: indikator
+ * keyboard selalu terlihat via ring token `--ring` (biru aksi), tanpa pernah
+ * menghapus outline bawaan browser.
+ */
+const FOCUS_RING =
+    'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-ground';
+
+/**
+ * Header halaman publik Repica — bar lembar terang di atas medan biru (Sachet Pop).
  *
- * Bar sticky solid (bukan kaca/blur) dengan garis rambut yang muncul setelah
- * halaman digulir. Semua warna memakai token semantik, jadi mode gelap
- * bekerja tanpa varian `dark:` per elemen.
+ * Bar sticky setengah-transparan (`bg-sheet/85` + blur) dengan border rambut
+ * dan bayangan pop saat halaman digulir. Tautan aktif memakai pil `bg-brand-tint
+ * text-action` ( kontras AA ); CTA primer fill `bg-action` (#1D4ED8), sekunder
+ * outline aksi.
  *
- * Menu seluler dibuka sebagai panel di bawah bar; tutup lewat tombol, Esc,
- * atau setelah memilih tautan. Target sentuh minimal 44px dan status
- * `aria-expanded` selalu dilaporkan.
+ * Menu seluler: drawer mengambang dari kanan dengan backdrop gelap, tutup via
+ * tombol / Esc / klik latar. Semua item `min-h-11` (≥44px sentuhan),
+ * `aria-expanded`, `aria-controls`, dan ring fokus terlihat.
  *
- * @param isAuthenticated - Menampilkan tautan dashboard alih-alih masuk/daftar.
+ * @param isAuthenticated - Menentukan apakah CTA "Buka Dashboard" ditampilkan
+ *   (saat sudah login) atau CTA daftar (saat tamu).
  */
 export default function MarketingHeader({
     isAuthenticated = false,
 }: {
     isAuthenticated?: boolean;
 }) {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [isScrolled, setIsScrolled] = useState(false);
-    const [activeHref, setActiveHref] = useState<string | null>(null);
+    const [scrolled, setScrolled] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [activeSection, setActiveSection] = useState<string>('');
+    const prefersReducedMotion = useReducedMotion() ?? false;
 
     useEffect(() => {
-        /** Menandai bar sudah bergulir agar garis rambut muncul. */
-        const onScroll = (): void => setIsScrolled(window.scrollY > 8);
-
-        onScroll();
+        const onScroll = () => setScrolled(window.scrollY > 0);
         window.addEventListener('scroll', onScroll, { passive: true });
-
         return () => window.removeEventListener('scroll', onScroll);
     }, []);
 
     useEffect(() => {
-        // `IntersectionObserver` menggantikan pembacaan posisi di setiap
-        // event scroll: jauh lebih ringan untuk INP di HP kelas bawah.
-        const sections = NAV_LINKS.map((link) =>
-            document.getElementById(link.href.slice(1)),
-        ).filter((section): section is HTMLElement => section !== null);
-
-        if (sections.length === 0) {
-            return undefined;
-        }
-
-        const observer = new IntersectionObserver(
-            (entries) => {
-                const visible = entries
-                    .filter((entry) => entry.isIntersecting)
-                    .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-
-                if (visible[0]) {
-                    setActiveHref(`#${visible[0].target.id}`);
-                }
-            },
-            { rootMargin: '-40% 0px -50% 0px', threshold: [0, 0.25, 0.5] },
-        );
-
-        sections.forEach((section) => observer.observe(section));
-
-        return () => observer.disconnect();
+        const onScroll = () => {
+            const fromTop = window.scrollY + ACTIVE_SECTION_OFFSET;
+            const hit = NAV_LINKS.find(({ href }) => {
+                const el = document.getElementById(href.slice(1));
+                return (
+                    el &&
+                    el.offsetTop <= fromTop &&
+                    el.offsetTop + el.offsetHeight > fromTop
+                );
+            });
+            setActiveSection(hit ? hit.href : '');
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        return () => window.removeEventListener('scroll', onScroll);
     }, []);
 
-    useEffect(() => {
-        if (!isMenuOpen) {
-            return undefined;
-        }
+    const navLinks = (
+        <div className="hidden items-center gap-1 sm:flex">
+            {NAV_LINKS.map((link) => {
+                const isActive = activeSection === link.href;
+                return (
+                    <Link
+                        key={link.label}
+                        href={link.href}
+                        className={cn(
+                            'rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors duration-200',
+                            FOCUS_RING,
+                            isActive
+                                ? 'bg-brand-tint text-action'
+                                : 'text-ink-soft hover:bg-brand-tint/60 hover:text-ink',
+                        )}
+                        aria-current={isActive ? 'page' : undefined}
+                    >
+                        {link.label}
+                    </Link>
+                );
+            })}
+        </div>
+    );
 
-        /** Menutup panel dengan Esc dan mengunci gulir latar. */
-        const onKeyDown = (event: KeyboardEvent): void => {
-            if (event.key === 'Escape') {
-                setIsMenuOpen(false);
-            }
-        };
-
-        const previousOverflow = document.body.style.overflow;
-        document.body.style.overflow = 'hidden';
-        window.addEventListener('keydown', onKeyDown);
-
-        return () => {
-            document.body.style.overflow = previousOverflow;
-            window.removeEventListener('keydown', onKeyDown);
-        };
-    }, [isMenuOpen]);
+    const authActions = (
+        <div className="hidden items-center gap-2.5 sm:flex">
+            {isAuthenticated ? (
+                <Link
+                    href={dashboard()}
+                    className={cn(
+                        'inline-flex items-center gap-2 rounded-lg bg-action px-5 py-2.5 text-sm font-bold text-action-foreground shadow-[0_3px_0_0_var(--color-action-strong)] transition-colors hover:bg-action-strong',
+                        FOCUS_RING,
+                    )}
+                >
+                    Buka Dashboard
+                    <ArrowRight className="size-4" aria-hidden="true" />
+                </Link>
+            ) : (
+                <>
+                    <Link
+                        href={login()}
+                        className={cn(
+                            'rounded-lg border-2 border-action/60 px-5 py-2.5 text-sm font-bold text-action transition-colors hover:border-action hover:bg-brand-tint',
+                            FOCUS_RING,
+                        )}
+                    >
+                        Masuk
+                    </Link>
+                    <Link
+                        href={register()}
+                        className={cn(
+                            'rounded-lg bg-action px-5 py-2.5 text-sm font-bold text-action-foreground shadow-[0_3px_0_0_var(--color-action-strong)] transition-colors hover:bg-action-strong',
+                            FOCUS_RING,
+                        )}
+                    >
+                        Coba Gratis 14 Hari
+                    </Link>
+                </>
+            )}
+        </div>
+    );
 
     return (
         <header
             className={cn(
-                'bg-background sticky top-0 z-50 border-b transition-colors duration-200',
-                isScrolled || isMenuOpen
-                    ? 'border-border'
-                    : 'border-transparent',
+                'sticky top-0 z-50 transition-shadow duration-300',
+                scrolled
+                    ? 'border-line/70 bg-sheet/85 border-b shadow-pop backdrop-blur-md'
+                    : 'border-b border-transparent bg-sheet/60 backdrop-blur-sm',
             )}
         >
-            <div className="mx-auto flex h-16 w-full max-w-[1200px] items-center justify-between gap-4 px-5 sm:px-8">
-                <Link
-                    href="/"
-                    className={cn(
-                        'flex items-center gap-2.5 rounded-lg',
-                        FOCUS_RING,
-                    )}
-                >
-                    <RepicaMark className="text-brand-600 dark:text-brand-500 size-7" />
-                    <RepicaWordmark
-                        className="text-ink"
-                        showDescription={false}
-                    />
-                </Link>
-
-                <nav
-                    aria-label="Navigasi utama"
-                    className="hidden items-center gap-1 md:flex"
-                >
-                    {NAV_LINKS.map((link) => (
-                        <a
-                            key={link.href}
-                            href={link.href}
-                            aria-current={
-                                activeHref === link.href
-                                    ? 'location'
-                                    : undefined
-                            }
-                            className={cn(
-                                'rounded-lg px-3 py-2.5 text-sm font-medium transition-colors duration-200',
-                                activeHref === link.href
-                                    ? 'text-link'
-                                    : 'text-ink-soft hover:text-ink',
-                                FOCUS_RING,
-                            )}
-                        >
-                            {link.label}
-                        </a>
-                    ))}
-                </nav>
-
-                <div className="hidden items-center gap-2 md:flex">
-                    <MarketingThemeSwitcher />
-
-                    {isAuthenticated ? (
-                        <Link
-                            href={dashboard()}
-                            className={cn(
-                                'bg-action text-action-foreground hover:bg-action-hover inline-flex h-10 items-center rounded-lg px-4 text-sm font-semibold transition-colors duration-200',
-                                FOCUS_RING,
-                            )}
-                        >
-                            Buka Dashboard
-                        </Link>
-                    ) : (
-                        <>
-                            <Link
-                                href={login()}
-                                className={cn(
-                                    'text-ink hover:bg-band inline-flex h-10 items-center rounded-lg px-4 text-sm font-semibold transition-colors duration-200',
-                                    FOCUS_RING,
-                                )}
-                            >
-                                Masuk
-                            </Link>
-                            <Link
-                                href={register()}
-                                className={cn(
-                                    'bg-action text-action-foreground hover:bg-action-hover inline-flex h-10 items-center rounded-lg px-4 text-sm font-semibold transition-colors duration-200',
-                                    FOCUS_RING,
-                                )}
-                            >
-                                Coba gratis
-                            </Link>
-                        </>
-                    )}
+            <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+                <div className="flex shrink-0 items-center gap-2">
+                    <Link
+                        href="/"
+                        className={cn('flex items-center gap-2 rounded-lg', FOCUS_RING)}
+                    >
+                        <span className="flex size-8 items-center justify-center rounded-lg bg-brand text-white">
+                            <RepicaMark className="size-5" />
+                        </span>
+                        <RepicaWordmark showDescription={false} />
+                    </Link>
                 </div>
 
-                <div className="flex items-center gap-1 md:hidden">
+                <div className="hidden items-center gap-1 lg:flex">
+                    {navLinks}
+                    {authActions}
+                </div>
+
+                <div className="flex shrink-0 items-center gap-2">
                     <MarketingThemeSwitcher />
-                    <Button
-                        aria-controls="menu-navigasi-seluler"
-                        aria-expanded={isMenuOpen}
-                        aria-label={
-                            isMenuOpen
-                                ? 'Tutup menu navigasi'
-                                : 'Buka menu navigasi'
-                        }
+                    <button
+                        onClick={() => setOpen((o) => !o)}
+                        aria-expanded={open}
+                        aria-controls="menu-nav-seluler"
+                        aria-label={open ? 'Tutup navigasi seluler' : 'Buka navigasi seluler'}
                         className={cn(
-                            'text-ink hover:bg-band size-11',
+                            'size-11 rounded-lg p-2 text-ink-soft transition-colors hover:bg-brand-tint hover:text-ink lg:hidden',
                             FOCUS_RING,
                         )}
-                        onClick={() => setIsMenuOpen((previous) => !previous)}
-                        size="icon"
-                        variant="ghost"
                     >
-                        {isMenuOpen ? (
-                            <X className="size-5" />
+                        {open ? (
+                            <X className="size-5" aria-hidden="true" />
                         ) : (
-                            <Menu className="size-5" />
+                            <Menu className="size-5" aria-hidden="true" />
                         )}
-                    </Button>
+                    </button>
                 </div>
             </div>
 
-            {isMenuOpen ? (
-                <nav
-                    id="menu-navigasi-seluler"
-                    aria-label="Navigasi seluler"
-                    className="border-border bg-background animate-in fade-in slide-in-from-top-2 border-b duration-150 motion-reduce:animate-none md:hidden"
-                >
-                    <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-1 px-5 py-4 sm:px-8">
-                        {NAV_LINKS.map((link) => (
-                            <a
-                                key={link.href}
-                                href={link.href}
-                                aria-current={
-                                    activeHref === link.href
-                                        ? 'location'
-                                        : undefined
-                                }
-                                onClick={() => setIsMenuOpen(false)}
-                                className={cn(
-                                    'flex min-h-11 items-center rounded-lg px-3 text-base font-medium transition-colors duration-200',
-                                    activeHref === link.href
-                                        ? 'text-link'
-                                        : 'text-ink hover:bg-band',
-                                    FOCUS_RING,
+            <AnimatePresence mode="wait">
+                {open && (
+                    <motion.div
+                        key="backdrop"
+                        initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0 }}
+                        animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1 }}
+                        exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0 }}
+                        transition={prefersReducedMotion ? {} : { duration: 0.2 }}
+                        className="fixed inset-0 top-16 z-40 bg-ink/40 backdrop-blur-sm"
+                        onClick={() => setOpen(false)}
+                    />
+                )}
+                {open && (
+                    <motion.div
+                        key="drawer"
+                        id="menu-nav-seluler"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-label="Navigasi seluler"
+                        initial={prefersReducedMotion ? { x: 0 } : { x: '100%' }}
+                        animate={{ x: 0 }}
+                        exit={prefersReducedMotion ? { x: 0 } : { x: '100%' }}
+                        transition={
+                            prefersReducedMotion
+                                ? {}
+                                : { type: 'spring', damping: 25, stiffness: 300 }
+                        }
+                        className="border-line bg-sheet fixed top-16 right-0 z-50 w-full border-l p-6 shadow-pop sm:max-w-md sm:p-8"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <nav className="flex flex-col gap-1" aria-label="Navigasi seluler">
+                            {NAV_LINKS.map((link) => {
+                                const isActive = activeSection === link.href;
+                                return (
+                                    <Link
+                                        key={link.label}
+                                        href={link.href}
+                                        onClick={() => setOpen(false)}
+                                        className={cn(
+                                            'flex min-h-11 w-full items-center justify-between rounded-lg px-4 py-3 text-sm font-semibold transition-colors',
+                                            FOCUS_RING,
+                                            isActive
+                                                ? 'bg-brand-tint text-action'
+                                                : 'text-ink hover:bg-brand-tint/60',
+                                        )}
+                                        aria-current={isActive ? 'page' : undefined}
+                                    >
+                                        {link.label}
+                                        {isActive ? (
+                                            <span className="text-xs font-bold uppercase tracking-wide text-action">
+                                                Aktif
+                                            </span>
+                                        ) : null}
+                                    </Link>
+                                );
+                            })}
+                            <div className="mt-6 flex flex-col gap-3 border-t border-line pt-6">
+                                {isAuthenticated ? (
+                                    <Link
+                                        href={dashboard()}
+                                        onClick={() => setOpen(false)}
+                                        className={cn(
+                                            'flex min-h-11 items-center justify-center gap-2 rounded-lg bg-action px-6 py-3 text-sm font-bold text-action-foreground',
+                                            FOCUS_RING,
+                                        )}
+                                    >
+                                        Buka Dashboard
+                                    </Link>
+                                ) : (
+                                    <>
+                                        <Link
+                                            href={login()}
+                                            onClick={() => setOpen(false)}
+                                            className={cn(
+                                                'flex min-h-11 items-center justify-center rounded-lg border-2 border-action/60 px-6 py-3 text-sm font-bold text-action',
+                                                FOCUS_RING,
+                                            )}
+                                        >
+                                            Masuk
+                                        </Link>
+                                        <Link
+                                            href={register()}
+                                            onClick={() => setOpen(false)}
+                                            className={cn(
+                                                'flex min-h-11 items-center justify-center rounded-lg bg-action px-6 py-3 text-sm font-bold text-action-foreground',
+                                                FOCUS_RING,
+                                            )}
+                                        >
+                                            Coba Gratis 14 Hari
+                                        </Link>
+                                    </>
                                 )}
-                            >
-                                {link.label}
-                            </a>
-                        ))}
-
-                        <div className="border-border mt-3 flex flex-col gap-2 border-t pt-4">
-                            {isAuthenticated ? (
-                                <Link
-                                    href={dashboard()}
-                                    className={cn(
-                                        'bg-action text-action-foreground flex min-h-11 items-center justify-center rounded-lg text-base font-semibold',
-                                        FOCUS_RING,
-                                    )}
-                                >
-                                    Buka Dashboard
-                                </Link>
-                            ) : (
-                                <>
-                                    <Link
-                                        href={login()}
-                                        className={cn(
-                                            'border-border text-ink flex min-h-11 items-center justify-center rounded-lg border text-base font-semibold',
-                                            FOCUS_RING,
-                                        )}
-                                    >
-                                        Masuk
-                                    </Link>
-                                    <Link
-                                        href={register()}
-                                        className={cn(
-                                            'bg-action text-action-foreground flex min-h-11 items-center justify-center rounded-lg text-base font-semibold',
-                                            FOCUS_RING,
-                                        )}
-                                    >
-                                        Coba gratis 14 hari
-                                    </Link>
-                                </>
-                            )}
-                        </div>
-                    </div>
-                </nav>
-            ) : null}
+                            </div>
+                        </nav>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </header>
     );
 }

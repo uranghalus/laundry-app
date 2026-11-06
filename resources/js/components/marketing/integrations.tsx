@@ -3,99 +3,116 @@ import {
     Landmark,
     MessageCircle,
     QrCode,
-    Smartphone,
     Wallet,
+    Smartphone,
 } from 'lucide-react';
 
 import { Container, SectionHeading } from '@/components/marketing/layout';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 /**
- * Kanal yang benar-benar terhubung — bukan grid logo kosmetik.
- *
- * Semua item berasal dari keputusan PRD: Meta WhatsApp Cloud API untuk
- * notifikasi dan persetujuan, Xendit untuk tautan pembayaran, serta SMS
- * sebagai cadangan bila nomor pelanggan tidak punya WhatsApp.
+ * Kanal yang benar-benar terhubung (PRD §5 — Meta WhatsApp Cloud API, Xendit
+ * pay link VA/QRIS/e-wallet, SMS fallback), bukan grid logo kosmetik.
+ * Digambarkan sebagai sachet kecil satu baris di rak integrasi: chip ikon +
+ * nama + catatan jujur apa yang kanal itu lakukan di Repica.
  */
 const INTEGRATIONS = [
     {
         icon: MessageCircle,
+        tone: 'bg-brand-tint text-action',
         label: 'WhatsApp Business',
-        note: 'Meta Cloud API',
+        note: 'OTP & notifikasi via Meta Cloud API',
     },
     {
         icon: Banknote,
+        tone: 'bg-violet-tint text-action',
         label: 'Xendit',
-        note: 'Tautan pembayaran',
+        note: 'Pay link di setiap invoice',
     },
     {
         icon: QrCode,
+        tone: 'bg-mint-tint text-action',
         label: 'QRIS',
-        note: 'Bayar langganan',
+        note: 'Bayar langganan sekali scan',
     },
     {
         icon: Landmark,
+        tone: 'bg-rose-tint text-action',
         label: 'Virtual Account',
-        note: 'Transfer terverifikasi',
+        note: 'Transfer terverifikasi otomatis',
     },
     {
         icon: Wallet,
+        tone: 'bg-amber-tint text-action',
         label: 'E-wallet',
         note: 'OVO · GoPay · Dana',
     },
     {
         icon: Smartphone,
-        label: 'SMS cadangan',
-        note: 'Bila nomor tanpa WA',
+        tone: 'bg-brand-foam text-ink',
+        label: 'SMS fallback',
+        note: 'Untuk nomor tanpa WhatsApp',
     },
 ] as const;
 
 /**
- * Band integrasi di atas harga.
+ * Band Integrasi — sachet kanal di rak biru tipis (dunia Sachet Pop).
  *
- * Latar `bg-band` membungkus seluruh isi (judul dan daftar kanal) — versi
- * sebelumnya meninggalkan `<div>` berwarna kosong sehingga teks jatuh di
- * luar bidang. Daftar kanal disusun sebagai tabel garis rambut dua kolom
- * agar terbaca seperti inventaris, bukan kumpulan badge.
+ * Bukan hero logo: satu baris chip yang mengakui apa yang sudah terhubung,
+ * dengan catatan fungsi tiap kanal. Chip non-aktif tidak punya hover mati —
+ * satu-satunya gerak adalah elevasi, tanpa perubahan warna yang tidak
+ * bermakna.
  */
 export default function MarketingIntegrations() {
     return (
         <section
-            aria-label="Integrasi dan kanal pembayaran"
-            className="border-border bg-band border-y"
+            id="integrasi"
+            className="bg-brand-foam scroll-mt-20 border-y border-line py-20 sm:py-24"
         >
-            <Container className="py-16 sm:py-24">
-                <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start lg:gap-16">
+            <Container>
+                <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                     <SectionHeading
-                        index="05"
+                        index="04"
                         eyebrow="Integrasi"
                         title="Terhubung dengan yang sudah Anda pakai"
-                        description="Tidak ada aplikasi baru untuk dipelajari. Konfirmasi pelanggan lewat WhatsApp, pembayaran lewat kanal yang sudah dikenal, semuanya masuk ke alur kerja Repica."
+                        description="Tidak ada aplikasi baru untuk dipelajari — kanal pembayaran dan pesan ini bekerja di dalam alur Repica."
                     />
-
-                    <ul className="border-border bg-border grid gap-px overflow-hidden rounded-xl border sm:grid-cols-2">
-                        {INTEGRATIONS.map((item) => (
-                            <li
-                                key={item.label}
-                                className="bg-background flex items-start gap-3 p-4"
-                            >
-                                <span className="border-border bg-card text-link flex size-9 shrink-0 items-center justify-center rounded-lg border">
-                                    <item.icon
-                                        className="size-4"
-                                        aria-hidden="true"
-                                    />
-                                </span>
-                                <span className="min-w-0">
-                                    <span className="text-ink block text-sm font-semibold tracking-[-0.01em]">
-                                        {item.label}
-                                    </span>
-                                    <span className="text-ink-soft mt-0.5 block text-xs leading-relaxed">
-                                        {item.note}
-                                    </span>
-                                </span>
-                            </li>
-                        ))}
-                    </ul>
+                    <Badge
+                        variant="secondary"
+                        className="bg-sheet text-action w-fit self-start border border-brand-edge px-3 py-1.5 text-xs font-bold md:self-auto"
+                    >
+                        Semua aktif hari ini
+                    </Badge>
                 </div>
+
+                <ul
+                    className="mt-12 grid list-none gap-4 sm:grid-cols-2 lg:grid-cols-3"
+                    aria-label="Kanal yang terintegrasi"
+                >
+                    {INTEGRATIONS.map(({ icon: Icon, tone, label, note }) => (
+                        <li
+                            key={label}
+                            data-welcome-surface
+                            className="bg-sheet border-line hover:shadow-pop flex min-h-11 items-center gap-3 rounded-[var(--radius-sachet)] border p-4 transition-shadow duration-200"
+                        >
+                            <span
+                                className={cn(
+                                    'flex size-11 shrink-0 items-center justify-center rounded-xl',
+                                    tone,
+                                )}
+                            >
+                                <Icon className="size-5" aria-hidden="true" />
+                            </span>
+                            <div className="min-w-0">
+                                <p className="text-ink text-sm font-extrabold">
+                                    {label}
+                                </p>
+                                <p className="text-ink-soft text-xs font-medium">{note}</p>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
             </Container>
         </section>
     );

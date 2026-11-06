@@ -1,92 +1,147 @@
-import { Building2, Hotel, Store } from 'lucide-react';
+import { Banknote, Scale, Timer, Users } from 'lucide-react';
 
-import { Container } from '@/components/marketing/layout';
+import { SectionHeading, Container } from '@/components/marketing/layout';
 import { cn } from '@/lib/utils';
 
 /**
- * Segmen audiens dari PRD §2 (persona Pak Rudi dan Bu Sari).
+ * Empat sachet masalah operasional — bahan bakar band Audience (brief v4:
+ * "menyapu empat sachet masalah operasional").
  *
- * `state` menandai kesiapan fitur secara jujur: multi-outlet tersedia,
- * invoice korporat belum. Tidak ada logo pelanggan rekaan di band ini karena
- * Repica belum punya pelanggan yang boleh diklaim.
+ * Setiap sachet = satu sakit nyata pemilik laundry (PRD §2) yang dijawab
+ * Repica. Aksen warna pastel (violet / mint / rose / amber) HANYA sebagai
+ * chip dan tint kemasan — bukan teks di bidang terang — mengikuti aturan
+ * ground Sachet Pop. Kartu punya target sentuh ≥44px lewat padding.
  */
-const AUDIENCES = [
+const SACHETS = [
     {
-        icon: Store,
-        title: 'Laundry satu gerai',
-        body: 'Pemilik yang merangkap kasir dan butuh catatan uang yang bisa dicocokkan tiap malam.',
-        state: 'Tersedia',
+        icon: Banknote,
+        tone: 'violet',
+        title: 'Uang kas tidak pernah pas',
+        problem:
+            'Setoran akhir hari selisih, dan tidak ada yang bisa menunjuk di transaksi mana.',
+        answer: 'Setiap invoice terkunci angka — rekap kas per outlet, per hari.',
     },
     {
-        icon: Building2,
-        title: 'Jaringan 2–5 outlet',
-        body: 'Kontrol akses staf dan laporan konsolidasi lintas gerai dalam satu dashboard.',
-        state: 'Tersedia',
+        icon: Scale,
+        tone: 'rose',
+        title: 'Sengketa baju rusak',
+        problem:
+            'Kata pelanggan vs kata staff. Tidak ada foto, tidak ada jejak, yang tersisa komplain.',
+        answer: 'Foto kondisi berwatermark + cap waktu + jejak audit tiap aksi.',
     },
     {
-        icon: Hotel,
-        title: 'Hotel & apartemen',
-        body: 'Invoice tempo dan penagihan korporat sedang disiapkan untuk rilis berikutnya.',
-        state: 'Segera',
+        icon: Timer,
+        tone: 'amber',
+        title: 'Order menumpuk tanpa urutan',
+        problem:
+            'Antrean cucian dihitung dengan kepala — mana duluan, mana nearing telat, tidak kelihatan.',
+        answer: 'Pipeline status dengan durasi terukur per tahap, bukan sekadar warna.',
+    },
+    {
+        icon: Users,
+        tone: 'mint',
+        title: 'Staff kerja tanpa batas akses',
+        problem:
+            'Satu akun dipakai bersama; harga modal terlihat semua orang; tidak ada yang bertanggung jawab.',
+        answer: 'Akses per peran dan per outlet — tiap perubahan tercatat siapa dan kapan.',
     },
 ] as const;
 
 /**
- * Strip audiensi — baris tipis tiga segmen, bukan deretan kartu promosi.
- *
- * Bentuknya sengaja menyerupai tabel berkas: satu bingkai garis rambut, tiga
- * kolom, dan status kesiapan di tiap kolom. Dengan begitu band ini menjadi
- * jeda tenang antara hero dan bento fitur, bukan kompetitor visualnya.
+ * Peta tone → kelas token (chip aksen + border kemasan). Dikelola lewat
+ * record literal supaya tidak ada hex polos dan kelas tetap terdeteksi JIT.
  */
-export default function AudienceStrip() {
+const TONES = {
+    violet: {
+        chip: 'bg-violet-tint',
+        edge: 'border-violet/35',
+        glow: 'bg-violet/10',
+    },
+    rose: {
+        chip: 'bg-rose-tint',
+        edge: 'border-rose/35',
+        glow: 'bg-rose/10',
+    },
+    amber: {
+        chip: 'bg-amber-tint',
+        edge: 'border-amber/40',
+        glow: 'bg-amber/10',
+    },
+    mint: {
+        chip: 'bg-mint-tint',
+        edge: 'border-mint/35',
+        glow: 'bg-mint/10',
+    },
+} as const;
+
+/**
+ * Band Audience — "Empat sachet masalah di rak laundry Anda".
+ *
+ * Komposisi: heading bernomor + grid 2x2 (1 kolom di mobile) sachet masalah.
+ * Bahasa bentuk: radius sachet, bibir sobekan `edge-tear-t` di kepala kartu
+ * (maskot garis, bukan isi), garis keras `border-2` seperti kemasan.
+ */
+export default function MarketingAudienceStrip() {
     return (
         <section
-            aria-labelledby="audiens-heading"
-            className="border-border border-b"
+            id="audiens"
+            className="bg-ground scroll-mt-20 border-t border-line py-20 sm:py-24"
         >
-            <Container className="py-10 sm:py-12">
-                <div className="grid gap-6 lg:grid-cols-[220px_1fr] lg:items-start lg:gap-14">
-                    <div>
-                        <h2
-                            id="audiens-heading"
-                            className="text-ink-soft text-[11px] font-semibold tracking-[0.18em] uppercase"
-                        >
-                            Dirancang untuk
-                        </h2>
-                        <p className="text-ink mt-2 text-sm leading-relaxed">
-                            Tiga jenis usaha yang paling sering kami temui.
-                        </p>
-                    </div>
+            <Container>
+                <SectionHeading
+                    index="01"
+                    eyebrow="Untuk siapa"
+                    title="Empat sachet masalah yang ada di rak Anda"
+                    description="Repica dirancang dari keluhan pemilik laundry yang paling sering berulang — bukan dari daftar fitur yang enak dibaca."
+                />
 
-                    <ul className="border-border grid overflow-hidden rounded-xl border sm:grid-cols-3">
-                        {AUDIENCES.map((item, index) => (
-                            <li
-                                key={item.title}
+                <ul
+                    className="mt-12 grid list-none gap-5 sm:grid-cols-2"
+                    aria-label="Empat masalah operasional yang dijawab Repica"
+                >
+                    {SACHETS.map(({ icon: Icon, tone, title, problem, answer }) => (
+                        <li
+                            key={title}
+                            className={cn(
+                                'bg-sheet edge-tear-t relative overflow-hidden border-2 rounded-[var(--radius-sachet)] p-6 pt-8 shadow-card transition-transform duration-200 hover:-translate-y-1',
+                                TONES[tone].edge,
+                            )}
+                        >
+                            {/* Percikan warna kemasan — dekorasi, aria-hidden. */}
+                            <span
+                                aria-hidden="true"
                                 className={cn(
-                                    'bg-background p-5',
-                                    index > 0 &&
-                                        'border-border border-t sm:border-t-0 sm:border-l',
+                                    'absolute -top-10 -right-10 size-32 rounded-full blur-2xl',
+                                    TONES[tone].glow,
                                 )}
-                            >
-                                <div className="flex items-center gap-2">
-                                    <item.icon
-                                        className="text-link size-4 shrink-0"
-                                        aria-hidden="true"
-                                    />
-                                    <h3 className="text-ink text-sm font-semibold tracking-[-0.01em]">
-                                        {item.title}
-                                    </h3>
-                                </div>
-                                <p className="text-ink-soft mt-2 text-sm leading-relaxed">
-                                    {item.body}
+                            />
+                            <div className="relative flex flex-col gap-3">
+                                <span
+                                    className={cn(
+                                        'text-ink inline-flex size-11 items-center justify-center rounded-xl',
+                                        TONES[tone].chip,
+                                    )}
+                                >
+                                    <Icon className="size-5" aria-hidden="true" />
+                                </span>
+                                <h3 className="text-display-card font-display text-ink font-extrabold">
+                                    {title}
+                                </h3>
+                                <p className="text-ink-soft text-sm leading-relaxed font-medium">
+                                    {problem}
                                 </p>
-                                <p className="text-ink-soft mt-3 text-[11px] font-semibold tracking-[0.14em] uppercase tabular-nums">
-                                    {item.state}
+                                <p
+                                    className={cn(
+                                        'text-ink border-t-2 pt-3 text-sm font-bold',
+                                        TONES[tone].edge,
+                                    )}
+                                >
+                                    {answer}
                                 </p>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
             </Container>
         </section>
     );

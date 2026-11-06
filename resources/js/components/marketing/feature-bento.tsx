@@ -1,183 +1,247 @@
-import type { ReactNode } from 'react';
-
-import { Camera, MessageCircle, ShieldCheck, Wallet } from 'lucide-react';
+import {
+    Camera,
+    MessageCircle,
+    ShieldCheck,
+    TrendingUp,
+    Wallet,
+} from 'lucide-react';
 
 import { Container, SectionHeading } from '@/components/marketing/layout';
-import { ProofArtifact } from '@/components/marketing/proof-artifact';
+import { ProofCard } from '@/components/marketing/proof-card';
 import { StatusBadge } from '@/components/marketing/status-badge';
 import { WaBubble } from '@/components/marketing/wa-bubble';
+import CountUp from '@/components/react-bits/count-up';
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 /**
- * Satu sel bento fitur.
- *
- * Sel bukan tombol: tidak ada aksi yang bisa dilakukan di sini, jadi memakai
- * `<article>` lebih jujur daripada `<button>` yang hanya bereaksi secara
- * visual. Ikon dan badge memperkuat judul, sementara `children` membawa
- * artefak bukti yang bisa dibaca.
- *
- * @param icon - Ikon lucide yang mewakili fitur.
- * @param title - Judul fitur (heading level 3).
- * @param description - Satu kalimat penjelas.
- * @param badge - Label status singkat.
- * @param variant - Warna badge status.
- * @param className - Kelas tambahan untuk rentang grid.
- * @param children - Artefak atau data contoh di dalam sel.
+ * Ring fokus bersama untuk kartu fitur — selalu terlihat, tidak menghapus
+ * outline tanpa pengganti.
  */
-function BentoCell({
-    icon: Icon,
-    title,
-    description,
-    badge,
-    variant = 'neutral',
-    className,
-    children,
-}: {
-    icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-    title: string;
-    description: string;
-    badge: string;
-    variant?: 'success' | 'warning' | 'info' | 'neutral';
-    className?: string;
-    children: ReactNode;
-}) {
+const FOCUS_RING =
+    'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-ground';
+
+/**
+ * Entri jejak audit mini — baris "siapa mengubah apa, kapan". Angka lama/baru
+ * memakai tabular-nums lewat atribut `data-numeric` (base CSS).
+ */
+function AuditLine({ children }: { children: React.ReactNode }) {
     return (
-        <article
-            className={cn(
-                'border-border bg-card flex flex-col gap-4 rounded-2xl border p-5 sm:p-6',
-                className,
-            )}
-        >
-            <div className="flex flex-wrap items-start justify-between gap-3">
-                <div className="flex items-center gap-2">
-                    <Icon
-                        className="text-link size-4 shrink-0"
-                        aria-hidden="true"
-                    />
-                    <h3 className="text-ink text-sm font-semibold tracking-[-0.01em] sm:text-base">
-                        {title}
-                    </h3>
-                </div>
-                <StatusBadge variant={variant} label={badge} />
-            </div>
-            <p className="text-ink-soft text-sm leading-relaxed">
-                {description}
-            </p>
-            <div className="mt-auto">{children}</div>
-        </article>
+        <p className="text-ink-soft border-action/60 border-l-2 pl-3 text-xs leading-snug font-medium tabular-nums">
+            {children}
+        </p>
     );
 }
 
 /**
- * Grid bento fitur halaman publik (`#fitur`).
+ * Band Feature Bento — "rak" empat kemasan solusi (dunia Sachet Pop).
  *
- * Rentang kolom ditulis statis supaya Tailwind benar-benar menghasilkan
- * kelasnya — kelas dinamis `md:col-span-${n}` tidak pernah dikompilasi.
+ * Ritme visual PLATE-OVER-PAD: setiap sel adalah pad berwarna (tint pastel
+ * satu tingkat) dengan piring sachet `bg-sheet` yang menumpuk di atasnya lewat
+ * offset — bukan bayangan bertumpuk. Grid asimetris: sel bukti kondisi membesar
+ * (2 kolom), tiga sel lain mengisi sisa rak. Angka fisik (Rp/hari, jumlah aksi)
+ * digoyang masuk via CountUp react-bits sebagai hitungan nyata, bukan statistik
+ * hiasan.
  *
- * Komposisi desktop 4 kolom:
- *
- * ```
- * bukti   bukti   audit   audit
- * bukti   bukti   wa      kas
- * ```
- *
- * Di tablet semua sel menjadi dua kolom, di ponsel satu kolom.
+ * Semua warna dari token; aksen pastel hanya chip/tint; teks CTA/aksi memakai
+ * `text-action` (AA). Kartu non-interaktif tidak punya hover yang mati — hanya
+ * elevasi naik satu tingkat saat hover sebagai umpan balik rak.
  */
 export default function FeatureBento() {
     return (
-        <section id="fitur" className="scroll-mt-20">
-            <Container className="py-16 sm:py-24">
+        <section id="fitur" className="bg-ground scroll-mt-20 border-t border-line py-20 sm:py-24">
+            <Container>
                 <SectionHeading
                     index="02"
                     eyebrow="Fitur"
-                    title="Yang membocorkan uang Anda, ditutup satu per satu"
-                    description="Setiap sel membuka satu masalah operasional laundry ke bukti yang bisa diperiksa: foto, jejak audit, persetujuan, dan kas."
+                    title="Empat kemasan, satu janji: semua ada buktinya"
+                    description="Setiap masalah operasional di rak sebelah sudah disobek di sini — solusinya terlihat sebagai artefak, bukan sebagai daftar fitur."
                 />
 
-                <div className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 lg:gap-5">
-                    <BentoCell
-                        className="md:col-span-2 lg:row-span-2"
-                        icon={Camera}
-                        title="Bukti kondisi awal, ber-watermark"
-                        description="Foto diambil saat barang masuk, dikunci waktu dan outlet, lalu disetujui pelanggan lewat WhatsApp."
-                        badge="Tersimpan 12 bulan"
-                        variant="success"
-                    >
-                        <ProofArtifact compact />
-                    </BentoCell>
-
-                    <BentoCell
-                        className="md:col-span-2"
-                        icon={ShieldCheck}
-                        title="Jejak audit di setiap perubahan"
-                        description="Harga, diskon, dan void tercatat lengkap: siapa, kapan, dari nilai berapa ke berapa."
-                        badge="Terpantau"
-                        variant="warning"
-                    >
-                        <ul className="border-border bg-background divide-border divide-y rounded-lg border text-xs">
-                            <li className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 px-3 py-2.5">
-                                <span className="text-ink-soft">
-                                    Cuci kering · Sari
+                {/* Rak — grid asimetris plate-over-pad. */}
+                <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+                    {/* Pad 1 — sel besar bukti kondisi (2 kolom). */}
+                    <div className="bg-brand-tint rounded-[var(--radius-sachet)] p-3 md:col-span-2 lg:row-span-2">
+                        <Card
+                            tabIndex={0}
+                            className={cn(
+                                'bg-sheet border-brand-edge relative h-full gap-0 overflow-hidden rounded-[calc(var(--radius-sachet)-0.375rem)] border-2 p-6 shadow-card transition-transform duration-200 hover:-translate-y-1',
+                                FOCUS_RING,
+                            )}
+                        >
+                            <div className="flex items-center justify-between gap-2">
+                                <span className="text-action flex items-center gap-2 text-sm font-extrabold">
+                                    <Camera className="size-4" aria-hidden="true" />
+                                    Buktikan kondisi awal
                                 </span>
-                                <span className="text-ink flex items-center gap-1.5">
-                                    <del className="text-ink-soft decoration-error/50">
-                                        Rp15.000
-                                    </del>
-                                    <span aria-hidden="true">→</span>
-                                    <span className="sr-only">menjadi</span>
-                                    <span className="font-semibold tabular-nums">
-                                        Rp18.000
-                                    </span>
-                                </span>
-                            </li>
-                            <li className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 px-3 py-2.5">
-                                <span className="text-ink-soft">
-                                    Void transaksi · Budi
-                                </span>
-                                <span className="text-ink font-semibold tabular-nums">
-                                    RC-2388
-                                </span>
-                            </li>
-                        </ul>
-                    </BentoCell>
-
-                    <BentoCell
-                        icon={MessageCircle}
-                        title="Persetujuan pelanggan"
-                        description="Status berubah setelah pelanggan membalas, bukan setelah kasir menekan tombol."
-                        badge="Disetujui"
-                        variant="success"
-                    >
-                        <WaBubble text="Oke, kondisi bajunya sesuai foto. Lanjut cuci." />
-                    </BentoCell>
-
-                    <BentoCell
-                        icon={Wallet}
-                        title="Kas harian tertutup"
-                        description="Tunai dan non-tunai dalam satu lembar yang bisa dicocokkan malam itu juga."
-                        badge="Tercatat"
-                    >
-                        <dl className="border-border divide-border divide-y rounded-lg border text-xs">
-                            <div className="flex items-center justify-between px-3 py-2">
-                                <dt className="text-ink-soft">Tunai</dt>
-                                <dd className="text-ink font-semibold tabular-nums">
-                                    Rp840.000
-                                </dd>
+                                <Badge variant="secondary" className="bg-ok-tint text-ok">
+                                    Foto + watermark
+                                </Badge>
                             </div>
-                            <div className="flex items-center justify-between px-3 py-2">
-                                <dt className="text-ink-soft">QRIS</dt>
-                                <dd className="text-ink font-semibold tabular-nums">
-                                    Rp360.000
-                                </dd>
+                            <p className="text-ink-soft mt-3 text-sm leading-relaxed font-medium">
+                                Setiap order dimulai dengan foto kondisi awal
+                                berwatermark outlet, waktu, dan nomor order —
+                                sengketa baju rusak tidak pernah lagi jadi kata
+                                satu melawan kata yang lain.
+                            </p>
+                            <div className="mt-5">
+                                <ProofCard />
                             </div>
-                            <div className="bg-band/70 flex items-center justify-between px-3 py-2">
-                                <dt className="text-ink-soft">Selisih</dt>
-                                <dd className="text-ink font-semibold tabular-nums">
-                                    Rp0
-                                </dd>
+                        </Card>
+                    </div>
+
+                    {/* Pad 2 — jejak audit harga. */}
+                    <div className="bg-violet-tint rounded-[var(--radius-sachet)] p-3">
+                        <Card
+                            tabIndex={0}
+                            className={cn(
+                                'bg-sheet border-violet/30 relative h-full gap-0 overflow-hidden rounded-[calc(var(--radius-sachet)-0.375rem)] border-2 p-5 shadow-card transition-transform duration-200 hover:-translate-y-1',
+                                FOCUS_RING,
+                            )}
+                        >
+                            <div className="flex items-center justify-between gap-2">
+                                <span className="text-action flex items-center gap-2 text-sm font-extrabold">
+                                    <ShieldCheck className="size-4" aria-hidden="true" />
+                                    Jejak audit harga
+                                </span>
+                                <StatusBadge variant="warning" label="Terpantau" />
                             </div>
-                        </dl>
-                    </BentoCell>
+                            <div className="mt-4 flex flex-col gap-2.5">
+                                <AuditLine>
+                                    Harga diubah · Sari · 10:32 · Rp15.000 → Rp18.000
+                                </AuditLine>
+                                <AuditLine>
+                                    Status di-rollback · Owner · 11:05 · Dicuci → Diterima
+                                </AuditLine>
+                                <AuditLine>
+                                    Transaksi di-void · Kasir 2 · 13:47 · dicatat otomatis
+                                </AuditLine>
+                            </div>
+                        </Card>
+                    </div>
+
+                    {/* Pad 3 — konfirmasi WhatsApp. */}
+                    <div className="bg-rose-tint rounded-[var(--radius-sachet)] p-3">
+                        <Card
+                            tabIndex={0}
+                            className={cn(
+                                'bg-sheet border-rose/30 relative h-full gap-0 overflow-hidden rounded-[calc(var(--radius-sachet)-0.375rem)] border-2 p-5 shadow-card transition-transform duration-200 hover:-translate-y-1',
+                                FOCUS_RING,
+                            )}
+                        >
+                            <div className="flex items-center justify-between gap-2">
+                                <span className="text-action flex items-center gap-2 text-sm font-extrabold">
+                                    <MessageCircle className="size-4" aria-hidden="true" />
+                                    Persetujuan WhatsApp
+                                </span>
+                                <StatusBadge variant="info" label="Terekam" />
+                            </div>
+                            <div className="mt-4">
+                                <WaBubble
+                                    text="Pesanan diterima, cuci mulai besok."
+                                    time="14:32"
+                                    approved
+                                />
+                            </div>
+                        </Card>
+                    </div>
+
+                    {/* Pad 4 — kas harian tertutup (artefak lembar malam hari). */}
+                    <div className="bg-mint-tint rounded-[var(--radius-sachet)] p-3 md:col-span-2 lg:col-span-2">
+                        <Card
+                            tabIndex={0}
+                            className={cn(
+                                'bg-sheet border-mint/30 relative h-full gap-0 overflow-hidden rounded-[calc(var(--radius-sachet)-0.375rem)] border-2 p-5 shadow-card transition-transform duration-200 hover:-translate-y-1',
+                                FOCUS_RING,
+                            )}
+                        >
+                            <div className="flex items-center justify-between gap-2">
+                                <span className="text-action flex items-center gap-2 text-sm font-extrabold">
+                                    <Wallet className="size-4" aria-hidden="true" />
+                                    Kas harian tertutup
+                                </span>
+                                <StatusBadge variant="success" label="Tercatat" />
+                            </div>
+                            <div className="mt-4 grid gap-4 sm:grid-cols-[1fr_1.2fr] sm:items-center">
+                                <dl className="border-line divide-line divide-y rounded-[var(--radius-tear)] border text-xs">
+                                    <div className="flex items-center justify-between px-3 py-2">
+                                        <dt className="text-ink-soft font-semibold">Tunai</dt>
+                                        <dd className="text-ink font-bold tabular-nums">
+                                            Rp
+                                            <CountUp to={840} duration={1.2} suffix=".000" />
+                                        </dd>
+                                    </div>
+                                    <div className="flex items-center justify-between px-3 py-2">
+                                        <dt className="text-ink-soft font-semibold">QRIS</dt>
+                                        <dd className="text-ink font-bold tabular-nums">
+                                            Rp
+                                            <CountUp to={360} duration={1} suffix=".000" />
+                                        </dd>
+                                    </div>
+                                    <div className="bg-brand-foam flex items-center justify-between px-3 py-2">
+                                        <dt className="text-ink-soft font-semibold">Selisih</dt>
+                                        <dd className="text-ok font-bold tabular-nums">Rp0</dd>
+                                    </div>
+                                </dl>
+                                <p className="text-ink-soft text-sm leading-relaxed font-medium">
+                                    Tunai dan non-tunai masuk satu lembar yang
+                                    bisa dicocokkan malam itu juga — tidak ada
+                                    lagi setoran yang “kemarin kurang, tidak
+                                    tahu kurangnya di mana”.
+                                </p>
+                            </div>
+                        </Card>
+                    </div>
+
+                    {/* Pad 5 — batas trial yang jujur (angka dari DECISIONS Q9). */}
+                    <div className="bg-amber-tint rounded-[var(--radius-sachet)] p-3 md:col-span-2 lg:col-span-2">
+                        <Card
+                            tabIndex={0}
+                            className={cn(
+                                'bg-sheet border-amber/40 relative h-full gap-0 overflow-hidden rounded-[calc(var(--radius-sachet)-0.375rem)] border-2 p-5 shadow-card transition-transform duration-200 hover:-translate-y-1',
+                                FOCUS_RING,
+                            )}
+                        >
+                            <div className="flex items-center justify-between gap-2">
+                                <span className="text-action flex items-center gap-2 text-sm font-extrabold">
+                                    <TrendingUp className="size-4" aria-hidden="true" />
+                                    Cara memulai yang jujur
+                                </span>
+                                <StatusBadge variant="neutral" label="Tanpa kartu" />
+                            </div>
+                            <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
+                                <div>
+                                    <p className="text-ink font-display text-2xl leading-none font-extrabold tabular-nums">
+                                        <CountUp to={14} duration={1} />
+                                    </p>
+                                    <p className="text-ink-soft mt-1 text-xs font-semibold">
+                                        hari trial penuh fitur
+                                    </p>
+                                </div>
+                                <div>
+                                    <p className="text-ink font-display text-2xl leading-none font-extrabold tabular-nums">
+                                        <CountUp to={30} duration={1} />
+                                    </p>
+                                    <p className="text-ink-soft mt-1 text-xs font-semibold">
+                                        order maks selama trial
+                                    </p>
+                                </div>
+                                <div>
+                                    <p className="text-ink font-display text-2xl leading-none font-extrabold tabular-nums">
+                                        <CountUp to={0} from={0} duration={0.6} prefix="Rp" />
+                                    </p>
+                                    <p className="text-ink-soft mt-1 text-xs font-semibold">
+                                        biaya mulai (tanpa kartu)
+                                    </p>
+                                </div>
+                            </div>
+                            <p className="text-ink-soft mt-3 text-sm leading-relaxed font-medium">
+                                Angka-angka ini adalah ketentuan trial yang
+                                berlaku di halaman harga — bukan janji bonus.
+                            </p>
+                        </Card>
+                    </div>
                 </div>
             </Container>
         </section>

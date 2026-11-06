@@ -3,11 +3,11 @@ import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
 /**
- * Container — satu-satunya penentu lebar baca halaman marketing.
+ * Container - satu-satunya penentu lebar baca halaman marketing.
  *
- * Dipakai oleh semua band supaya tepi kiri/kanan konsisten di 1200px dan
- * padding responsif tidak ditulis ulang. Tanpa container, band akan
- * full-bleed dan ritme halaman pecah.
+ * Dipakai oleh semua band supaya tepi kiri/kanan konsisten dan padding
+ * responsif tidak ditulis ulang. Tanpa container, band akan full-bleed dan
+ * ritme halaman pecah.
  *
  * @param className - Kelas tambahan (mis. padding vertikal band).
  * @param children - Isi container.
@@ -21,10 +21,7 @@ export function Container({
 }) {
     return (
         <div
-            className={cn(
-                'mx-auto w-full max-w-[1200px] px-5 sm:px-8',
-                className,
-            )}
+            className={cn('mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8', className)}
         >
             {children}
         </div>
@@ -32,16 +29,16 @@ export function Container({
 }
 
 /**
- * Eyebrow — penanda seksi bernomor.
+ * Eyebrow - penanda seksi bernomor di atas judul band.
  *
- * Nomor seksi (`01`, `02`, …) memberi halaman urutan baca yang eksplisit dan
- * menjadi benang editorial yang menyatukan band terang dan band gelap.
- * Nomornya dekoratif bagi pembaca layar, jadi seluruh penanda dibungkus
- * `aria-hidden` dan judul seksi tetap menjadi heading semantik.
+ * Nomor seksi (`01`, `02`, ...) memberi halaman urutan baca yang eksplisit dan
+ * menjadi benang editorial yang menyatukan band terang dan band malam. Nomornya
+ * dekoratif bagi pembaca layar, jadi seluruh penanda dibungkus `aria-hidden`;
+ * label teksnya ikut tersembunyi karena judul `h2` sudah menyebut topik band.
  *
  * @param index - Nomor seksi dua digit.
  * @param children - Label seksi singkat.
- * @param tone - `light` di atas kanvas terang, `dark` di atas band navy.
+ * @param tone - `light` di atas kanvas terang, `dark` di atas band malam.
  */
 export function Eyebrow({
     index,
@@ -56,15 +53,15 @@ export function Eyebrow({
         <p
             aria-hidden="true"
             className={cn(
-                'flex items-center gap-3 text-[11px] font-semibold tracking-[0.18em] uppercase',
-                tone === 'dark' ? 'text-brand-200' : 'text-link',
+                'flex items-center gap-3 text-[11px] font-bold tracking-[0.18em] uppercase',
+                tone === 'dark' ? 'text-night-brand' : 'text-action',
             )}
         >
             <span className="tabular-nums">{index}</span>
             <span
                 className={cn(
                     'h-px w-8',
-                    tone === 'dark' ? 'bg-brand-500/60' : 'bg-brand-200',
+                    tone === 'dark' ? 'bg-night-brand/60' : 'bg-brand',
                 )}
             />
             {children}
@@ -73,10 +70,11 @@ export function Eyebrow({
 }
 
 /**
- * SectionHeading — pasangan wajib eyebrow + judul + deskripsi.
+ * SectionHeading - pasangan wajib eyebrow + judul + deskripsi.
  *
  * Semua band memakai komposisi yang sama agar hierarki halaman rata: satu
- * `h2` per band, deskripsi maksimal dua baris, tanpa kicker dekoratif lain.
+ * `h2` display (Archivo) per band dengan skala `text-display-band`, deskripsi
+ * maksimal dua baris, tanpa kicker dekoratif lain.
  *
  * @param index - Nomor seksi dua digit.
  * @param eyebrow - Label seksi.
@@ -107,8 +105,8 @@ export function SectionHeading({
             </Eyebrow>
             <h2
                 className={cn(
-                    'mt-5 text-3xl font-bold tracking-[-0.03em] text-balance sm:text-4xl lg:text-[2.75rem] lg:leading-[1.05]',
-                    tone === 'dark' ? 'text-white' : 'text-ink',
+                    'text-display-band font-display mt-4 text-balance font-extrabold tracking-tight',
+                    tone === 'dark' ? 'text-night-ink' : 'text-ink',
                 )}
             >
                 {title}
@@ -116,8 +114,8 @@ export function SectionHeading({
             {description ? (
                 <p
                     className={cn(
-                        'mt-5 max-w-xl text-base leading-relaxed sm:text-lg',
-                        tone === 'dark' ? 'text-white/70' : 'text-ink-soft',
+                        'mt-4 max-w-xl text-base leading-relaxed font-medium sm:text-lg',
+                        tone === 'dark' ? 'text-night-ink-soft' : 'text-ink-soft',
                     )}
                 >
                     {description}

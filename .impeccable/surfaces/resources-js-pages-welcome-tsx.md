@@ -1,8 +1,38 @@
 ---
-version: 3
+version: 1
 slug: 'resources-js-pages-welcome-tsx'
 primary_target: 'resources/js/pages/welcome.tsx'
-related_targets: ['resources/js/components/marketing/proof-artifact.tsx', 'resources/js/components/marketing/layout.tsx']
+related_targets: []
+---
+
+---
+
+version: 4
+slug: 'resources-js-pages-welcome-tsx'
+primary_target: 'resources/js/pages/welcome.tsx'
+related_targets:
+[
+'resources/js/components/marketing/hero.tsx',
+'resources/js/components/marketing/hero-bento-preview.tsx',
+'resources/js/components/marketing/audience-strip.tsx',
+'resources/js/components/marketing/feature-bento.tsx',
+'resources/js/components/marketing/pipeline.tsx',
+'resources/js/components/marketing/integrations.tsx',
+'resources/js/components/marketing/pricing.tsx',
+'resources/js/components/marketing/faq.tsx',
+'resources/js/components/marketing/cta-footer.tsx',
+'resources/js/components/marketing/site-header.tsx',
+'resources/js/components/marketing/layout.tsx',
+'resources/js/components/marketing/theme-switcher.tsx',
+'resources/js/components/marketing/split-text.tsx',
+'resources/js/components/marketing/count-up.tsx',
+'resources/js/components/marketing/proof-artifact.tsx',
+'resources/js/components/marketing/proof-card.tsx',
+'resources/js/components/marketing/status-badge.tsx',
+'resources/js/components/marketing/wa-bubble.tsx',
+'resources/js/components/marketing/repica-mark.tsx',
+'resources/css/app.css'
+]
 ---
 
 # Surface brief — `/` (welcome, halaman marketing Repica)
@@ -10,41 +40,50 @@ related_targets: ['resources/js/components/marketing/proof-artifact.tsx', 'resou
 ## Scope & mode
 
 Route `/` (`resources/js/pages/welcome.tsx` + `components/marketing/*`). Mode: **Persuade**.
-Audiensi: Pak Rudi (pemilik 1 gerai, non-teknis, Android) primer; Bu Sari (3–10 outlet) sekunder.
+Audiens: Pak Rudi (pemilik 1 gerai, non-teknis, Android) primer; Bu Sari (3–10 outlet) sekunder.
 Job: paham diferensiator (bukti kondisi), percaya, daftar trial 14 hari. Aksi utama: `/register`.
 
-## Constraints
+## Constraints (diperbarui sesi ini)
 
-- Palet terikat pada **#266DD3** sebagai action ink, netral slate, dan tiga warna status.
-  Sumber kebenaran lengkap: `DESIGN.md` v3 "Bukti Terkendali".
-- Dua momen navy hanya di band Pipeline (`#cara-kerja`) dan CTA penutup; band lain terang.
-- Nol customer: tidak ada logo klien, tidak ada angka traction. Angka = fakta produk.
-- Hanya 2 tier dapat dibeli (Basic/Pro) + trial 14 hari; korporat "Segera" (DECISIONS Q1/Q9).
-- Dark + light penuh lewat token semantik; prefers-reduced-motion dihormati; lang=id; AA kontras.
+- **Override pengguna sesi ini:** rebuild penuh halaman marketing; `DESIGN.md`, `DESIGN-BRIEF-Laundry-SaaS.md`,
+  dan `PRODUCT.md` **tidak mengikat** permukaan ini. Dunia visual di bawah menggantikannya.
+- **Pin pengguna:** warna primer `#66C3FF`. Arah: interaktif + colorful, **tidak** norak.
+- Anchor band (`#fitur`, `#cara-kerja`, `#harga`, `#faq`) dan tautan nav harus tetap sinkron.
+- Tanpa dependensi npm baru. `motion` dan `lucide-react` sudah tersedia. Font self-host (`@font-face`,
+  file di repo), tanpa stylesheet eksternal.
+- Tanpa raw hex di class TSX — token Tailwind via `app.css` `@theme`. Komentar kode Bahasa Indonesia.
+- AA kontras, `prefers-reduced-motion` dihormati, `lang="id"`, target sentuh ≥44px, focus ring terlihat.
+- Semua angka uang/order pakai `tabular-nums`. Dark mode tetap jalan via token semantik bila toggle dipertahankan.
 
 ## Direction contract
 
-THESIS: Halaman ini adalah meja kerja pemilik laundry yang rapi — satu nota bukti kondisi,
-satu buku kas, satu papan status. Produk yang menjual kejujuran harus memperlihatkan dokumennya
-di detik pertama, bukan screenshot dashboard generik.
+THESIS: Halaman ini adalah rak sachet deterjen: tiap fitur adalah satu kemasan yang disobek untuk
+menuangkan buktinya. Tawaran terbaca di detik pertama lewat sobekan sachet utama yang membuka
+artefak bukti kondisi (foto + watermark + approval WhatsApp) — penolakan atas hero SaaS
+headline-copy-button di atas screenshot dashboard generik.
 
-OWN-WORLD: Kanvas hampir putih (`#FCFCFD`) dengan garis rambut 1px sebagai anatomi; kertas hangat
-(`#FAF8F4`) hanya di dalam artefak nota; kobalt `#266DD3` membawa semua aksi dan tautan. Dua bidang
-navy (`#0E1B2E`) menjadi ruang kontrol: Pipeline dan CTA penutup. Radius 8/12/16/20, bayangan hanya
-untuk nota dan kartu Pro. Plus Jakarta Sans 700 tracking -0.035em; angka selalu tabular.
+OWN-WORLD: Ground off-white `#FBFCFE`; bidang warna #66C3FF sebagai dominan (field, garis, potongan);
+pastel pendukung hemat — violet `#8B5CF6`, minta `#34D399`, rose `#FB7185`, amber `#FBBF24` — hanya
+sebagai chip, aksen kartu, dan bekas sobekan. Tinta `#0F172A` untuk teks; action ink `#1D4ED8`
+(fill CTA, teks tautan, ring fokus) karena #66C3FF di atas putih terlalu kontras-rendah untuk teks.
+Bentuk: sobekan (tear edge) sebagai bahasa tepi, radius 12–24, elevasi lembut offset+blur
+(`shadow-sm`, satu level untuk terangkat; `shadow-md` hanya untuk popover/modal), tanpa bayangan
+bertumpuk; chip aksen warna; malam `#0B1B33` dengan field biru berpendar untuk band gelap. Tanpa glassmorphism.
 
-STORY: Pengunjung melihat loop bukti bekerja (foto→watermark→WA→setuju) di hero, membaca empat
-masalah operasional yang ditutup di bento, memahami enam tahap pipeline, membandingkan harga jujur,
-lalu mendaftar atau bertanya via WhatsApp. Yang tersisa di kepala: "yang motret duluan".
+STORY: Pengunjung melihat bukti kondisi tersobek keluar dari sachet hero, menyapu empat sachet
+masalah operasional, mengikuti pipeline sebagai blok berdurasi terukur, membandingkan dua harga
+jujur, menjawab FAQ, lalu mendaftar — yang tertinggal: "yang motret duluan, disetujui lewat WA".
 
-FIRST VIEWPORT (1440): Header 64px solid, garis muncul saat scroll. Kiri: H1 clamp(2.35rem, 6.4vw,
-4.5rem) tracking -0.035em dengan satu kata bergaris bawah kobalt, lead maks 2–3 baris, dua CTA
-(primer `bg-action` + WhatsApp garis), lalu strip empat fakta produk. Kanan: `ProofArtifact` —
-nota bukti kondisi dengan tepi perforasi, nomor order, slot foto ber-watermark, baris meta, cap
-disetujui. Di bawahnya audience strip tiga segmen bergaris rambut.
+FIRST VIEWPORT (1440): Nav strip biru bersobek di atas. Kiri: headline raksasa (display weights,
+tracking ketat) di atas field blok pastel tak simetris; sub 2 baris; dua CTA — primer biru border
+tinta hard-shadow, sekunder garis; strip empat fakta produk sebagai chip warna. Kanan: sachet
+hero (rotasi halus) bersobek pada gesture/klik, di dalamnya artefak bukti kondisi; band bawah tetaplah
+strip fakta yang sama. Mobile: satu kolom, sachet di bawah copy, sobekan tetap.
 
-FORM: tidak memakai concept-seed. Dunia visual diturunkan dari `DESIGN.md` v3 dan diverifikasi
-dengan detector impeccable (0 temuan).
+FORM: Kandidat 5 dari 7 daftar grounded (sachet deterjen di rak minimarket); seed:708681af0298dd10.
+Raise yang dibawa: angka terhitung sebagai kejadian fisik (donasi nixie), ritme plate-over-pad
+(donasi kalender), blok durasi terukur (donasi laban), bloom keaksesan cursor (donasi understory).
+Signature interaction: **tear** — sobekan sachet sebagai interaksi pembuka konten.
 
-FINISH: `npm run check`, `npm run types:check`, `npm run build`, `php artisan test`,
-`vendor/bin/pint --dirty --format agent` hijau. Handoff visual terakhir: review desktop + mobile.
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the
+verdict, DESIGN.md, and every shipping raster carrying its provenance.

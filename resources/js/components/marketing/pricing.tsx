@@ -1,46 +1,48 @@
 import { useState } from 'react';
 
 import { Link } from '@inertiajs/react';
-import { ArrowRight, Check, Minus } from 'lucide-react';
+import { ArrowRight, Check, Minus, Sparkles } from 'lucide-react';
 
 import { Container, SectionHeading } from '@/components/marketing/layout';
+import CountUp from '@/components/react-bits/count-up';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { register } from '@/routes';
 import { cn } from '@/lib/utils';
-import { dashboard, register } from '@/routes';
 
-/**
- * Paket berbayar yang benar-benar dapat dibeli (DECISIONS.md Q1 & Q9).
- * Harga tahunan = 10× bulanan, jadi dua bulan gratis — bukan diskon rekaan.
- */
+/** Dua tier yang benar-benar dapat dibeli, sesuai DECISIONS.md Q1 & Q9. */
 const PLANS = [
     {
         key: 'basic',
         name: 'Basic',
-        tagline: 'Untuk satu gerai yang ingin rapi dulu.',
-        monthlyPrice: 149000,
-        annualPrice: 1490000,
+        tagline: 'Untuk laundry satu gerai',
+        monthlyPrice: 149_000,
+        annualPrice: 1_490_000,
         featured: false,
         features: [
-            '1 outlet, 2 pengguna',
+            '1 outlet, 2 user',
             'Order end-to-end + notifikasi WhatsApp',
-            'Bukti kondisi 100 foto/bulan',
+            'Proof-of-Condition 100 foto/bulan',
             'Laporan harian + deposit member',
             'Jejak audit per order',
         ],
-        excluded: ['Multi-outlet', 'Laporan konsolidasi'],
+        excluded: ['Multi-outlet', 'Laporan konsolidasi lintas outlet'],
     },
     {
         key: 'pro',
         name: 'Pro',
-        tagline: 'Untuk jaringan 2–5 outlet dengan banyak staf.',
-        monthlyPrice: 499000,
-        annualPrice: 4990000,
+        tagline: 'Untuk 2-5 outlet, user tak terbatas',
+        monthlyPrice: 499_000,
+        annualPrice: 4_990_000,
         featured: true,
         features: [
-            'Sampai 5 outlet, pengguna tak terbatas',
+            'Sampai 5 outlet, user tak terbatas',
             'Semua fitur Basic',
-            'Bukti kondisi tanpa batas',
+            'Proof-of-Condition tanpa batas foto',
             'Multi-outlet + RBAC penuh',
-            'Laporan konsolidasi + audit log penuh',
+            'Laporan konsolidasi + Audit Log penuh',
         ],
         excluded: [],
     },
@@ -49,316 +51,207 @@ const PLANS = [
 type Billing = 'bulanan' | 'tahunan';
 
 /**
- * Format nominal Rupiah dengan pemisah ribuan titik (format Indonesia).
+ * Format nominal Rupiah dengan titik ribuan (format Indonesia) — lokal file
+ * ini karena hanya band harga yang menampilkan harga.
  *
- * @param value - Nominal dalam rupiah.
- * @returns Nominal tanpa awalan `Rp`, mis. `149.000`.
+ * @param value - Nominal dalam rupiah utuh.
  */
 function formatRupiah(value: number): string {
     return value.toLocaleString('id-ID');
 }
 
 /**
- * Kartu satu paket berbayar.
- *
- * Paket unggulan memakai bidang navy penuh dengan teks putih — satu-satunya
- * kartu berwarna di band harga, supaya rekomendasi terbaca tanpa badge
- * tambahan yang berisik.
- *
- * @param plan - Definisi paket dari `PLANS`.
- * @param billing - Siklus tagihan yang sedang dipilih.
- * @param isAuthenticated - Menentukan tujuan CTA.
+ * Ring fokus untuk radio billing — indikator keyboard terlihat di kedua latar.
  */
-function PlanCard({
-    plan,
-    billing,
-    isAuthenticated,
-}: {
-    plan: (typeof PLANS)[number];
-    billing: Billing;
-    isAuthenticated: boolean;
-}) {
-    const featured = plan.featured;
-    const price = billing === 'bulanan' ? plan.monthlyPrice : plan.annualPrice;
-    const perMonth = Math.round(plan.annualPrice / 12);
-    const href = isAuthenticated ? dashboard() : register();
-
-    return (
-        <article
-            className={cn(
-                'flex flex-col rounded-2xl border p-6 sm:p-7',
-                featured
-                    ? 'border-navy bg-navy shadow-lift'
-                    : 'border-border bg-card',
-            )}
-        >
-            <div className="flex flex-wrap items-start justify-between gap-2">
-                <h3
-                    className={cn(
-                        'text-lg font-bold tracking-[-0.01em]',
-                        featured ? 'text-white' : 'text-ink',
-                    )}
-                >
-                    {plan.name}
-                </h3>
-                {featured ? (
-                    <span className="rounded-full bg-white/15 px-2.5 py-1 text-[11px] font-semibold tracking-wide text-white">
-                        Direkomendasikan
-                    </span>
-                ) : null}
-            </div>
-
-            <p
-                className={cn(
-                    'mt-1 text-sm leading-relaxed',
-                    featured ? 'text-white/65' : 'text-ink-soft',
-                )}
-            >
-                {plan.tagline}
-            </p>
-
-            <p className="mt-6 flex items-baseline gap-1.5">
-                <span
-                    className={cn(
-                        'text-4xl font-bold tracking-[-0.03em] tabular-nums',
-                        featured ? 'text-white' : 'text-ink',
-                    )}
-                >
-                    <span className="text-base font-semibold">Rp</span>
-                    {formatRupiah(price)}
-                </span>
-                <span
-                    className={cn(
-                        'text-sm',
-                        featured ? 'text-white/55' : 'text-ink-soft',
-                    )}
-                >
-                    {billing === 'bulanan' ? '/bln' : '/tahun'}
-                </span>
-            </p>
-
-            <p
-                className={cn(
-                    'mt-1 text-xs leading-relaxed tabular-nums',
-                    featured ? 'text-white/55' : 'text-ink-soft',
-                )}
-            >
-                {billing === 'bulanan'
-                    ? 'Ditagih bulanan, berhenti kapan saja.'
-                    : `Setara Rp${formatRupiah(perMonth)}/bln — dua bulan gratis.`}
-            </p>
-
-            <ul
-                className={cn(
-                    'mt-6 divide-y border-y',
-                    featured
-                        ? 'divide-white/15 border-white/15'
-                        : 'divide-border border-border',
-                )}
-            >
-                {plan.features.map((feature) => (
-                    <li
-                        key={feature}
-                        className="flex items-start gap-2.5 py-2.5"
-                    >
-                        <Check
-                            className={cn(
-                                'mt-0.5 size-4 shrink-0',
-                                featured ? 'text-brand-200' : 'text-link',
-                            )}
-                            aria-hidden="true"
-                        />
-                        <span
-                            className={cn(
-                                'text-sm leading-relaxed',
-                                featured ? 'text-white/85' : 'text-ink',
-                            )}
-                        >
-                            {feature}
-                        </span>
-                    </li>
-                ))}
-            </ul>
-
-            {plan.excluded.length > 0 ? (
-                <ul className="mt-4 space-y-1.5">
-                    {plan.excluded.map((item) => (
-                        <li
-                            key={item}
-                            className={cn(
-                                'flex items-start gap-2 text-xs',
-                                featured ? 'text-white/50' : 'text-ink-soft',
-                            )}
-                        >
-                            <Minus
-                                className="mt-0.5 size-3.5 shrink-0"
-                                aria-hidden="true"
-                            />
-                            <span>Tidak termasuk: {item}</span>
-                        </li>
-                    ))}
-                </ul>
-            ) : null}
-
-            <div className="mt-auto pt-6">
-                <Link
-                    href={href}
-                    className={cn(
-                        'focus-visible:ring-ring inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg px-5 text-sm font-semibold transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-offset-2',
-                        featured
-                            ? 'text-navy hover:bg-brand-50 bg-white'
-                            : 'border-action text-action hover:bg-brand-50 border',
-                    )}
-                >
-                    Mulai trial 14 hari
-                    <ArrowRight className="size-4" aria-hidden="true" />
-                </Link>
-            </div>
-        </article>
-    );
-}
+const FOCUS_RING =
+    'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-ground';
 
 /**
- * Kartu masuk tanpa biaya.
+ * Band Harga — dua sachet paket + strip hemat yang "sobek" (dunia Sachet Pop).
  *
- * Diletakkan sejajar paket berbayar supaya pengunjung yang belum siap
- * membayar tetap melihat jalur mencoba — trial 14 hari dengan cap 30 order,
- * bukan "gratis selamanya" yang tidak benar.
+ * Toggle periodis memakai fieldset + radio NATIF (kontrak test & a11y), bukan
+ * tombol hiasan: `role` dan keyboard behavior gratis dari browser. Hemat
+ * tahunan ditampilkan sebagai tear-strip `fiber-line` miring di kartu — bahasa
+ * bentuk sobekan harga yang ditempel, dengan angka CountUp saat pertama terlihat.
  *
- * @param isAuthenticated - Menentukan tujuan CTA.
+ * Kejujoran dipertahankan: apa yang TIDAK ada di paket ditulis dengan ikon
+ * minus, bukan dihilangkan diam-diam.
  */
-function TrialCard({ isAuthenticated }: { isAuthenticated: boolean }) {
-    const href = isAuthenticated ? dashboard() : register();
-
-    return (
-        <article className="border-border bg-band/60 flex flex-col rounded-2xl border border-dashed p-6 sm:p-7">
-            <div className="flex flex-wrap items-start justify-between gap-2">
-                <h3 className="text-ink text-lg font-bold tracking-[-0.01em]">
-                    Trial
-                </h3>
-                <span className="border-border bg-card text-ink-soft rounded-full border px-2.5 py-1 text-[11px] font-semibold tracking-wide">
-                    Tanpa kartu
-                </span>
-            </div>
-
-            <p className="text-ink-soft mt-1 text-sm leading-relaxed">
-                Untuk mencoba alur penuh sebelum memutuskan.
-            </p>
-
-            <p className="mt-6 flex items-baseline gap-1.5">
-                <span className="text-ink text-4xl font-bold tracking-[-0.03em] tabular-nums">
-                    14 hari
-                </span>
-            </p>
-            <p className="text-ink-soft mt-1 text-xs leading-relaxed tabular-nums">
-                Rp0 · berhenti otomatis bila tidak dilanjutkan.
-            </p>
-
-            <ul className="divide-border border-border mt-6 divide-y border-y">
-                {[
-                    'Semua fitur Basic terbuka',
-                    'Maksimal 30 order selama trial',
-                    '1 outlet, 2 pengguna',
-                ].map((feature) => (
-                    <li
-                        key={feature}
-                        className="flex items-start gap-2.5 py-2.5"
-                    >
-                        <Check
-                            className="text-link mt-0.5 size-4 shrink-0"
-                            aria-hidden="true"
-                        />
-                        <span className="text-ink text-sm leading-relaxed">
-                            {feature}
-                        </span>
-                    </li>
-                ))}
-            </ul>
-
-            <p className="text-ink-soft mt-4 text-xs leading-relaxed">
-                Setelah trial berakhir, data tetap terbaca dan order berjalan
-                tetap bisa diselesaikan.
-            </p>
-
-            <div className="mt-auto pt-6">
-                <Link
-                    href={href}
-                    className="border-action text-action hover:bg-brand-50 focus-visible:ring-ring inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border px-5 text-sm font-semibold transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-offset-2"
-                >
-                    Mulai tanpa kartu
-                    <ArrowRight className="size-4" aria-hidden="true" />
-                </Link>
-            </div>
-        </article>
-    );
-}
-
-/**
- * Band `#harga`: dua paket berbayar + satu jalur trial.
- *
- * Sakelar siklus tagihan memakai `<input type="radio">` asli di dalam
- * `<fieldset>`: panah kiri/kanan bekerja tanpa JavaScript tambahan dan
- * pembaca layar sudah tahu ini satu pilihan. Versi sebelumnya memakai
- * `role="radiogroup"` di atas dua `<button>` tanpa dukungan panah.
- *
- * @param isAuthenticated - Jika true, CTA mengarah ke dashboard.
- */
-export default function MarketingPricing({
-    isAuthenticated = false,
-}: {
-    isAuthenticated?: boolean;
-}) {
+export default function MarketingPricing() {
     const [billing, setBilling] = useState<Billing>('bulanan');
 
     return (
-        <section id="harga" className="scroll-mt-20">
-            <Container className="py-16 sm:py-24">
-                <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
-                    <SectionHeading
-                        index="06"
-                        eyebrow="Harga"
-                        title="Dua paket berbayar, satu trial tanpa kartu"
-                        description="Harga tetap, tanpa biaya tersembunyi. Paket tahunan memotong dua bulan; trial memberi ruang untuk membuktikan alurnya lebih dulu."
-                    />
+        <section id="harga" className="bg-ground scroll-mt-20 py-20 sm:py-24">
+            <Container>
+                <SectionHeading
+                    index="05"
+                    eyebrow="Harga"
+                    title="Dua paket, tanpa jaring tersembunyi"
+                    description="Semua fitur Pro dicoba gratis 14 hari (1 outlet, maks 30 order). Setelah itu pilih sachet yang pas — batennya tertulis apa adanya."
+                    className="mx-auto text-center"
+                />
 
-                    <fieldset className="border-border bg-card inline-flex w-fit shrink-0 items-center rounded-full border p-1">
-                        <legend className="sr-only">Siklus tagihan</legend>
-                        {(['bulanan', 'tahunan'] as const).map((value) => (
-                            <label key={value} className="relative">
+                {/* Toggle periodis: fieldset + radio natif. */}
+                <fieldset className="mt-10 flex justify-center">
+                    <legend className="sr-only">Periode tagihan</legend>
+                    <div className="bg-brand-foam border-line inline-flex rounded-[var(--radius-tear)] border p-1">
+                        {(['bulanan', 'tahunan'] as const).map((mode) => (
+                            <label
+                                key={mode}
+                                className={cn(
+                                    'relative flex min-h-11 cursor-pointer items-center gap-2 rounded-md px-5 text-sm font-bold capitalize transition-colors',
+                                    FOCUS_RING,
+                                    billing === mode
+                                        ? 'bg-action text-action-foreground shadow-card'
+                                        : 'text-ink-soft hover:text-ink',
+                                )}
+                            >
                                 <input
                                     type="radio"
-                                    name="siklus-tagihan"
-                                    value={value}
-                                    checked={billing === value}
-                                    onChange={() => setBilling(value)}
+                                    name="periode-tagihan"
+                                    value={mode}
+                                    checked={billing === mode}
+                                    onChange={() => setBilling(mode)}
                                     className="peer sr-only"
                                 />
-                                <span className="text-ink-soft hover:text-ink peer-checked:bg-action peer-checked:text-action-foreground peer-focus-visible:ring-ring inline-flex min-h-9 cursor-pointer items-center gap-1.5 rounded-full px-4 text-sm font-semibold transition-colors duration-200 peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2">
-                                    {value === 'bulanan'
-                                        ? 'Bulanan'
-                                        : 'Tahunan'}
-                                    {value === 'tahunan' ? (
-                                        <span className="text-[10px] font-bold tracking-wide opacity-80">
-                                            −2 bln
-                                        </span>
-                                    ) : null}
-                                </span>
+                                {mode}
+                                {mode === 'tahunan' ? (
+                                    <span
+                                        className={cn(
+                                            'rounded-full px-2 py-0.5 text-[10px] font-extrabold',
+                                            billing === 'tahunan'
+                                                ? 'bg-white/20 text-white'
+                                                : 'bg-ok-tint text-ok',
+                                        )}
+                                    >
+                                        -2 bln
+                                    </span>
+                                ) : null}
                             </label>
                         ))}
-                    </fieldset>
+                    </div>
+                </fieldset>
+
+                {/* Dua sachet paket. */}
+                <div className="mt-12 grid gap-5 lg:grid-cols-2 lg:gap-6">
+                    {PLANS.map((plan) => {
+                        const price =
+                            billing === 'bulanan'
+                                ? plan.monthlyPrice
+                                : Math.round(plan.annualPrice / 12);
+                        const yearlySaving = plan.monthlyPrice * 12 - plan.annualPrice;
+                        return (
+                            <Card
+                                key={plan.key}
+                                className={cn(
+                                    'relative overflow-hidden gap-0 rounded-[var(--radius-sachet)] border-2 p-6 shadow-card sm:p-8',
+                                    plan.featured
+                                        ? 'bg-sheet border-brand'
+                                        : 'bg-sheet border-line',
+                                )}
+                            >
+                                {/* Tear-strip hemat — hanya saat tahunan. */}
+                                {billing === 'tahunan' ? (
+                                    <div
+                                        aria-label={`Hemat Rp${formatRupiah(yearlySaving)} per tahun`}
+                                        className="fiber-line bg-amber-tint text-ink edge-tear-b absolute top-0 right-0 z-10 flex min-h-11 items-center gap-1.5 rounded-bl-[var(--radius-sachet)] border-b-2 border-l-2 border-amber/50 px-4 py-2 text-xs font-extrabold"
+                                    >
+                                        <Sparkles className="size-3.5" aria-hidden="true" />
+                                        HEMAT Rp
+                                        <CountUp
+                                            to={yearlySaving}
+                                            duration={1}
+                                            separator="."
+                                        />
+                                        /THN
+                                    </div>
+                                ) : null}
+
+                                <div className="flex items-start justify-between gap-3">
+                                    <div>
+                                        <p className="text-ink font-display text-xl leading-tight font-extrabold">
+                                            {plan.name}
+                                        </p>
+                                        <p className="text-ink-soft mt-1 text-sm font-medium">
+                                            {plan.tagline}
+                                        </p>
+                                    </div>
+                                    {plan.featured ? (
+                                        <Badge className="bg-action text-action-foreground">
+                                            Paling cocok multi-outlet
+                                        </Badge>
+                                    ) : null}
+                                </div>
+
+                                <div className="mt-6 flex items-end gap-2 tabular-nums">
+                                    <span className="text-ink font-display text-4xl leading-none font-extrabold sm:text-5xl">
+                                        Rp{formatRupiah(price)}
+                                    </span>
+                                    <span className="text-ink-soft pb-1 text-sm font-semibold">
+                                        /bulan
+                                    </span>
+                                </div>
+                                <p className="text-ink-soft mt-1 text-xs font-medium tabular-nums">
+                                    {billing === 'tahunan'
+                                        ? `Ditagih Rp${formatRupiah(plan.annualPrice)} per tahun`
+                                        : 'Ditagih bulanan, berhenti kapan saja'}
+                                </p>
+
+                                <Separator className="bg-line my-6" />
+
+                                <CardContent className="flex flex-col gap-3 p-0">
+                                    {plan.features.map((f) => (
+                                        <p
+                                            key={f}
+                                            className="text-ink flex items-start gap-2 text-sm font-medium"
+                                        >
+                                            <Check
+                                                className="text-ok mt-0.5 size-4 shrink-0"
+                                                aria-hidden="true"
+                                            />
+                                            {f}
+                                        </p>
+                                    ))}
+                                    {plan.excluded.map((f) => (
+                                        <p
+                                            key={f}
+                                            className="text-ink-soft flex items-start gap-2 text-sm font-medium line-through decoration-line"
+                                        >
+                                            <Minus
+                                                className="mt-0.5 size-4 shrink-0 opacity-60"
+                                                aria-hidden="true"
+                                            />
+                                            {f}
+                                        </p>
+                                    ))}
+                                </CardContent>
+
+                                <Button
+                                    asChild
+                                    size="lg"
+                                    variant={plan.featured ? 'default' : 'outline'}
+                                    className={cn(
+                                        'mt-8 w-full rounded-[var(--radius-tear)] text-sm font-bold',
+                                        plan.featured
+                                            ? 'bg-action text-action-foreground hover:bg-action-strong shadow-[0_4px_0_0_var(--color-action-strong)]'
+                                            : 'border-2 border-action/60 text-action hover:border-action hover:bg-brand-tint',
+                                    )}
+                                >
+                                    <Link href={register()}>
+                                        Mulai 14 Hari Gratis
+                                        <ArrowRight className="size-4" aria-hidden="true" />
+                                    </Link>
+                                </Button>
+                            </Card>
+                        );
+                    })}
                 </div>
 
-                <div className="mt-12 grid items-stretch gap-5 lg:grid-cols-3">
-                    {PLANS.map((plan) => (
-                        <PlanCard
-                            key={plan.key}
-                            plan={plan}
-                            billing={billing}
-                            isAuthenticated={isAuthenticated}
-                        />
-                    ))}
-                    <TrialCard isAuthenticated={isAuthenticated} />
-                </div>
+                <p className="text-ink-soft mt-8 text-center text-xs font-medium">
+                    Trial 14 hari semua fitur Pro · 1 outlet · maksimal 30
+                    order · tanpa kartu kredit. Pajak termasuk; ganti atau
+                    berhenti kapan saja.
+                </p>
             </Container>
         </section>
     );

@@ -1,50 +1,44 @@
+import { CheckCircle, Clock, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-type StatusVariant = 'success' | 'warning' | 'info' | 'neutral' | 'error';
-
 /**
- * StatusBadge — pill status dengan ikon + label.
+ * Status badge - pill sachet kecil berisi ikon + label, untuk status pipeline
+ * (Diterima / Menunggu Persetujuan / Ditolak) maupun sel konten. Varian warna
+ * diikat pada token semantik `@theme` Sachet Pop: ok / warn / wait / bad /
+ * brand-tint / netral. Tidak ada hex polos dan tidak ada kelas skala v3 yang
+ * sudah mati.
  *
- * Status tidak pernah dibawa oleh warna saja: ikon dan teks selalu ada,
- * supaya pembaca dengan buta warna tetap membedakan "Siap Diambil" dan
- * "Selesai". Komponen ini tidak lagi memasang `role="status"` secara
- * default — badge statis bukan live region, dan belasan badge dalam satu
- * halaman akan membanjiri pembaca layar. Kalau status benar-benar berubah
- * dinamis, bungkus dengan `<div aria-live="polite">` di pemakainya.
- *
- * @param variant - Warna status.
+ * @param variant - 'success' | 'warning' | 'info' | 'neutral' | 'brand' | 'bad'
  * @param label - Teks status yang ditampilkan.
  * @param icon - Ikon lucide opsional di depan label.
- * @param className - Kelas tambahan untuk penempatan.
  */
 export function StatusBadge({
     variant = 'info',
     label,
     icon: Icon,
-    className,
 }: {
-    variant?: StatusVariant;
+    variant?: 'success' | 'warning' | 'info' | 'neutral' | 'brand' | 'bad';
     label: string;
     icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-    className?: string;
 }) {
-    const variants: Record<StatusVariant, string> = {
-        success: 'bg-success-tint text-success border-success/25',
-        warning: 'bg-warning-tint text-warning border-warning/25',
-        info: 'bg-brand-50 text-link border-brand-200',
-        neutral: 'bg-band text-ink-soft border-border',
-        error: 'bg-error-tint text-error border-error/25',
+    const base =
+        'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-bold transition-colors duration-200';
+    const variants = {
+        success: 'bg-ok-tint text-ok border-ok/25',
+        warning: 'bg-warn-tint text-warn border-warn/25',
+        info: 'bg-wait-tint text-wait border-wait/25',
+        bad: 'bg-bad-tint text-bad border-bad/25',
+        brand: 'bg-brand-tint text-action border-brand-edge',
+        neutral: 'bg-brand-foam text-ink-soft border-line',
     };
 
     return (
         <span
-            className={cn(
-                'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium whitespace-nowrap',
-                variants[variant],
-                className,
-            )}
+            className={cn(base, variants[variant])}
+            role="status"
+            aria-label={label}
         >
-            {Icon ? <Icon className="size-3.5" aria-hidden="true" /> : null}
+            {Icon && <Icon className="size-3.5" aria-hidden="true" />}
             <span className="tabular-nums">{label}</span>
         </span>
     );

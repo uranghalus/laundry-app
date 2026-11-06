@@ -9,87 +9,105 @@
 
 @theme {
     /*
-     * Keputusan Q10 — Segar Premium (DECISIONS.md) 2026-10-30 — Tipografi.
-     * Plus Jakarta Sans tetap menjadi identitas (Q10 menegaskannya):
-     * geometris-humanist, terbaca di layar HP kecil, heading bold dengan
-     * tracking ketat di halaman marketing.
+     * Keputusan dunia "Sachet Pop — Kemasan Segar" (halaman marketing `/`):
+     * muka tampilan memakai Archivo (lebar, berat) untukDisplay, dan Manrope
+     * untuk body. Keduanya SELF-HOSTING: file woff2 asli ada di
+     * `resources/fonts/` dan didaftarkan lewat `@font-face` di bawah, jadi
+     * halaman tidak bergantung pada stylesheet eksternal maupun platform.
      */
-    --font-sans:
-        'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif,
+    --font-display:
+        'Archivo', 'Manrope', ui-sans-serif, system-ui, sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
+    --font-sans:
+        'Manrope', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
     /*
-     * Keputusan Q10 — Segar Premium (DECISIONS.md) 2026-10-30 — Radius.
-     * 8px input/tombol, 12px kartu, 999px badge; radius kartu premium
-     * mengikuti motif bagian mengambang ("floating band").
+     * Radius dunia sachet: 12–24px. `rounded-lg` (8px) hanya untuk kontrol
+     * kecil di dalam sachet (mis. tab tarik), kartu memakai xl–3xl.
      */
     --radius: 0.5rem;
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
     --radius-sm: calc(var(--radius) - 4px);
-    --radius-card: 0.75rem;
+    --radius-sachet: 1.25rem;
+    --radius-tear: 0.375rem;
 
     /*
-     * Keputusan Q10 — Segar Premium (DECISIONS.md) 2026-10-30 — skala
-     * tipografi marketing. Token ini netral (tidak menyentuh warna atau
-     * radius): dibagikan dengan aplikasi, dibatasi ke atas secara fluid
-     * agar digunakan pada halaman welcome.
+     * Skala tipografi marketing — dibatasi ke atas supaya komponen aplikasi
+     * tidak ikut membesar, dan dibatasi 5.5rem agar tidak pernah melewati
+     * plafon 6rem (craft floor).
      */
-    --text-display-1: clamp(2.5rem, 6vw, 4.5rem);
-    --text-display-2: clamp(2rem, 4.5vw, 3.25rem);
-    --text-display-3: clamp(1.5rem, 3vw, 2.25rem);
-    --text-display-1--line-height: 1.05;
-    --text-display-2--line-height: 1.15;
-    --text-display-3--line-height: 1.25;
+    --text-display-hero: clamp(2.5rem, 6.4vw, 4.75rem);
+    --text-display-hero--line-height: 0.98;
+    --text-display-band: clamp(1.875rem, 4.6vw, 3.25rem);
+    --text-display-band--line-height: 1.04;
+    --text-display-card: clamp(1.25rem, 2.2vw, 1.5rem);
+    --text-display-card--line-height: 1.2;
 
     /*
-     * Repica — "Bukti Terkendali" (DESIGN.md v3, 2026-11-02) — skala merek
-     * kobalt. brand-600 (#266DD3) adalah action ink: fill CTA, teks link,
-     * dan ring fokus. Rasio terukur: #266DD3 di atas putih 4.99:1 (lolos AA
-     * body, tapi tipis); di atas band tint ia turun ke 4.14:1 sehingga teks
-     * biru di dalam band wajib memakai brand-700 (7.1:1). brand-500 hanya
-     * untuk garis, underline, dan dot — tidak pernah jadi teks.
+     * ── Palet dunia "Sachet Pop — Kemasan Segar" ──────────────────────────
+     * Aksen/field dominan: #66C3FF. Catatan kontras: #66C3FF di atas putih
+     * hanya ~1.9:1, jadi TOKEN INI TIDAK PERNAH dipakai sebagai warna teks
+     * di atas permukaan terang — hanya field, garis, tepi, dan sobekan.
+     * Teks biru memakai `--color-action` (#1D4ED8, ≥4.5:1 di atas putih).
      */
-    --color-brand-50: #f2f6fc;
-    --color-brand-100: #e1ebf9;
-    --color-brand-200: #c7daf4;
-    --color-brand-500: #4e8be6;
-    --color-brand-600: #266dd3;
-    --color-brand-700: #1e56a8;
-    --color-brand-900: #163e7a;
+    --color-brand: var(--brand);
+    --color-brand-tint: var(--brand-tint);
+    --color-brand-foam: var(--brand-foam);
+    --color-brand-edge: var(--brand-edge);
 
-    --color-success: #15803d;
-    --color-warning: #b45309;
-    --color-error: #b91c1c;
-
-    /*
-     * Token semantik: nilainya berganti di mode gelap, jadi komponen cukup
-     * memakai `bg-action`, `text-ink`, `bg-band` — tanpa `dark:` per warna.
-     */
+    /* CTA fill, teks tautan, ring fokus — lulus AA di atas putih. */
     --color-action: var(--action);
-    --color-action-hover: var(--action-hover);
+    --color-action-strong: var(--action-strong);
     --color-action-foreground: var(--action-foreground);
     --color-link: var(--link);
+
+    /* Netral kanvas. */
+    --color-ground: var(--ground);
+    --color-sheet: var(--sheet);
+    --color-line: var(--line);
     --color-ink: var(--ink);
     --color-ink-soft: var(--ink-soft);
-    --color-paper: var(--paper);
-    --color-band: var(--band);
-    --color-band-strong: var(--band-strong);
-    --color-navy: var(--navy);
-    --color-navy-soft: var(--navy-soft);
-    --color-success-tint: var(--success-tint);
-    --color-warning-tint: var(--warning-tint);
-    --color-error-tint: var(--error-tint);
 
-    /* Alias lama dipertahankan agar permukaan lain tidak pecah. */
-    --color-ground: var(--ground);
-    --color-band-tint: var(--band);
-    --color-band-tint-deep: var(--band-strong);
+    /* Pastel dekoratif — selalu berpasangan dengan teks AA-safe. */
+    --color-violet: var(--violet);
+    --color-mint: var(--mint);
+    --color-rose: var(--rose);
+    --color-amber: var(--amber);
+    --color-violet-tint: var(--violet-tint);
+    --color-mint-tint: var(--mint-tint);
+    --color-rose-tint: var(--rose-tint);
+    --color-amber-tint: var(--amber-tint);
 
-    /* Elevasi: satu bayangan lembut per permukaan, tidak pernah ditumpuk. */
-    --shadow-band: 0 4px 24px -2px rgb(15 23 42 / 0.08);
-    --shadow-lift: 0 10px 28px -6px rgb(15 23 42 / 0.12);
+    /* Malam: field biru berpendar. */
+    --color-night: var(--night);
+    --color-night-soft: var(--night-soft);
+    --color-night-line: var(--night-line);
+    --color-night-ink: var(--night-ink);
+    --color-night-ink-soft: var(--night-ink-soft);
+    --color-night-brand: var(--night-brand);
+
+    /*
+     * Status pipeline — setiap status WAJIB ikon + label + warna, dan teks
+     * di atas tint-anya lulus AA. Varian gelap ditukar di blok `.dark`.
+     */
+    --color-ok: var(--ok);
+    --color-ok-tint: var(--ok-tint);
+    --color-warn: var(--warn);
+    --color-warn-tint: var(--warn-tint);
+    --color-wait: var(--wait);
+    --color-wait-tint: var(--wait-tint);
+    --color-bad: var(--bad);
+    --color-bad-tint: var(--bad-tint);
+
+    /*
+     * Elevasi: offset + blur LEMBUT saja, tanpa bayangan blok keras. Satu
+     * tingkat per permukaan, tidak pernah ditumpuk.
+     */
+    --shadow-card: var(--elevation-card);
+    --shadow-pop: var(--elevation-pop);
 
     --color-background: var(--background);
     --color-foreground: var(--foreground);
@@ -129,164 +147,351 @@
 }
 
 /*
- * Repica — "Bukti Terkendali" (DESIGN.md v3, 2026-11-02) — mode terang.
- * Kanvas editorial hampir putih (#FCFCFD) dengan tinta slate; kobalt
- * #266DD3 membawa semua aksi. Kertas hangat (#FAF8F4) hanya dipakai di
- * dalam artefak bukti/nota, bukan sebagai latar halaman — supaya rasa
- * "dokumen fisik" tetap jadi aksen, bukan suasana.
+ * ── Font self-hosted ────────────────────────────────────────────────────
+ * Archivo (variable: wght 400–900, wdth dipatok 125% = lebar) untuk judul;
+ * Manrope (variable: wght 200–800) untuk body. Subset latin cukup untuk
+ * Bahasa Indonesia; `font-display: swap` menjaga teks langsung terbaca.
+ */
+@font-face {
+    font-family: 'Archivo';
+    font-style: normal;
+    font-weight: 400 900;
+    font-stretch: 125%;
+    font-display: swap;
+    src: url('../fonts/archivo-latin.woff2') format('woff2');
+    unicode-range:
+        U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+        U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+        U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: 'Manrope';
+    font-style: normal;
+    font-weight: 200 800;
+    font-display: swap;
+    src: url('../fonts/manrope-latin.woff2') format('woff2');
+    unicode-range:
+        U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+        U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+        U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/*
+ * Repica — "Sachet Pop — Kemasan Segar" — mode terang.
+ * Kanvas off-white #FBFCFE, field biru #66C3FF melimpah sebagai bidang/garis,
+ * tinta slate untuk keterbacaan AA, action ink #1D4ED8 untuk semua aksi.
  */
 :root {
-    --ground: #fcfcfd;
-    --band: #eef3fb;
-    --band-strong: #e1ebf9;
-    --paper: #faf8f4;
-    --navy: #0e1b2e;
-    --navy-soft: #16263d;
+    --brand: #66c3ff;
+    --brand-tint: #e0f2fe;
+    --brand-foam: #f0f9ff;
+    --brand-edge: #bfe3ff;
+
+    --action: #1d4ed8;
+    --action-strong: #1e3a8a;
+    --action-foreground: #ffffff;
+    --link: #1d4ed8;
+
+    --ground: #fbfcfe;
+    --sheet: #ffffff;
+    --line: #e2e8f0;
     --ink: #0f172a;
     --ink-soft: #475569;
-    --action: #266dd3;
-    --action-hover: #1e56a8;
-    --action-foreground: #ffffff;
-    --link: #1e56a8;
-    --success-tint: #dcfce7;
-    --warning-tint: #fef3c7;
-    --error-tint: #fee2e2;
 
-    --background: #fcfcfd;
+    --violet: #8b5cf6;
+    --mint: #34d399;
+    --rose: #fb7185;
+    --amber: #fbbf24;
+    --violet-tint: #f1ebfe;
+    --mint-tint: #e4f8f0;
+    --rose-tint: #feecef;
+    --amber-tint: #fdf3dd;
+
+    --night: #0b1b33;
+    --night-soft: #12263f;
+    --night-line: #1d3a5c;
+    --night-ink: #eaf3fb;
+    --night-ink-soft: #a7c0da;
+    --night-brand: #57b6f2;
+
+    --ok: #15803d;
+    --ok-tint: #dcfce7;
+    --warn: #b45309;
+    --warn-tint: #fef3c7;
+    --wait: #1d4ed8;
+    --wait-tint: #e0f2fe;
+    --bad: #b91c1c;
+    --bad-tint: #fee2e2;
+
+    --elevation-card:
+        0 1px 2px -1px rgb(15 23 42 / 0.12),
+        0 4px 14px -6px rgb(15 23 42 / 0.12);
+    --elevation-pop:
+        0 2px 4px -2px rgb(15 23 42 / 0.14),
+        0 14px 32px -10px rgb(15 23 42 / 0.18);
+
+    --bloom: rgb(102 195 255 / 0.5);
+    --fiber: rgb(255 255 255 / 0.85);
+    --sheen-a: rgb(255 255 255 / 0.26);
+    --sheen-b: rgb(11 27 51 / 0.14);
+
+    --background: #fbfcfe;
     --foreground: #0f172a;
     --card: #ffffff;
     --card-foreground: #0f172a;
     --popover: #ffffff;
     --popover-foreground: #0f172a;
 
-    --primary: #266dd3;
+    --primary: #1d4ed8;
     --primary-foreground: #ffffff;
 
-    --secondary: #e1ebf9;
-    --secondary-foreground: #1e56a8;
+    --secondary: #e0f2fe;
+    --secondary-foreground: #0f172a;
 
-    --muted: #eef3fb;
-    --muted-foreground: #64748b;
-    --accent: #eef3fb;
-    --accent-foreground: #1e56a8;
+    --muted: #f1f5f9;
+    --muted-foreground: #475569;
+    --accent: #66c3ff;
+    --accent-foreground: #0f172a;
 
     --destructive: #b91c1c;
     --destructive-foreground: #ffffff;
 
-    --border: #e3e8f0;
-    --input: #e3e8f0;
-    --ring: #266dd3;
+    --border: #e2e8f0;
+    --input: #e2e8f0;
+    --ring: #1d4ed8;
 
-    --chart-1: #266dd3;
-    --chart-2: #1e56a8;
-    --chart-3: #4e8be6;
-    --chart-4: #b45309;
-    --chart-5: #b91c1c;
+    --chart-1: #66c3ff;
+    --chart-2: #fb7185;
+    --chart-3: #8b5cf6;
+    --chart-4: #34d399;
+    --chart-5: #fbbf24;
 
     --sidebar: #ffffff;
     --sidebar-foreground: #0f172a;
-    --sidebar-primary: #266dd3;
+    --sidebar-primary: #1d4ed8;
     --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #eef3fb;
-    --sidebar-accent-foreground: #1e56a8;
-    --sidebar-border: #e3e8f0;
-    --sidebar-ring: #266dd3;
+    --sidebar-accent: #e0f2fe;
+    --sidebar-accent-foreground: #0f172a;
+    --sidebar-border: #e2e8f0;
+    --sidebar-ring: #1d4ed8;
 }
 
 /*
- * Repica — "Bukti Terkendali" (DESIGN.md v3, 2026-11-02) — mode gelap.
- * Slate-navy dingin agar satu dunia dengan kobalt. Fill aksi tetap #266DD3
- * (putih di atasnya 4.99:1), sementara teks biru naik ke #8AB6F5 agar
- * terbaca di latar gelap; brand-500 tidak pernah jadi teks di mode terang,
- * dan di mode gelap ia hanya dipakai sebagai garis.
+ * Mode gelap: ground malam #0B1B33 dengan field biru yang menyala. Semua
+ * token semantik dipasangkan agar toggle tema tetap bekerja tanpa varian
+ * `dark:` per warna di komponen.
  */
 .dark {
-    --ground: #070b12;
-    --band: #101a2b;
-    --band-strong: #16233a;
-    --paper: #141c28;
-    --navy: #0b1626;
-    --navy-soft: #121f33;
-    --ink: #f1f5f9;
-    --ink-soft: #94a3b8;
-    --action: #266dd3;
-    --action-hover: #3a7ee2;
+    --brand: #57b6f2;
+    --brand-tint: #13314f;
+    --brand-foam: #102a44;
+    --brand-edge: #24547d;
+
+    --action: #2563eb;
+    --action-strong: #1d4ed8;
     --action-foreground: #ffffff;
-    --link: #8ab6f5;
-    --success-tint: #052e16;
-    --warning-tint: #451a03;
-    --error-tint: #450a0a;
+    --link: #a8d4ff;
 
-    --background: #070b12;
-    --foreground: #f1f5f9;
-    --card: #0f172a;
-    --card-foreground: #f1f5f9;
-    --popover: #0f172a;
-    --popover-foreground: #f1f5f9;
+    --ground: #0b1b33;
+    --sheet: #12263f;
+    --line: #1d3a5c;
+    --ink: #eaf3fb;
+    --ink-soft: #a7c0da;
 
-    --primary: #266dd3;
+    --violet: #a78bfa;
+    --mint: #6ee7b7;
+    --rose: #fda4af;
+    --amber: #fcd34d;
+    --violet-tint: #241b3d;
+    --mint-tint: #102e26;
+    --rose-tint: #33161d;
+    --amber-tint: #35270c;
+
+    --night: #0b1b33;
+    --night-soft: #12263f;
+    --night-line: #1d3a5c;
+    --night-ink: #eaf3fb;
+    --night-ink-soft: #a7c0da;
+    --night-brand: #57b6f2;
+
+    --ok: #86efac;
+    --ok-tint: #052e16;
+    --warn: #fcd34d;
+    --warn-tint: #3a2703;
+    --wait: #a8d4ff;
+    --wait-tint: #10233d;
+    --bad: #fca5a5;
+    --bad-tint: #3d0d0d;
+
+    --elevation-card:
+        0 1px 2px -1px rgb(0 0 0 / 0.5), 0 4px 14px -6px rgb(0 0 0 / 0.55);
+    --elevation-pop:
+        0 2px 4px -2px rgb(0 0 0 / 0.55), 0 14px 32px -10px rgb(0 0 0 / 0.65);
+
+    --bloom: rgb(87 182 242 / 0.32);
+    --fiber: rgb(234 243 251 / 0.5);
+
+    --background: #0b1b33;
+    --foreground: #eaf3fb;
+    --card: #12263f;
+    --card-foreground: #eaf3fb;
+    --popover: #12263f;
+    --popover-foreground: #eaf3fb;
+
+    --primary: #2563eb;
     --primary-foreground: #ffffff;
 
-    --secondary: #16233a;
-    --secondary-foreground: #f1f5f9;
+    --secondary: #13314f;
+    --secondary-foreground: #eaf3fb;
 
-    --muted: #16233a;
-    --muted-foreground: #94a3b8;
-    --accent: #163e7a;
-    --accent-foreground: #e1ebf9;
+    --muted: #13314f;
+    --muted-foreground: #a7c0da;
+    --accent: #57b6f2;
+    --accent-foreground: #0b1b33;
 
-    --destructive: #b91c1c;
-    --destructive-foreground: #ffffff;
+    --destructive: #fca5a5;
+    --destructive-foreground: #450a0a;
 
-    --border: #1e2a3d;
-    --input: #1e2a3d;
-    --ring: #8ab6f5;
+    --border: #1d3a5c;
+    --input: #1d3a5c;
+    --ring: #a8d4ff;
 
-    --chart-1: #8ab6f5;
-    --chart-2: #4e8be6;
-    --chart-3: #c7daf4;
-    --chart-4: #b45309;
-    --chart-5: #b91c1c;
+    --chart-1: #57b6f2;
+    --chart-2: #fda4af;
+    --chart-3: #a78bfa;
+    --chart-4: #6ee7b7;
+    --chart-5: #fcd34d;
 
-    --sidebar: #0f172a;
-    --sidebar-foreground: #f1f5f9;
-    --sidebar-primary: #266dd3;
+    --sidebar: #12263f;
+    --sidebar-foreground: #eaf3fb;
+    --sidebar-primary: #2563eb;
     --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #163e7a;
-    --sidebar-accent-foreground: #e1ebf9;
-    --sidebar-border: #1e2a3d;
-    --sidebar-ring: #8ab6f5;
-}
-
-@layer base {
-    * {
-        @apply border-border;
-    }
-
-    body {
-        @apply bg-background text-foreground;
-    }
-
-    /*
-     * Keputusan Q10 — Segar Premium (DECISIONS.md) 2026-10-30: semua
-     * angka memakai tabular-nums agar Rupiah dan nomor order sejajar
-     * vertikal; halaman marketing memakainya lewat utility class.
-     */
-    table,
-    [data-numeric] {
-        font-variant-numeric: tabular-nums;
-    }
+    --sidebar-accent: #13314f;
+    --sidebar-accent-foreground: #eaf3fb;
+    --sidebar-border: #1d3a5c;
+    --sidebar-ring: #a8d4ff;
 }
 
 /*
- * Gerak masuk saat scroll — tanpa dependency JS (lihat keputusan Q6a).
- * Native CSS scroll-driven animation; dimatikan total bila pengguna
- * meminta reduced motion (a11y yang diikat oleh Q10 untuk halaman publik).
+ * Bloom kedekatan kursor di field warna (mis. bidang hero). Div ini tidak
+ * menggambar apa pun sendiri: ia hanya memindahkan titik pusat radial
+ * mengikuti posisi pointer, jadi tetap murah di HP Android entry-level.
+ * Digabungkan sebagai latar di atas field lewat utility `field-bloom`.
  */
+@utility field-bloom {
+    background-image: radial-gradient(
+        22rem 22rem at var(--bloom-x, 50%) var(--bloom-y, 26%),
+        var(--bloom),
+        transparent 72%
+    );
+}
+
+@utility reveal-soft {
+    animation: reveal-up 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/*
+ * Bahasa bentuk "sobekan sachet". Gigi tidak merata (bukan segitiga periodik)
+ * supaya terasa robekan tangan, bukan bordiran. Persentase mengikuti tinggi
+ * elemen, jadi amplitude mengecil di bar pendek (nav) dan membesar di sachet.
+ */
+@utility edge-tear-b {
+    clip-path: polygon(
+        0% 0%,
+        100% 0%,
+        100% 97%,
+        97% 92.5%,
+        94% 98.5%,
+        91% 93%,
+        88% 99%,
+        84% 94.5%,
+        81% 92%,
+        78% 98%,
+        74% 93.5%,
+        71% 99.5%,
+        68% 94%,
+        64% 92.5%,
+        61% 98.5%,
+        58% 93%,
+        54% 99%,
+        51% 94.5%,
+        48% 92%,
+        44% 97.5%,
+        41% 93.5%,
+        38% 99.5%,
+        34% 94%,
+        31% 92.5%,
+        28% 98%,
+        24% 93.5%,
+        21% 99%,
+        18% 94%,
+        14% 92.5%,
+        11% 98.5%,
+        8% 93.5%,
+        5% 99%,
+        2% 95%,
+        0% 97%
+    );
+}
+
+@utility edge-tear-t {
+    clip-path: polygon(
+        0% 3%,
+        2% 5%,
+        5% 1%,
+        8% 6.5%,
+        11% 1.5%,
+        14% 7.5%,
+        18% 6%,
+        21% 1%,
+        24% 6.5%,
+        28% 2%,
+        31% 7.5%,
+        34% 6%,
+        38% 0.5%,
+        41% 6.5%,
+        44% 2.5%,
+        48% 8%,
+        51% 5.5%,
+        54% 1%,
+        58% 7%,
+        61% 1.5%,
+        64% 7.5%,
+        68% 6%,
+        71% 0.5%,
+        74% 6.5%,
+        78% 2%,
+        81% 8%,
+        84% 5.5%,
+        88% 1%,
+        91% 7%,
+        94% 1.5%,
+        97% 7.5%,
+        100% 3%,
+        100% 100%,
+        0% 100%
+    );
+}
+
+/*
+ * Serat pada garis robekan: strip tipis bertekstur yang diletakkan di
+ * sepanjang bibir sobekan sachet. Hanya dekorasi (aria-hidden).
+ */
+@utility fiber-line {
+    background-image: repeating-linear-gradient(
+        90deg,
+        var(--fiber),
+        var(--fiber) 2px,
+        transparent 2px,
+        transparent 5px
+    );
+}
+
 @keyframes reveal-up {
     from {
         opacity: 0;
-        transform: translateY(1.5rem);
+        transform: translateY(1.25rem);
     }
 
     to {
@@ -295,41 +500,79 @@
     }
 }
 
-@utility reveal {
-    animation: reveal-up both;
-    animation-timeline: view();
-    animation-range: entry 0% entry 35%;
-}
+@layer base {
+    * {
+        @apply border-border;
+    }
 
-/* `@utility` tidak boleh bersarang di dalam media query, jadi penolakan
-   reduced-motion ditulis sebagai selector biasa yang muncul setelahnya. */
-@media (prefers-reduced-motion: reduce) {
-    .reveal {
-        animation: none;
+    body {
+        @apply bg-background text-foreground antialiased;
+    }
+
+    /*
+     * Semua angka uang/nomor order memakai tabular-nums agar sejajar vertikal
+     * (R-FE-008); komponen memakainya lewat utility `tabular-nums`.
+     */
+    table,
+    [data-numeric] {
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* Ring fokus terlihat & konsisten: indikator keyboard tidak pernah hilang. */
+    :focus-visible {
+        outline: 2px solid var(--ring);
+        outline-offset: 2px;
+    }
+
+    /* Tautan memakai warna aksi dan jarak garis bawah yang dibaca manusiawi. */
+    a {
+        text-underline-offset: 0.25em;
+    }
+
+    html {
+        scrollbar-color: var(--brand-edge) var(--ground);
+        scroll-behavior: smooth;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        html {
+            scroll-behavior: auto;
+        }
+    }
+
+    ::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--ground);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--brand-edge);
+        border: 3px solid var(--ground);
+        border-radius: 999px;
+    }
+
+    /* Seleksi teks & caret ikut palet dunia sachet, bukan bawaan browser. */
+    ::selection {
+        background: var(--brand);
+        color: #08203a;
+    }
+
+    .dark ::selection {
+        background: var(--night-brand);
+        color: #07172b;
+    }
+
+    * {
+        caret-color: var(--action);
     }
 }
 
-/*
- * Permukaan browser yang jarang distyling (craft floor): seleksi teks dan
- * caret ikut palet brand — sinyal termurah bahwa halaman ini dibangun,
- * bukan dirakit.
- */
-::selection {
-    background-color: #266dd3;
-    color: #ffffff;
-}
-
-.dark ::selection {
-    background-color: #8ab6f5;
-    color: #0b1626;
-}
-
-input,
-textarea {
-    caret-color: #266dd3;
-}
-
-.dark input,
-.dark textarea {
-    caret-color: #8ab6f5;
+@media (prefers-reduced-motion: reduce) {
+    .reveal-soft {
+        animation: none;
+    }
 }

@@ -1,21 +1,82 @@
-import { Plus } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
 import { Container, SectionHeading } from '@/components/marketing/layout';
+import { cn } from '@/lib/utils';
 
 /**
- * Jawaban atas keberatan nyata pembeli dari PRD §1/§5 dan DECISIONS.md.
+ * FAQ dengan disclosure native (`<details>`/`<summary>`) — jawaban sudah ada
+ * di DOM (bisa dicari Ctrl+F), screen-reader friendly tanpa JavaScript, dan
+ * tanpa primitive accordion baru (Rules.md: primitive hanya lewat shadcn CLI).
+ * Versi sachet: tiap pertanyaan adalah kemasan kecil bersobekan; membuka =
+ * sobek sachet-nya.
  *
- * Semua jawaban sudah ada di DOM lewat `<details>` — bisa dicari Ctrl+F dan
- * terbaca pembaca layar tanpa JavaScript.
+ * Semua pertanyaan menjawab keberatan nyata pembeli dari PRD §1/§5 + keputusan
+ * DECISIONS.md (bukan interview marketing); maksimal 8 item. Indikator buka/
+ * tutup memakai ikon + rotasi (bukan hanya warna), teks tetap `text-ink` AA.
  */
-const FAQS = [
+export default function MarketingFaq() {
+    return (
+        <section id="faq" className="bg-ground scroll-mt-20 border-t border-line py-20 sm:py-24">
+            <Container>
+                <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-14">
+                    <SectionHeading
+                        index="06"
+                        eyebrow="FAQ"
+                        title="Pertanyaan yang benar-benar ditanyakan pemilik laundry"
+                        description="Jawaban langsung dari spesifikasi produk, bukan klaim pemasaran. Ada yang belum terjawab? Buka WhatsApp kami di bawah halaman."
+                    />
+
+                    <ul className="flex max-w-2xl flex-col gap-3">
+                        {FAQS.map(({ question, answer }, index) => (
+                            <li key={question}>
+                                <details
+                                    className={cn(
+                                        'bg-sheet border-line group rounded-[var(--radius-sachet)] border-2 transition-shadow duration-200',
+                                        'open:shadow-pop',
+                                    )}
+                                >
+                                    <summary
+                                        className={cn(
+                                            'flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 px-5 py-4',
+                                            'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-ground rounded-[calc(var(--radius-sachet)-2px)]',
+                                            '[&::-webkit-details-marker]:hidden',
+                                        )}
+                                    >
+                                        <span className="text-ink text-sm font-bold sm:text-base">
+                                            {question}
+                                        </span>
+                                        <span
+                                            aria-hidden="true"
+                                            className="bg-brand-tint text-action flex size-7 shrink-0 items-center justify-center rounded-full transition-transform duration-200 group-open:rotate-180"
+                                        >
+                                            <ChevronDown className="size-4" />
+                                        </span>
+                                    </summary>
+                                    <p
+                                        id={`faq-${index}-content`}
+                                        className="text-ink-soft border-line mx-5 mb-5 border-t pt-4 text-sm leading-relaxed font-medium"
+                                    >
+                                        {answer}
+                                    </p>
+                                </details>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </Container>
+        </section>
+    );
+}
+
+/** Konten produk-true dari PRD §1/§5 + DECISIONS.md — tanpa klaim rekaan. */
+const FAQS: Array<{ question: string; answer: string }> = [
     {
         question: 'Berapa lama setup dari daftar sampai bisa dipakai?',
         answer: 'Di bawah 30 menit. Anda mendaftar, memilih single atau multi-outlet, mengisi 3 data outlet (nama, alamat, nomor WhatsApp), lalu memilih paket. Tidak ada instalasi apa pun — semua lewat browser di HP maupun laptop.',
     },
     {
         question: 'Kalau WhatsApp pelanggan tidak aktif, apa jadinya?',
-        answer: 'Notifikasi otomatis jatuh ke SMS sebagai cadangan. Jika keduanya gagal, status tetap muncul di dashboard staf sebagai pengingat manual. Tautan persetujuan bukti kondisi hanya dikirim ke nomor yang pelanggan berikan sendiri.',
+        answer: 'Notifikasi otomatis jatuh ke SMS sebagai cadangan. Jika keduanya gagal, status tetap muncul di dashboard staff sebagai pengingat manual. Link approval bukti kondisi hanya dikirim ke nomor yang pelanggan berikan sendiri.',
     },
     {
         question: 'Apakah data laundry saya bisa dibaca laundry lain?',
@@ -31,68 +92,10 @@ const FAQS = [
     },
     {
         question: 'Bagaimana sengketa baju rusak dihindari?',
-        answer: 'Foto kondisi awal + watermark + persetujuan WhatsApp; owner punya pembelaan berbasis bukti dalam jejak audit.',
+        answer: 'Foto kondisi awal berwatermark + persetujuan WhatsApp + jejak audit per aksi: owner punya pembelaan berbasis bukti, bukan ingatan bersama.',
     },
     {
         question: 'Siapa yang boleh void transaksi?',
-        answer: 'Hanya yang punya role yang diizinkan, dan setiap aksi kritis tercatat dalam audit log (siapa, kapan, dari apa ke apa).',
-    },
-    {
-        question: 'Bukti kondisi disimpan berapa lama?',
-        answer: 'Bukti kondisi disimpan selama 12 bulan, dapat diakses kapan saja untuk pembelaan sengketa.',
+        answer: 'Hanya peran yang diizinkan (RBAC per outlet), dan setiap aksi kritis tercatat di audit log — siapa, kapan, dari apa ke apa.',
     },
 ];
-
-/**
- * Band `#faq` dengan disclosure native.
- *
- * Tidak ada `useState` di dalam `.map()` (pelanggaran aturan hook), tidak ada
- * `aria-expanded`/`aria-controls` yang menduplikasi perilaku bawaan
- * `<details>`, dan ikon plus hanya berputar — teks pertanyaan tetap menjadi
- * satu-satunya pembawa makna.
- *
- * @param items - Daftar pasangan pertanyaan/jawaban (opsional).
- */
-export default function MarketingFaq({
-    items = FAQS,
-}: {
-    items?: Array<{ question: string; answer: string }>;
-}) {
-    return (
-        <section
-            id="faq"
-            aria-label="Pertanyaan yang sering diajukan"
-            className="border-border scroll-mt-20 border-t"
-        >
-            <Container className="py-16 sm:py-24">
-                <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start lg:gap-16">
-                    <SectionHeading
-                        index="07"
-                        eyebrow="FAQ"
-                        title="Yang biasanya ditanyakan sebelum mulai"
-                        description="Jawaban langsung dari spesifikasi produk, bukan klaim pemasaran. Ada yang belum terjawab? Buka WhatsApp kami di bagian bawah halaman."
-                    />
-
-                    <div className="border-border divide-border divide-y border-y">
-                        {items.map(({ question, answer }) => (
-                            <details key={question} className="group">
-                                <summary className="focus-visible:ring-ring -mx-2 flex cursor-pointer list-none items-start justify-between gap-4 rounded-lg px-2 py-4 focus-visible:ring-2 focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">
-                                    <span className="text-ink text-sm font-semibold tracking-[-0.01em] sm:text-base">
-                                        {question}
-                                    </span>
-                                    <Plus
-                                        className="text-link mt-0.5 size-4 shrink-0 transition-transform duration-200 group-open:rotate-45 motion-reduce:transition-none"
-                                        aria-hidden="true"
-                                    />
-                                </summary>
-                                <p className="text-ink-soft pr-8 pb-5 text-sm leading-relaxed">
-                                    {answer}
-                                </p>
-                            </details>
-                        ))}
-                    </div>
-                </div>
-            </Container>
-        </section>
-    );
-}
