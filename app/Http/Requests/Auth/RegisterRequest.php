@@ -5,11 +5,12 @@ namespace App\Http\Requests\Auth;
 use App\Concerns\ProfileValidationRules;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 /**
- * Request untuk registrasi tenant baru
- * Validasi: nama, email, password, nomor HP, tipe bisnis
+ * Request untuk registrasi akun owner baru.
+ *
+ * Hanya memvalidasi data akun. Data bisnis dan outlet diisi pada langkah
+ * onboarding setelah nomor HP terverifikasi.
  */
 class RegisterRequest extends FormRequest
 {
@@ -24,7 +25,7 @@ class RegisterRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request.
+     * Aturan validasi data akun.
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
@@ -33,17 +34,13 @@ class RegisterRequest extends FormRequest
         return [
             'name' => $this->nameRules(),
             'email' => $this->emailRules(),
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
             'phone' => ['required', 'string', 'max:20', 'regex:/^(\+62|62|0)8[1-9][0-9]{7,10}$/'],
-            'business_type' => ['required', Rule::in(['single', 'multi'])],
-            'outlet_name' => ['required', 'string', 'max:255'],
-            'outlet_address' => ['required', 'string'],
-            'outlet_whatsapp_number' => ['required', 'string', 'max:20', 'regex:/^(\+62|62|0)8[1-9][0-9]{7,10}$/'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
         ];
     }
 
     /**
-     * Get custom messages for validator errors.
+     * Pesan validasi khusus.
      *
      * @return array<string, string>
      */
@@ -51,9 +48,6 @@ class RegisterRequest extends FormRequest
     {
         return [
             'phone.regex' => 'Nomor HP harus berformat Indonesia (contoh: 081234567890 atau 6281234567890)',
-            'outlet_whatsapp_number.regex' => 'Nomor WhatsApp outlet harus berformat Indonesia',
-            'business_type.in' => 'Tipe bisnis harus single atau multi',
-            'password.confirmed' => 'Konfirmasi password tidak cocok',
         ];
     }
 }

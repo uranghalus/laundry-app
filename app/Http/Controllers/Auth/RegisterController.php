@@ -2,110 +2,76 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\OtpPurpose;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
-use App\Models\Outlet;
-use App\Models\SubscriptionPlan;
-use App\Models\Tenant;
 use App\Models\User;
+use App\Services\Otp\OtpService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 use Inertia\Response;
 
 /**
- * Controller untuk registrasi tenant baru
- * Alur: Register -> OTP WhatsApp -> Onboarding (pilih tipe bisnis + setup outlet) -> Pilih Plan
+ * Controller untuk registrasi akun owner baru.
+ *
+ * Alur: daftar akun -> verifikasi OTP nomor HP -> onboarding tipe bisnis
+ * dan setup outlet. Tenant dan outlet belum dibuat pada langkah ini.
  */
 class RegisterController extends Controller
 {
     /**
-     * Tampilkan halaman registrasi
+     * Tampilkan halaman registrasi akun.
      */
     public function create(): Response
     {
-        return Inertia::render('auth/register');
+        return Inertia::render('auth/register', [
+            'passwordRules' => Password::defaults()->toPasswordRulesString(),
+        ]);
     }
 
     /**
-     * Proses registrasi tenant baru
-     * Membuat tenant, outlet pertama, owner user, dan subscription trial
+     * Buat akun owner tanpa tenant atau outlet, lalu terbitkan OTP nomor HP.
      */
-    public function store(RegisterRequest $request): RedirectResponse
+    public function store(RegisterRequest $request, OtpService $otpService): RedirectResponse
     {
         $validated = $request->validated();
+        $phone = $this->normalizePhone($validated['phone']);
 
-        return DB::transaction(function () use ($validated) {
-            // 1. Buat tenant
-            $tenant = Tenant::create([
-                'name' => $validated['name'],
-                'business_type' => $validated['business_type'],
-                'status' => 'trial',
-            ]);
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'phone' => $phone,
+            'role' => 'owner',
+            'status' => 'active',
+            'tenant_id' => null,
+            'outlet_id' => null,
+        ]);
 
-            // 2. Buat outlet pertama
-            $outlet = Outlet::create([
-                'tenant_id' => $tenant->id,
-                'name' => $validated['outlet_name'],
-                'address' => $validated['outlet_address'],
-                'whatsapp_number' => $this->normalizePhone($validated['outlet_whatsapp_number']),
-                'operating_hours' => [
-                    'open' => '08:00',
-                    'close' => '21:00',
-                ],
-            ]);
+        event(new Registered($user));
 
-            // 3. Buat user owner
-            $user = User::create([
-                'name' => $validated['name'],
-                'email' => $validated['email'],
-                'password' => Hash::make($validated['password']),
-                'phone' => $this->normalizePhone($validated['phone']),
-                'role' => 'owner',
-                'status' => 'active',
-                'tenant_id' => $tenant->id,
-                'outlet_id' => $outlet->id,
-                'email_verified_at' => now(), // Skip email verification for now, use WhatsApp OTP
-            ]);
+        Auth::login($user);
 
-            // 4. Buat subscription trial (14 hari)
-            $basicPlan = SubscriptionPlan::where('name', 'Basic')->firstOrFail();
-            $tenant->subscription()->create([
-                'plan_id' => $basicPlan->id,
-                'status' => 'trial',
-                'start_date' => now(),
-                'end_date' => now()->addDays(14),
-            ]);
+        $otpService->issue($phone, OtpPurpose::Register);
 
-            // 5. Fire registered event
-            event(new Registered($user));
-
-            // 6. Login user
-            Auth::login($user);
-
-            // 7. Redirect ke halaman pemilihan plan (atau dashboard jika sudah ada plan)
-            return redirect()->route('onboarding.plan');
-        });
+        return redirect()->route('onboarding.verify');
     }
 
     /**
-     * Normalisasi nomor telepon ke format 628xxxxxxxxxx
+     * Normalisasi nomor telepon ke format 628xxxxxxxxxx.
      */
     private function normalizePhone(string $phone): string
     {
         $phone = preg_replace('/[^0-9]/', '', $phone);
 
         if (str_starts_with($phone, '0')) {
-            $phone = '62'.substr($phone, 1);
-        } elseif (str_starts_with($phone, '62')) {
-            // Already in correct format
-        } elseif (str_starts_with($phone, '8')) {
-            $phone = '62'.$phone;
+            return '62'.substr($phone, 1);
         }
 
-        return $phone;
+        return str_starts_with($phone, '8') ? '62'.$phone : $phone;
     }
 }
