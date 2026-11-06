@@ -23,11 +23,21 @@ class Outlet extends Model
         'address',
         'whatsapp_number',
         'operating_hours',
+        'write_enabled',
     ];
 
     protected $casts = [
         'operating_hours' => 'array',
+        'write_enabled' => 'boolean',
     ];
+
+    /**
+     * Cek apakah outlet menerima perubahan data operasional.
+     */
+    public function isWritable(): bool
+    {
+        return $this->write_enabled;
+    }
 
     /**
      * Relasi ke tenant

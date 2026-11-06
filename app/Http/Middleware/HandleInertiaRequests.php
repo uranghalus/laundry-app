@@ -37,6 +37,7 @@ class HandleInertiaRequests extends Middleware
     {
         $user = $request->user();
         $tenant = $user?->tenant;
+        $subscription = $tenant?->subscription()->latest('id')->first();
 
         return [
             ...parent::share($request),
@@ -47,7 +48,8 @@ class HandleInertiaRequests extends Middleware
             'tenant' => $tenant,
             'role' => $user?->role,
             'outlets' => $tenant?->outlets ?? [],
-            'subscription' => $tenant ? $tenant->subscription()->latest('id')->first() : null,
+            'subscription' => $subscription,
+            'can_write' => $subscription !== null && ! $subscription->isExpired(),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }
