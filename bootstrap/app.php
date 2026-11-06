@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureOutletWritable;
+use App\Http\Middleware\EnsurePhoneVerified;
 use App\Http\Middleware\EnsureSubscriptionActive;
 use App\Http\Middleware\EnsureTenantContext;
 use App\Http\Middleware\EnsureTenantIsTrial;
@@ -29,6 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'tenant.context' => EnsureTenantContext::class,
+            'phone.verified' => EnsurePhoneVerified::class,
             'tenant.trial' => EnsureTenantIsTrial::class,
             'subscription.active' => EnsureSubscriptionActive::class,
             'outlet.writable' => EnsureOutletWritable::class,

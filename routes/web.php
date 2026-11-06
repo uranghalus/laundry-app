@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\OnboardingController;
+use App\Http\Controllers\Auth\OtpVerificationController;
 use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Support\Facades\Route;
 
@@ -10,6 +11,13 @@ Route::inertia('/', 'welcome')->name('home');
 Route::middleware('guest')->group(function () {
     Route::get('/register', [RegisterController::class, 'create'])->name('register');
     Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
+});
+
+// Authenticated routes yang belum memerlukan tenant (verifikasi nomor HP)
+Route::middleware('auth')->group(function () {
+    Route::get('/onboarding/verify', [OtpVerificationController::class, 'show'])->name('onboarding.verify');
+    Route::post('/onboarding/verify', [OtpVerificationController::class, 'verify'])->name('onboarding.verify.store');
+    Route::post('/onboarding/verify/resend', [OtpVerificationController::class, 'resend'])->name('onboarding.verify.resend');
 });
 
 // Authenticated routes
