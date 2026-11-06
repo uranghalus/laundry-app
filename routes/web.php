@@ -13,7 +13,7 @@ Route::middleware('guest')->group(function () {
 });
 
 // Authenticated routes
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'tenant.context'])->group(function () {
     // Onboarding routes (hanya untuk tenant trial)
     Route::middleware('tenant.trial')->group(function () {
         Route::get('/onboarding/plan', [OnboardingController::class, 'plan'])->name('onboarding.plan');

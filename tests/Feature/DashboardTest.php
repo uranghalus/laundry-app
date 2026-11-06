@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Outlet;
+use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -18,7 +20,23 @@ class DashboardTest extends TestCase
 
     public function test_authenticated_users_can_visit_the_dashboard()
     {
-        $user = User::factory()->create();
+        $tenant = Tenant::create([
+            'name' => 'Tenant Test',
+            'business_type' => 'single',
+            'status' => 'active',
+        ]);
+
+        $outlet = Outlet::create([
+            'tenant_id' => $tenant->id,
+            'name' => 'Outlet Test',
+            'address' => 'Jl. Contoh No. 1',
+            'whatsapp_number' => '081200000001',
+        ]);
+
+        $user = User::factory()->create([
+            'tenant_id' => $tenant->id,
+            'outlet_id' => $outlet->id,
+        ]);
         $this->actingAs($user);
 
         $response = $this->get(route('dashboard'));

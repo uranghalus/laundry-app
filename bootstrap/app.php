@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureTenantContext;
 use App\Http\Middleware\EnsureTenantIsTrial;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -25,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
+            'tenant.context' => EnsureTenantContext::class,
             'tenant.trial' => EnsureTenantIsTrial::class,
         ]);
     })
