@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Concerns\PasswordValidationRules;
 use App\Concerns\ProfileValidationRules;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -14,14 +15,31 @@ use Illuminate\Foundation\Http\FormRequest;
  */
 class RegisterRequest extends FormRequest
 {
+    use PasswordValidationRules;
     use ProfileValidationRules;
 
     /**
-     * Determine if the user is authorized to make this request.
+     * Menentukan apakah user berhak mengirim request ini.
      */
     public function authorize(): bool
     {
         return true;
+    }
+
+    /**
+     * Membuang pemisah umum pada nomor HP sebelum validasi.
+     *
+     * User sering menulis nomor dengan spasi, tanda hubung, atau titik.
+     */
+    protected function prepareForValidation(): void
+    {
+        if (! is_string($this->input('phone'))) {
+            return;
+        }
+
+        $this->merge([
+            'phone' => (string) preg_replace('/[\s\-().]/', '', $this->input('phone')),
+        ]);
     }
 
     /**
@@ -35,7 +53,7 @@ class RegisterRequest extends FormRequest
             'name' => $this->nameRules(),
             'email' => $this->emailRules(),
             'phone' => ['required', 'string', 'max:20', 'regex:/^(\+62|62|0)8[1-9][0-9]{7,10}$/'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => $this->passwordRules(),
         ];
     }
 

@@ -86,4 +86,35 @@ class RegistrationTest extends TestCase
         $response->assertSessionHasErrors('phone');
         $this->assertDatabaseMissing('users', ['email' => 'test@example.com']);
     }
+
+    public function test_phone_separators_are_stripped_before_validation(): void
+    {
+        $response = $this->post(route('register.store'), [
+            'name' => 'Test User',
+            'email' => 'format@example.com',
+            'phone' => '0812-3456-7890',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ]);
+
+        $response->assertSessionHasNoErrors();
+        $this->assertDatabaseHas('users', [
+            'email' => 'format@example.com',
+            'phone' => '6281234567890',
+        ]);
+    }
+
+    public function test_short_password_is_rejected(): void
+    {
+        $response = $this->from(route('register'))->post(route('register.store'), [
+            'name' => 'Test User',
+            'email' => 'weak@example.com',
+            'phone' => '081234567890',
+            'password' => 'pendek',
+            'password_confirmation' => 'pendek',
+        ]);
+
+        $response->assertSessionHasErrors('password');
+        $this->assertDatabaseMissing('users', ['email' => 'weak@example.com']);
+    }
 }
