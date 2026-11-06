@@ -2,12 +2,15 @@
 
 namespace App\Providers;
 
+use App\Contracts\OtpSender;
+use App\Services\Otp\LogOtpSender;
 use App\Support\CurrentTenant;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use InvalidArgumentException;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -18,6 +21,15 @@ class AppServiceProvider extends ServiceProvider
     {
         // Satu instance per request/job agar context tenant konsisten.
         $this->app->scoped(CurrentTenant::class, fn (): CurrentTenant => new CurrentTenant);
+
+        $this->app->bind(OtpSender::class, function (): OtpSender {
+            $driver = config('services.otp.driver');
+
+            return match ($driver) {
+                'log' => new LogOtpSender,
+                default => throw new InvalidArgumentException("Driver OTP tidak dikenal: {$driver}"),
+            };
+        });
     }
 
     /**

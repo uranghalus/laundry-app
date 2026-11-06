@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    'otp' => [
+        'driver' => env('OTP_DRIVER', 'log'),
+        'code_ttl' => (int) env('OTP_CODE_TTL', 300),
+        'resend_cooldown' => (int) env('OTP_RESEND_COOLDOWN', 60),
+        'max_attempts' => (int) env('OTP_MAX_ATTEMPTS', 5),
+    ],
+
 ];
