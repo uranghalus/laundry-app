@@ -21,6 +21,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property string|null $phone
+ * @property Carbon|null $phone_verified_at
  * @property string|null $two_factor_secret
  * @property string|null $two_factor_recovery_codes
  * @property Carbon|null $two_factor_confirmed_at
@@ -48,6 +49,7 @@ class User extends Authenticatable implements PasskeyUser
     {
         return [
             'email_verified_at' => 'datetime',
+            'phone_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
             'role' => 'string',
@@ -101,6 +103,14 @@ class User extends Authenticatable implements PasskeyUser
     public function isKasir(): bool
     {
         return $this->role === 'kasir';
+    }
+
+    /**
+     * Cek apakah nomor HP user sudah terverifikasi lewat OTP.
+     */
+    public function hasVerifiedPhone(): bool
+    {
+        return $this->phone_verified_at !== null;
     }
 
     /**
