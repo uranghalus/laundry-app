@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\BusinessTypeController;
 use App\Http\Controllers\Auth\OnboardingController;
 use App\Http\Controllers\Auth\OtpVerificationController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -13,11 +14,20 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
 });
 
-// Authenticated routes yang belum memerlukan tenant (verifikasi nomor HP)
+// Authenticated routes yang belum memerlukan tenant (wizard onboarding)
 Route::middleware('auth')->group(function () {
     Route::get('/onboarding/verify', [OtpVerificationController::class, 'show'])->name('onboarding.verify');
     Route::post('/onboarding/verify', [OtpVerificationController::class, 'verify'])->name('onboarding.verify.store');
     Route::post('/onboarding/verify/resend', [OtpVerificationController::class, 'resend'])->name('onboarding.verify.resend');
+
+    // Index onboarding: mengarahkan user ke langkah wizard yang sedang berjalan.
+    Route::get('/onboarding', [BusinessTypeController::class, 'index'])->name('onboarding.index');
+
+    // Langkah tipe bisnis: butuh nomor HP yang sudah terverifikasi.
+    Route::middleware('phone.verified')->group(function () {
+        Route::get('/onboarding/business', [BusinessTypeController::class, 'show'])->name('onboarding.business');
+        Route::post('/onboarding/business', [BusinessTypeController::class, 'store'])->name('onboarding.business.store');
+    });
 });
 
 // Authenticated routes
