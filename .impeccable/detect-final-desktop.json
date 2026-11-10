@@ -1,0 +1,110 @@
+[
+    {
+        "antipattern": "low-contrast",
+        "name": "Low contrast text",
+        "description": "Text does not meet WCAG AA contrast requirements (4.5:1 for body, 3:1 for large text). Increase the contrast between text and background.",
+        "severity": "advisory",
+        "category": "quality",
+        "file": "http://127.0.0.1:8010",
+        "line": 0,
+        "snippet": "1.4:1 (need 4.5:1) ÔÇö text #d7d4ce on #faf6ee",
+        "advisory": true,
+        "selector": "div.\\[transform-style\\:preserve-3d\\].relative > div.relative > div.bg-sheet.border-line:nth-of-type(1) > div.bg-paper.relative > div.absolute.inset-0:nth-of-type(2) > p.text-ink.font-mono:nth-of-type(1)"
+    },
+    {
+        "antipattern": "text-occlusion",
+        "name": "Text occluded by an overlapping element",
+        "description": "Text is painted under an opaque element or a second text run, so part of it cannot be read. A decorative box, a stacked layer, or an inline element with leaked padding lands on the words instead of beside them. Give overlapping layers room, or move the text out from under the layer above it.",
+        "severity": "advisory",
+        "category": "quality",
+        "file": "http://127.0.0.1:8010",
+        "line": 0,
+        "snippet": "p.text-ink.font-mono.text-[11px].font-bold.tracking-[0.16em].whitespace-nowrap.uppercase \"Outlet Gambir ┬À 15:32 ┬À \" is 35% covered by an opaque element (div.bg-sheet.border-line.shadow-card.max-w-xs.rounded-lg.rounded-tl-sm.border.p-3.5.absolute.top-[36%].right-0.w-[17rem].rotate-[1.8deg].sm:-right-6)",
+        "advisory": true,
+        "selector": "div.\\[transform-style\\:preserve-3d\\].relative > div.relative > div.bg-sheet.border-line:nth-of-type(1) > div.bg-paper.relative > div.absolute.inset-0:nth-of-type(2) > p.text-ink.font-mono:nth-of-type(1)"
+    },
+    {
+        "antipattern": "low-contrast",
+        "name": "Low contrast text",
+        "description": "Text does not meet WCAG AA contrast requirements (4.5:1 for body, 3:1 for large text). Increase the contrast between text and background.",
+        "severity": "advisory",
+        "category": "quality",
+        "file": "http://127.0.0.1:8010",
+        "line": 0,
+        "snippet": "1.4:1 (need 4.5:1) ÔÇö text #d7d4ce on #faf6ee",
+        "advisory": true,
+        "selector": "div.\\[transform-style\\:preserve-3d\\].relative > div.relative > div.bg-sheet.border-line:nth-of-type(1) > div.bg-paper.relative > div.absolute.inset-0:nth-of-type(2) > p.text-ink.font-mono:nth-of-type(2)"
+    },
+    {
+        "antipattern": "text-occlusion",
+        "name": "Text occluded by an overlapping element",
+        "description": "Text is painted under an opaque element or a second text run, so part of it cannot be read. A decorative box, a stacked layer, or an inline element with leaked padding lands on the words instead of beside them. Give overlapping layers room, or move the text out from under the layer above it.",
+        "severity": "advisory",
+        "category": "quality",
+        "file": "http://127.0.0.1:8010",
+        "line": 0,
+        "snippet": "p.text-ink.font-mono.text-[11px].font-bold.tracking-[0.16em].whitespace-nowrap.uppercase \"Outlet Gambir ┬À 15:32 ┬À \" is 63% covered by overlapping text (p.text-ink.font-mono.text-[11px].font-bold.tracking-[0.16em].whitespace-nowrap.uppercase)",
+        "advisory": true,
+        "selector": "div.\\[transform-style\\:preserve-3d\\].relative > div.relative > div.bg-sheet.border-line:nth-of-type(1) > div.bg-paper.relative > div.absolute.inset-0:nth-of-type(2) > p.text-ink.font-mono:nth-of-type(2)"
+    },
+    {
+        "antipattern": "low-contrast",
+        "name": "Low contrast text",
+        "description": "Text does not meet WCAG AA contrast requirements (4.5:1 for body, 3:1 for large text). Increase the contrast between text and background.",
+        "severity": "advisory",
+        "category": "quality",
+        "file": "http://127.0.0.1:8010",
+        "line": 0,
+        "snippet": "1.4:1 (need 4.5:1) ÔÇö text #d7d4ce on #faf6ee",
+        "advisory": true,
+        "selector": "div.\\[transform-style\\:preserve-3d\\].relative > div.relative > div.bg-sheet.border-line:nth-of-type(1) > div.bg-paper.relative > div.absolute.inset-0:nth-of-type(2) > p.text-ink.font-mono:nth-of-type(3)"
+    },
+    {
+        "antipattern": "text-occlusion",
+        "name": "Text occluded by an overlapping element",
+        "description": "Text is painted under an opaque element or a second text run, so part of it cannot be read. A decorative box, a stacked layer, or an inline element with leaked padding lands on the words instead of beside them. Give overlapping layers room, or move the text out from under the layer above it.",
+        "severity": "advisory",
+        "category": "quality",
+        "file": "http://127.0.0.1:8010",
+        "line": 0,
+        "snippet": "p.text-ink.font-mono.text-[11px].font-bold.tracking-[0.16em].whitespace-nowrap.uppercase \"Outlet Gambir ┬À 15:32 ┬À \" is 68% covered by overlapping text (p.text-ink.font-mono.text-[11px].font-bold.tracking-[0.16em].whitespace-nowrap.uppercase)",
+        "advisory": true,
+        "selector": "div.\\[transform-style\\:preserve-3d\\].relative > div.relative > div.bg-sheet.border-line:nth-of-type(1) > div.bg-paper.relative > div.absolute.inset-0:nth-of-type(2) > p.text-ink.font-mono:nth-of-type(3)"
+    },
+    {
+        "antipattern": "low-contrast",
+        "name": "Low contrast text",
+        "description": "Text does not meet WCAG AA contrast requirements (4.5:1 for body, 3:1 for large text). Increase the contrast between text and background.",
+        "severity": "advisory",
+        "category": "quality",
+        "file": "http://127.0.0.1:8010",
+        "line": 0,
+        "snippet": "1.4:1 (need 4.5:1) ÔÇö text #d7d4ce on #faf6ee",
+        "advisory": true,
+        "selector": "div.relative.w-full > div.bg-sheet.border-line > div.bg-paper.relative > div.absolute.inset-0:nth-of-type(2) > p.text-ink.font-mono:nth-of-type(1)"
+    },
+    {
+        "antipattern": "low-contrast",
+        "name": "Low contrast text",
+        "description": "Text does not meet WCAG AA contrast requirements (4.5:1 for body, 3:1 for large text). Increase the contrast between text and background.",
+        "severity": "advisory",
+        "category": "quality",
+        "file": "http://127.0.0.1:8010",
+        "line": 0,
+        "snippet": "1.4:1 (need 4.5:1) ÔÇö text #d7d4ce on #faf6ee",
+        "advisory": true,
+        "selector": "div.relative.w-full > div.bg-sheet.border-line > div.bg-paper.relative > div.absolute.inset-0:nth-of-type(2) > p.text-ink.font-mono:nth-of-type(2)"
+    },
+    {
+        "antipattern": "low-contrast",
+        "name": "Low contrast text",
+        "description": "Text does not meet WCAG AA contrast requirements (4.5:1 for body, 3:1 for large text). Increase the contrast between text and background.",
+        "severity": "advisory",
+        "category": "quality",
+        "file": "http://127.0.0.1:8010",
+        "line": 0,
+        "snippet": "1.4:1 (need 4.5:1) ÔÇö text #d7d4ce on #faf6ee",
+        "advisory": true,
+        "selector": "div.relative.w-full > div.bg-sheet.border-line > div.bg-paper.relative > div.absolute.inset-0:nth-of-type(2) > p.text-ink.font-mono:nth-of-type(3)"
+    }
+]

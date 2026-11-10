@@ -204,6 +204,40 @@ Semua angka adalah **hipotesis eksplisit**, bukan komitmen — fungsinya supaya 
 
 ---
 
+## Q11 - Desain welcome publik `/`: kunci arah "Buku Bukti" (2026-11-09)
+
+**Keputusan:** Arah desain halaman **welcome publik `/`** dikunci ulang sebagai **"Buku Bukti"** (Evidence Ledger), menggantikan Q10 "Segar Premium" serta dua eksplorasi antara yang tidak pernah dicatat di dokumen ini (v3 "Bukti Terkendali" kobalt `#266DD3`, v5 "KryptonLab Technical" cerulean glassmorphism). Token, aturan, tipografi, dan urutan band di bawah mengikat implementasi; `DESIGN.md` v6 adalah sumber kebenaran visualnya.
+
+**Token warna:**
+
+| Token           | Nilai                             | Fungsi / batasan                                             |
+| --------------- | --------------------------------- | ------------------------------------------------------------ |
+| ground          | `#FAF9F6`                         | latar halaman (kertas hangat)                                |
+| sheet           | `#FFFFFF`                         | lembar isi / band berbingkai `border-y`                      |
+| paper           | `#FAF6EE`                         | **hanya** di dalam artefak bukti (nota), bukan latar halaman |
+| line            | `#E3DFD6`                         | garis 1px, motif buku besar                                  |
+| line-strong     | `#C9C2B4`                         | garis penekanan / scrollbar                                  |
+| ink             | `#121417`                         | teks utama — 17.52:1 di atas ground                          |
+| ink-soft        | `#5C6169`                         | teks sekunder — 5.92:1                                       |
+| action          | `#0B6EA8`                         | semua elemen interaktif — 5.51:1 dua arah terhadap putih     |
+| action-strong   | `#09597F`                         | hover aksi                                                   |
+| graphic         | `#008DD5`                         | **grafik/garis saja** — 3.64:1 di putih, tidak pernah teks   |
+| ok / warn / bad | `#0F7A4D` / `#8A5A00` / `#B42318` | status + tint masing-masing                                  |
+| night           | `#0E1A24`                         | tiga bidang gelap: pipeline, panel Pro, CTA penutup          |
+| night-accent    | `#7FB8D9`                         | tautan di bidang gelap — 8.19:1                              |
+
+**Tipografi:** Manrope self-hosted sebagai satu-satunya keluarga huruf (display = body; hierarki via berat/ukuran), mono sistem hanya untuk ID/waktu/angka teknis. Skala display: hero `clamp(2.75rem, 7.4vw, 6rem)`, band `clamp(2rem, 4.8vw, 3.75rem)`. Judul band tanpa kicker.
+
+**Aturan yang mengikat:** One-Action (satu kobalt untuk semua aksi) · Graphic-Only Cerulean · Paper-Is-An-Object · Three-Dark-Fields · No-Kicker · tanpa glassmorphism · radius 4/6/8/12px · teks fungsional ≥11px · target sentuh ≥44px · semua data contoh berlabel ("Contoh", "Ilustrasi alur · data contoh") · tidak ada metrik palsu.
+
+**Interaktivitas (React Bits lokal):** `fade-content`, `spotlight-card`, `tilt-card`, `marquee`, `count-up` — implementasi sendiri tanpa dependensi baru, `motion` + `lucide-react` saja. Demo alur bukti interaktif (Foto → Persetujuan WA → Stempel) adalah "Ilustrasi alur · data contoh", bukan konsol live palsu.
+
+**Urutan band:** Hero (+ marquee) → Problems ledger → Proof band `#fitur` → Dark status stepper `#cara-kerja` → Integrations → Pricing `#harga` (Pro panel gelap, annual menampilkan total + hemat persis) → FAQ `#faq` → CTA footer.
+
+**Supersede:** Q10 (Segar Premium), keputusan vault v3 "Bukti Terkendali" (2026-11-02) dan v5 "KryptonLab Technical" (2026-11-06). `DESIGN.md` v5 tidak lagi menjadi acuan. Kontak WhatsApp tetap config-driven (`siteConfig.whatsappUrl = null`) sampai nomor produksi ada.
+
+---
+
 ## Status Blokir
 
 Dengan Q1, Q3, Q4, Q9 terjawab, prasyarat "tidak boleh mulai coding Subscription & Billing (6.5) dan Onboarding (6.1)" di Section 10 PRD **terpenuhi** — tinggal owner mengonfirmasi/mengoverride keputusan di atas. Q2, Q5, Q6, Q7, Q8 tidak memblokir coding, tapi Q5 punya lead time verifikasi Meta yang perlu dimulai cepat.

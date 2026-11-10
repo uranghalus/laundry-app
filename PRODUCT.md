@@ -38,7 +38,7 @@ Undecided: detail UI tier gate, rentang timeout approval default 2 jam configura
 
 ## Brand Commitments
 
-Nama brand: Repica. Visual direction: "Bukti Terkendali" — kanvas editorial terang, garis rambut, artefak nota bukti kondisi, dan tepat dua bidang navy (Pipeline + CTA penutup). Referensi BukuWarung/BukuKas, Linear/Notion, WhatsApp Business. Palet utama kobalt #266DD3 (aksi) dengan #1E56A8 untuk teks di atas tint, netral slate, amber untuk high-risk/pending. Tipografi Plus Jakarta Sans. Mode terang dan gelap sama-sama didukung; tidak ada glassmorphism. Sumber kebenaran visual: DESIGN.md v3.
+Nama brand: Repica. Visual direction: **"Buku Bukti"** (Evidence Ledger) — halaman dibaca sebagai buku catatan operasional: kertas hangat, garis buku besar, artefak nota bukti kondisi, satu kobalt aksi, dan tiga bidang gelap terbatas (Pipeline, panel Pro, CTA penutup). Tipografi Manrope self-hosted (satu keluarga huruf). Mode terang dan gelap sama-sama didukung; tanpa glassmorphism, tanpa metrik palsu, data contoh selalu berlabel. Sumber kebenaran visual: DESIGN.md v6. Nomor WhatsApp produksi dan entitas legal belum ada — kontak WA bersifat config-driven (`siteConfig.whatsappUrl = null`) dan halaman legal tidak dibuat sampai datanya nyata.
 
 ## Evidence on Hand
 
