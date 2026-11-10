@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
 use App\Services\Otp\OtpService;
+use App\Support\PhoneNumber;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -63,15 +64,12 @@ class RegisterController extends Controller
 
     /**
      * Normalisasi nomor telepon ke format 628xxxxxxxxxx.
+     *
+     * Sumber kebenaran normalisasi berpindah ke App\Support\PhoneNumber agar
+     * langkah outlet (dan modul lanjutan) menulis nomor dengan aturan sama.
      */
     private function normalizePhone(string $phone): string
     {
-        $phone = preg_replace('/[^0-9]/', '', $phone);
-
-        if (str_starts_with($phone, '0')) {
-            return '62'.substr($phone, 1);
-        }
-
-        return str_starts_with($phone, '8') ? '62'.$phone : $phone;
+        return PhoneNumber::normalize($phone);
     }
 }

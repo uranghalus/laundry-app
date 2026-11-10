@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\BusinessTypeController;
 use App\Http\Controllers\Auth\OnboardingController;
+use App\Http\Controllers\Auth\OnboardingOutletController;
 use App\Http\Controllers\Auth\OtpVerificationController;
 use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Support\Facades\Route;
@@ -23,10 +24,13 @@ Route::middleware('auth')->group(function () {
     // Index onboarding: mengarahkan user ke langkah wizard yang sedang berjalan.
     Route::get('/onboarding', [BusinessTypeController::class, 'index'])->name('onboarding.index');
 
-    // Langkah tipe bisnis: butuh nomor HP yang sudah terverifikasi.
+    // Langkah tipe bisnis dan outlet pertama: butuh nomor HP yang sudah terverifikasi.
     Route::middleware('phone.verified')->group(function () {
         Route::get('/onboarding/business', [BusinessTypeController::class, 'show'])->name('onboarding.business');
         Route::post('/onboarding/business', [BusinessTypeController::class, 'store'])->name('onboarding.business.store');
+
+        Route::get('/onboarding/outlet', [OnboardingOutletController::class, 'show'])->name('onboarding.outlet');
+        Route::post('/onboarding/outlet', [OnboardingOutletController::class, 'store'])->name('onboarding.outlet.store');
     });
 });
 
