@@ -87,7 +87,7 @@ export default function ProblemsLedger() {
                                     <div className="md:col-span-5">
                                         <div className="flex items-start gap-4">
                                             <div className="flex shrink-0 flex-col items-center gap-2">
-                                                <span className="bg-muted text-ink flex size-11 items-center justify-center rounded-md">
+                                                <span className="bg-graphic-tint text-action-text flex size-11 items-center justify-center rounded-md">
                                                     <Icon
                                                         className="size-5"
                                                         aria-hidden="true"

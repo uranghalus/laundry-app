@@ -41,7 +41,11 @@ export default function MarketingCtaFooter({
         <footer className="bg-night text-night-ink">
             <Container className="py-20 sm:py-24">
                 <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
-                    <div className="lg:col-span-8">
+                    <div className="relative lg:col-span-8">
+                        <div
+                            className="bg-action/10 absolute -top-1/3 -right-1/4 h-[40%] w-[40%] rounded-full mix-blend-overlay blur-[96px]"
+                            aria-hidden="true"
+                        />
                         <h2 className="text-display-band font-display font-extrabold tracking-tight text-balance">
                             Mulai hari ini.{' '}
                             <span className="text-night-accent">

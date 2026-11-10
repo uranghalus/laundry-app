@@ -71,10 +71,10 @@ export default function ProofBand() {
                                         key={item.label}
                                         delay={index * 0.06}
                                     >
-                                        <SpotlightCard className="border-line border-b">
+                                        <SpotlightCard className="border-line border-graphic-tint/20 border-b">
                                             <div className="grid grid-cols-[auto_1fr] gap-4 px-1 py-6 sm:gap-5">
                                                 <div className="flex flex-col items-center gap-3">
-                                                    <span className="bg-muted text-ink flex size-11 items-center justify-center rounded-md">
+                                                    <span className="bg-graphic-tint text-action-text flex size-11 items-center justify-center rounded-md">
                                                         <Icon
                                                             className="size-5"
                                                             aria-hidden="true"

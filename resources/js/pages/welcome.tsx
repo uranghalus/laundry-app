@@ -43,7 +43,14 @@ export default function Welcome() {
     };
 
     return (
-        <div className="welcome-page bg-ground text-ink min-h-screen">
+        <div className="welcome-page bg-ground text-ink relative min-h-screen overflow-hidden">
+            <div
+                className="pointer-events-none absolute inset-0 -z-10"
+                aria-hidden="true"
+            >
+                <div className="bg-action/8 absolute top-[-5%] right-[-10%] h-[30%] w-[30%] rounded-full mix-blend-overlay blur-[160px]" />
+                <div className="bg-graphic-tint absolute bottom-[-10%] left-[-8%] h-[35%] w-[35%] rounded-full mix-blend-overlay blur-[120px]" />
+            </div>
             <Head title="Repica — Manajemen Laundry dengan Bukti Kondisi">
                 <meta
                     content="Repica mencatat order, foto kondisi, persetujuan pelanggan, dan kas harian dalam satu buku. Sengketa laundry selesai dengan bukti, bukan ingatan. Trial 14 hari tanpa kartu kredit."

@@ -135,7 +135,7 @@ export default function MarketingPricing({
                                   includedText: 'text-night-ink',
                               }
                             : {
-                                  card: 'bg-sheet text-ink border-line',
+                                  card: 'bg-sheet text-ink border-line border-graphic-tint/20',
                                   tagline: 'text-ink-soft',
                                   meta: 'border-line text-ink-soft',
                                   rule: 'border-line',

@@ -64,7 +64,7 @@ export default function MarketingIntegrations() {
                             >
                                 <div className="flex h-full flex-col justify-between gap-8 p-6 sm:p-8">
                                     <div className="flex items-start justify-between gap-4">
-                                        <span className="bg-ink text-ground flex size-12 items-center justify-center rounded-md">
+                                        <span className="bg-action text-action-foreground hover:bg-action-strong flex size-12 items-center justify-center rounded-md transition-colors">
                                             <Icon
                                                 className="size-5"
                                                 aria-hidden="true"

@@ -49,6 +49,13 @@ export default function MarketingHero({
     return (
         <section className="bg-ground relative overflow-hidden">
             <div
+                className="pointer-events-none absolute inset-0 -z-10"
+                aria-hidden="true"
+            >
+                <div className="bg-action/10 absolute top-[-10%] left-[-10%] h-[40%] w-[40%] rounded-full mix-blend-overlay blur-[120px]" />
+                <div className="bg-graphic-tint absolute right-[-10%] bottom-[-15%] h-[35%] w-[35%] rounded-full mix-blend-overlay blur-[100px]" />
+            </div>
+            <div
                 aria-hidden="true"
                 className="ledger-grid pointer-events-none absolute inset-0 opacity-60"
             />

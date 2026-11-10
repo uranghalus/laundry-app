@@ -93,7 +93,7 @@ export default function MarketingFaq() {
                                     key={item.question}
                                     ref={index === 0 ? firstItemRef : undefined}
                                     className={cn(
-                                        'border-line group border-b transition-colors',
+                                        'border-line group border-graphic-tint/30 group-open:border-graphic-tint border-b transition-colors',
                                         'open:bg-paper',
                                     )}
                                 >
