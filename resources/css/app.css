@@ -9,114 +9,96 @@
 
 @theme {
     /*
-     * Keputusan dunia "Sachet Pop — Kemasan Segar" (halaman marketing `/`):
-     * muka tampilan memakai Archivo (lebar, berat) untukDisplay, dan Manrope
-     * untuk body. Keduanya SELF-HOSTING: file woff2 asli ada di
-     * `resources/fonts/` dan didaftarkan lewat `@font-face` di bawah, jadi
-     * halaman tidak bergantung pada stylesheet eksternal maupun platform.
+     * Repica — "Buku Bukti" (Evidence Ledger).
+     *
+     * Satu keluarga huruf untuk seluruh halaman: Manrope (self-hosted), dengan
+     * sumbu berat 200–800. Judul memakai berat 800 dan tracking rapat; teks isi
+     * memakai 400–600. Mono sistem hanya untuk ID order, waktu, dan angka
+     * teknis — bukan sebagai kostum "technical".
      */
     --font-display:
-        'Archivo', 'Manrope', ui-sans-serif, system-ui, sans-serif,
-        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-        'Noto Color Emoji';
+        'Manrope', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
     --font-sans:
         'Manrope', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
         'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-mono:
+        ui-monospace, 'SFMono-Regular', 'Menlo', 'Consolas', 'Liberation Mono',
+        monospace;
 
     /*
-     * Radius dunia sachet: 12–24px. `rounded-lg` (8px) hanya untuk kontrol
-     * kecil di dalam sachet (mis. tab tarik), kartu memakai xl–3xl.
+     * Bahasa bentuk: 4 / 6 / 8 / 12 px saja. Tidak ada radius metaforis.
      */
     --radius: 0.5rem;
-    --radius-lg: var(--radius);
-    --radius-md: calc(var(--radius) - 2px);
-    --radius-sm: calc(var(--radius) - 4px);
-    --radius-sachet: 1.25rem;
-    --radius-tear: 0.375rem;
+    --radius-sm: 0.25rem;
+    --radius-md: 0.375rem;
+    --radius-lg: 0.5rem;
+    --radius-xl: 0.75rem;
+    --radius-2xl: 0.75rem;
+    --radius-3xl: 0.75rem;
 
     /*
-     * Skala tipografi marketing — dibatasi ke atas supaya komponen aplikasi
-     * tidak ikut membesar, dan dibatasi 5.5rem agar tidak pernah melewati
-     * plafon 6rem (craft floor).
+     * Skala tipografi editorial.
      */
-    --text-display-hero: clamp(2.5rem, 6.4vw, 4.75rem);
-    --text-display-hero--line-height: 0.98;
-    --text-display-band: clamp(1.875rem, 4.6vw, 3.25rem);
-    --text-display-band--line-height: 1.04;
-    --text-display-card: clamp(1.25rem, 2.2vw, 1.5rem);
-    --text-display-card--line-height: 1.2;
+    --text-display-hero: clamp(2.75rem, 7.4vw, 6rem);
+    --text-display-hero--line-height: 0.94;
+    --text-display-hero--letter-spacing: -0.035em;
+    --text-display-band: clamp(2rem, 4.8vw, 3.75rem);
+    --text-display-band--line-height: 0.98;
+    --text-display-band--letter-spacing: -0.03em;
+    --text-display-card: clamp(1.25rem, 2.1vw, 1.625rem);
+    --text-display-card--line-height: 1.12;
+    --text-display-lead: clamp(1.25rem, 2.2vw, 1.75rem);
+    --text-display-lead--line-height: 1.35;
 
     /*
-     * ── Palet dunia "Sachet Pop — Kemasan Segar" ──────────────────────────
-     * Aksen/field dominan: #66C3FF. Catatan kontras: #66C3FF di atas putih
-     * hanya ~1.9:1, jadi TOKEN INI TIDAK PERNAH dipakai sebagai warna teks
-     * di atas permukaan terang — hanya field, garis, tepi, dan sobekan.
-     * Teks biru memakai `--color-action` (#1D4ED8, ≥4.5:1 di atas putih).
+     * ── Palet "Buku Bukti" ────────────────────────────────────────────────
+     * Kertas hangat sebagai kanvas, tinta hampir hitam, satu tinta aksi
+     * kobalt (#0B6EA8, 5.51:1 dua arah), dan cerulean hanya untuk grafik.
      */
-    --color-brand: var(--brand);
-    --color-brand-tint: var(--brand-tint);
-    --color-brand-foam: var(--brand-foam);
-    --color-brand-edge: var(--brand-edge);
-
-    /* CTA fill, teks tautan, ring fokus — lulus AA di atas putih. */
-    --color-action: var(--action);
-    --color-action-strong: var(--action-strong);
-    --color-action-foreground: var(--action-foreground);
-    --color-link: var(--link);
-
-    /* Netral kanvas. */
     --color-ground: var(--ground);
     --color-sheet: var(--sheet);
+    --color-paper: var(--paper);
     --color-line: var(--line);
+    --color-line-strong: var(--line-strong);
     --color-ink: var(--ink);
     --color-ink-soft: var(--ink-soft);
 
-    /* Pastel dekoratif — selalu berpasangan dengan teks AA-safe. */
-    --color-violet: var(--violet);
-    --color-mint: var(--mint);
-    --color-rose: var(--rose);
-    --color-amber: var(--amber);
-    --color-violet-tint: var(--violet-tint);
-    --color-mint-tint: var(--mint-tint);
-    --color-rose-tint: var(--rose-tint);
-    --color-amber-tint: var(--amber-tint);
+    --color-action: var(--action);
+    --color-action-strong: var(--action-strong);
+    --color-action-text: var(--action-text);
+    --color-action-foreground: var(--action-foreground);
 
-    /* Malam: field biru berpendar. */
-    --color-night: var(--night);
-    --color-night-soft: var(--night-soft);
-    --color-night-line: var(--night-line);
-    --color-night-ink: var(--night-ink);
-    --color-night-ink-soft: var(--night-ink-soft);
-    --color-night-brand: var(--night-brand);
+    /* Cerulean: garis, grafik, dan sorotan — tidak pernah teks. */
+    --color-graphic: var(--graphic);
+    --color-graphic-tint: var(--graphic-tint);
 
-    /*
-     * Status pipeline — setiap status WAJIB ikon + label + warna, dan teks
-     * di atas tint-anya lulus AA. Varian gelap ditukar di blok `.dark`.
-     */
     --color-ok: var(--ok);
     --color-ok-tint: var(--ok-tint);
     --color-warn: var(--warn);
     --color-warn-tint: var(--warn-tint);
-    --color-wait: var(--wait);
-    --color-wait-tint: var(--wait-tint);
     --color-bad: var(--bad);
     --color-bad-tint: var(--bad-tint);
 
-    /*
-     * Elevasi: offset + blur LEMBUT saja, tanpa bayangan blok keras. Satu
-     * tingkat per permukaan, tidak pernah ditumpuk.
-     */
-    --shadow-card: var(--elevation-card);
-    --shadow-pop: var(--elevation-pop);
+    --color-night: var(--night);
+    --color-night-raised: var(--night-raised);
+    --color-night-line: var(--night-line);
+    --color-night-ink: var(--night-ink);
+    --color-night-ink-soft: var(--night-ink-soft);
+    --color-night-accent: var(--night-accent);
 
+    --shadow-card: var(--elevation-card);
+    --shadow-float: var(--elevation-float);
+
+    /* Token shadcn yang dipakai primitif aplikasi. */
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
     --color-background: var(--background);
     --color-foreground: var(--foreground);
     --color-card: var(--card);
     --color-card-foreground: var(--card-foreground);
     --color-popover: var(--popover);
     --color-popover-foreground: var(--popover-foreground);
-    --color-primary: var(--primary);
-    --color-primary-foreground: var(--primary-foreground);
     --color-secondary: var(--secondary);
     --color-secondary-foreground: var(--secondary-foreground);
     --color-muted: var(--muted);
@@ -125,17 +107,14 @@
     --color-accent-foreground: var(--accent-foreground);
     --color-destructive: var(--destructive);
     --color-destructive-foreground: var(--destructive-foreground);
-
     --color-border: var(--border);
     --color-input: var(--input);
     --color-ring: var(--ring);
-
     --color-chart-1: var(--chart-1);
     --color-chart-2: var(--chart-2);
     --color-chart-3: var(--chart-3);
     --color-chart-4: var(--chart-4);
     --color-chart-5: var(--chart-5);
-
     --color-sidebar: var(--sidebar);
     --color-sidebar-foreground: var(--sidebar-foreground);
     --color-sidebar-primary: var(--sidebar-primary);
@@ -148,23 +127,9 @@
 
 /*
  * ── Font self-hosted ────────────────────────────────────────────────────
- * Archivo (variable: wght 400–900, wdth dipatok 125% = lebar) untuk judul;
- * Manrope (variable: wght 200–800) untuk body. Subset latin cukup untuk
- * Bahasa Indonesia; `font-display: swap` menjaga teks langsung terbaca.
+ * Manrope (variable wght 200–800). Subset latin cukup untuk Bahasa
+ * Indonesia; `font-display: swap` menjaga teks langsung terbaca.
  */
-@font-face {
-    font-family: 'Archivo';
-    font-style: normal;
-    font-weight: 400 900;
-    font-stretch: 125%;
-    font-display: swap;
-    src: url('../fonts/archivo-latin.woff2') format('woff2');
-    unicode-range:
-        U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
-        U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
-        U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
 @font-face {
     font-family: 'Manrope';
     font-style: normal;
@@ -178,340 +143,249 @@
 }
 
 /*
- * Repica — "Sachet Pop — Kemasan Segar" — mode terang.
- * Kanvas off-white #FBFCFE, field biru #66C3FF melimpah sebagai bidang/garis,
- * tinta slate untuk keterbacaan AA, action ink #1D4ED8 untuk semua aksi.
+ * ── Mode terang: kertas hangat ──────────────────────────────────────────
+ * Kanvas #FAF9F6, lembar #FFFFFF, artefak #FAF6EE, garis hangat #E3DFD6.
+ * Semua pasangan teks diukur: ink 17.52:1, ink-soft 5.92:1,
+ * action 5.51:1 dua arah, status 5.10–6.57:1.
  */
 :root {
-    --brand: #66c3ff;
-    --brand-tint: #e0f2fe;
-    --brand-foam: #f0f9ff;
-    --brand-edge: #bfe3ff;
+    --background: #faf9f6;
+    --foreground: #121417;
 
-    --action: #1d4ed8;
-    --action-strong: #1e3a8a;
-    --action-foreground: #ffffff;
-    --link: #1d4ed8;
-
-    --ground: #fbfcfe;
-    --sheet: #ffffff;
-    --line: #e2e8f0;
-    --ink: #0f172a;
-    --ink-soft: #475569;
-
-    --violet: #8b5cf6;
-    --mint: #34d399;
-    --rose: #fb7185;
-    --amber: #fbbf24;
-    --violet-tint: #f1ebfe;
-    --mint-tint: #e4f8f0;
-    --rose-tint: #feecef;
-    --amber-tint: #fdf3dd;
-
-    --night: #0b1b33;
-    --night-soft: #12263f;
-    --night-line: #1d3a5c;
-    --night-ink: #eaf3fb;
-    --night-ink-soft: #a7c0da;
-    --night-brand: #57b6f2;
-
-    --ok: #15803d;
-    --ok-tint: #dcfce7;
-    --warn: #b45309;
-    --warn-tint: #fef3c7;
-    --wait: #1d4ed8;
-    --wait-tint: #e0f2fe;
-    --bad: #b91c1c;
-    --bad-tint: #fee2e2;
-
-    --elevation-card:
-        0 1px 2px -1px rgb(15 23 42 / 0.12),
-        0 4px 14px -6px rgb(15 23 42 / 0.12);
-    --elevation-pop:
-        0 2px 4px -2px rgb(15 23 42 / 0.14),
-        0 14px 32px -10px rgb(15 23 42 / 0.18);
-
-    --bloom: rgb(102 195 255 / 0.5);
-    --fiber: rgb(255 255 255 / 0.85);
-    --sheen-a: rgb(255 255 255 / 0.26);
-    --sheen-b: rgb(11 27 51 / 0.14);
-
-    --background: #fbfcfe;
-    --foreground: #0f172a;
     --card: #ffffff;
-    --card-foreground: #0f172a;
+    --card-foreground: #121417;
+
     --popover: #ffffff;
-    --popover-foreground: #0f172a;
+    --popover-foreground: #121417;
 
-    --primary: #1d4ed8;
-    --primary-foreground: #ffffff;
+    --muted: #f1eee7;
+    --muted-foreground: #5c6169;
 
-    --secondary: #e0f2fe;
-    --secondary-foreground: #0f172a;
+    --secondary: #f1eee7;
+    --secondary-foreground: #121417;
 
-    --muted: #f1f5f9;
-    --muted-foreground: #475569;
-    --accent: #66c3ff;
-    --accent-foreground: #0f172a;
+    --accent: rgba(11, 110, 168, 0.08);
+    --accent-foreground: #0b6ea8;
 
-    --destructive: #b91c1c;
+    --destructive: #b42318;
     --destructive-foreground: #ffffff;
 
-    --border: #e2e8f0;
-    --input: #e2e8f0;
-    --ring: #1d4ed8;
+    --border: #e3dfd6;
+    --input: #e3dfd6;
+    --ring: #0b6ea8;
 
-    --chart-1: #66c3ff;
-    --chart-2: #fb7185;
-    --chart-3: #8b5cf6;
-    --chart-4: #34d399;
-    --chart-5: #fbbf24;
-
-    --sidebar: #ffffff;
-    --sidebar-foreground: #0f172a;
-    --sidebar-primary: #1d4ed8;
-    --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #e0f2fe;
-    --sidebar-accent-foreground: #0f172a;
-    --sidebar-border: #e2e8f0;
-    --sidebar-ring: #1d4ed8;
-}
-
-/*
- * Mode gelap: ground malam #0B1B33 dengan field biru yang menyala. Semua
- * token semantik dipasangkan agar toggle tema tetap bekerja tanpa varian
- * `dark:` per warna di komponen.
- */
-.dark {
-    --brand: #57b6f2;
-    --brand-tint: #13314f;
-    --brand-foam: #102a44;
-    --brand-edge: #24547d;
-
-    --action: #2563eb;
-    --action-strong: #1d4ed8;
-    --action-foreground: #ffffff;
-    --link: #a8d4ff;
-
-    --ground: #0b1b33;
-    --sheet: #12263f;
-    --line: #1d3a5c;
-    --ink: #eaf3fb;
-    --ink-soft: #a7c0da;
-
-    --violet: #a78bfa;
-    --mint: #6ee7b7;
-    --rose: #fda4af;
-    --amber: #fcd34d;
-    --violet-tint: #241b3d;
-    --mint-tint: #102e26;
-    --rose-tint: #33161d;
-    --amber-tint: #35270c;
-
-    --night: #0b1b33;
-    --night-soft: #12263f;
-    --night-line: #1d3a5c;
-    --night-ink: #eaf3fb;
-    --night-ink-soft: #a7c0da;
-    --night-brand: #57b6f2;
-
-    --ok: #86efac;
-    --ok-tint: #052e16;
-    --warn: #fcd34d;
-    --warn-tint: #3a2703;
-    --wait: #a8d4ff;
-    --wait-tint: #10233d;
-    --bad: #fca5a5;
-    --bad-tint: #3d0d0d;
-
-    --elevation-card:
-        0 1px 2px -1px rgb(0 0 0 / 0.5), 0 4px 14px -6px rgb(0 0 0 / 0.55);
-    --elevation-pop:
-        0 2px 4px -2px rgb(0 0 0 / 0.55), 0 14px 32px -10px rgb(0 0 0 / 0.65);
-
-    --bloom: rgb(87 182 242 / 0.32);
-    --fiber: rgb(234 243 251 / 0.5);
-
-    --background: #0b1b33;
-    --foreground: #eaf3fb;
-    --card: #12263f;
-    --card-foreground: #eaf3fb;
-    --popover: #12263f;
-    --popover-foreground: #eaf3fb;
-
-    --primary: #2563eb;
+    --primary: #0b6ea8;
     --primary-foreground: #ffffff;
 
-    --secondary: #13314f;
-    --secondary-foreground: #eaf3fb;
+    --ground: #faf9f6;
+    --sheet: #ffffff;
+    --paper: #faf6ee;
+    --line: #e3dfd6;
+    --line-strong: #c9c2b4;
+    --ink: #121417;
+    --ink-soft: #5c6169;
 
-    --muted: #13314f;
-    --muted-foreground: #a7c0da;
-    --accent: #57b6f2;
-    --accent-foreground: #0b1b33;
+    --action: #0b6ea8;
+    --action-strong: #09597f;
+    --action-text: #0b6ea8;
+    --action-foreground: #ffffff;
 
-    --destructive: #fca5a5;
-    --destructive-foreground: #450a0a;
+    --graphic: #008dd5;
+    --graphic-tint: rgba(0, 141, 213, 0.09);
 
-    --border: #1d3a5c;
-    --input: #1d3a5c;
-    --ring: #a8d4ff;
+    --ok: #0f7a4d;
+    --ok-tint: #ecfdf5;
+    --warn: #8a5a00;
+    --warn-tint: #fbf3e2;
+    --bad: #b42318;
+    --bad-tint: #fef2f2;
 
-    --chart-1: #57b6f2;
-    --chart-2: #fda4af;
-    --chart-3: #a78bfa;
-    --chart-4: #6ee7b7;
-    --chart-5: #fcd34d;
+    --night: #0e1a24;
+    --night-raised: #16232e;
+    --night-line: rgba(242, 240, 234, 0.14);
+    --night-ink: #f2f0ea;
+    --night-ink-soft: #a8b0b8;
+    --night-accent: #7fb8d9;
 
-    --sidebar: #12263f;
-    --sidebar-foreground: #eaf3fb;
-    --sidebar-primary: #2563eb;
+    --elevation-card:
+        0 1px 2px rgba(18, 20, 23, 0.06),
+        0 8px 24px -12px rgba(18, 20, 23, 0.18);
+    --elevation-float:
+        0 2px 4px rgba(18, 20, 23, 0.06),
+        0 18px 40px -18px rgba(18, 20, 23, 0.28);
+
+    --chart-1: #0b6ea8;
+    --chart-2: #0f7a4d;
+    --chart-3: #8a5a00;
+    --chart-4: #b42318;
+    --chart-5: #008dd5;
+
+    --sidebar: #faf9f6;
+    --sidebar-foreground: #121417;
+    --sidebar-primary: #0b6ea8;
     --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #13314f;
-    --sidebar-accent-foreground: #eaf3fb;
-    --sidebar-border: #1d3a5c;
-    --sidebar-ring: #a8d4ff;
+    --sidebar-accent: #f1eee7;
+    --sidebar-accent-foreground: #121417;
+    --sidebar-border: #e3dfd6;
+    --sidebar-ring: #0b6ea8;
 }
 
 /*
- * Bloom kedekatan kursor di field warna (mis. bidang hero). Div ini tidak
- * menggambar apa pun sendiri: ia hanya memindahkan titik pusat radial
- * mengikuti posisi pointer, jadi tetap murah di HP Android entry-level.
- * Digabungkan sebagai latar di atas field lewat utility `field-bloom`.
+ * ── Mode gelap: malam arsip ─────────────────────────────────────────────
+ * Kanvas #0C141B, lembar #12202B, tinta hangat #F2F0EA. Aksi tetap kobalt
+ * dengan teks putih (5.51:1); tautan memakai #7FB8D9 (8.19:1).
  */
-@utility field-bloom {
+.dark {
+    --background: #0c141b;
+    --foreground: #f2f0ea;
+
+    --card: #12202b;
+    --card-foreground: #f2f0ea;
+
+    --popover: #12202b;
+    --popover-foreground: #f2f0ea;
+
+    --muted: #16232e;
+    --muted-foreground: #a8b0b8;
+
+    --secondary: #16232e;
+    --secondary-foreground: #f2f0ea;
+
+    --accent: rgba(127, 184, 217, 0.14);
+    --accent-foreground: #7fb8d9;
+
+    --destructive: #b42318;
+    --destructive-foreground: #ffffff;
+
+    --border: rgba(242, 240, 234, 0.14);
+    --input: rgba(242, 240, 234, 0.14);
+    --ring: #7fb8d9;
+
+    --primary: #0b6ea8;
+    --primary-foreground: #ffffff;
+
+    --ground: #0c141b;
+    --sheet: #12202b;
+    --paper: #16232e;
+    --line: rgba(242, 240, 234, 0.14);
+    --line-strong: rgba(242, 240, 234, 0.28);
+    --ink: #f2f0ea;
+    --ink-soft: #a8b0b8;
+
+    --action: #0b6ea8;
+    --action-strong: #09597f;
+    --action-text: #7fb8d9;
+    --action-foreground: #ffffff;
+
+    --graphic: #4fb3e8;
+    --graphic-tint: rgba(79, 179, 232, 0.12);
+
+    --ok: #4ade80;
+    --ok-tint: rgba(15, 122, 77, 0.18);
+    --warn: #fbbf24;
+    --warn-tint: rgba(138, 90, 0, 0.22);
+    --bad: #f97066;
+    --bad-tint: rgba(180, 35, 24, 0.2);
+
+    --night: #060d14;
+    --night-raised: #101c26;
+    --night-line: rgba(242, 240, 234, 0.16);
+    --night-ink: #f2f0ea;
+    --night-ink-soft: #a8b0b8;
+    --night-accent: #7fb8d9;
+
+    --elevation-card:
+        0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 24px -12px rgba(0, 0, 0, 0.7);
+    --elevation-float:
+        0 2px 4px rgba(0, 0, 0, 0.5), 0 18px 40px -18px rgba(0, 0, 0, 0.8);
+
+    --chart-1: #7fb8d9;
+    --chart-2: #4ade80;
+    --chart-3: #fbbf24;
+    --chart-4: #f97066;
+    --chart-5: #4fb3e8;
+
+    --sidebar: #0c141b;
+    --sidebar-foreground: #f2f0ea;
+    --sidebar-primary: #0b6ea8;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #16232e;
+    --sidebar-accent-foreground: #f2f0ea;
+    --sidebar-border: rgba(242, 240, 234, 0.14);
+    --sidebar-ring: #7fb8d9;
+}
+
+/*
+ * Garis buku besar vertikal — motif halaman, bukan dekorasi acak. Dipasang
+ * pada lapisan aria-hidden di belakang konten supaya tidak memotong teks.
+ */
+@utility ledger-grid {
+    background-image: linear-gradient(
+        to right,
+        var(--line) 1px,
+        transparent 1px
+    );
+    background-size: 25% 100%;
+    background-repeat: repeat-x;
+}
+
+@utility ledger-grid-night {
+    background-image: linear-gradient(
+        to right,
+        var(--night-line) 1px,
+        transparent 1px
+    );
+    background-size: 25% 100%;
+    background-repeat: repeat-x;
+}
+
+/*
+ * Sorotan kursor untuk SpotlightCard: titik cahaya mengikuti pointer lewat
+ * dua CSS variable yang ditulis komponen. Tanpa pointer halus, lapisan ini
+ * tidak dirender sama sekali.
+ */
+@utility spotlight-surface {
     background-image: radial-gradient(
-        22rem 22rem at var(--bloom-x, 50%) var(--bloom-y, 26%),
-        var(--bloom),
-        transparent 72%
-    );
-}
-
-@utility reveal-soft {
-    animation: reveal-up 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-/*
- * Bahasa bentuk "sobekan sachet". Gigi tidak merata (bukan segitiga periodik)
- * supaya terasa robekan tangan, bukan bordiran. Persentase mengikuti tinggi
- * elemen, jadi amplitude mengecil di bar pendek (nav) dan membesar di sachet.
- */
-@utility edge-tear-b {
-    clip-path: polygon(
-        0% 0%,
-        100% 0%,
-        100% 97%,
-        97% 92.5%,
-        94% 98.5%,
-        91% 93%,
-        88% 99%,
-        84% 94.5%,
-        81% 92%,
-        78% 98%,
-        74% 93.5%,
-        71% 99.5%,
-        68% 94%,
-        64% 92.5%,
-        61% 98.5%,
-        58% 93%,
-        54% 99%,
-        51% 94.5%,
-        48% 92%,
-        44% 97.5%,
-        41% 93.5%,
-        38% 99.5%,
-        34% 94%,
-        31% 92.5%,
-        28% 98%,
-        24% 93.5%,
-        21% 99%,
-        18% 94%,
-        14% 92.5%,
-        11% 98.5%,
-        8% 93.5%,
-        5% 99%,
-        2% 95%,
-        0% 97%
-    );
-}
-
-@utility edge-tear-t {
-    clip-path: polygon(
-        0% 3%,
-        2% 5%,
-        5% 1%,
-        8% 6.5%,
-        11% 1.5%,
-        14% 7.5%,
-        18% 6%,
-        21% 1%,
-        24% 6.5%,
-        28% 2%,
-        31% 7.5%,
-        34% 6%,
-        38% 0.5%,
-        41% 6.5%,
-        44% 2.5%,
-        48% 8%,
-        51% 5.5%,
-        54% 1%,
-        58% 7%,
-        61% 1.5%,
-        64% 7.5%,
-        68% 6%,
-        71% 0.5%,
-        74% 6.5%,
-        78% 2%,
-        81% 8%,
-        84% 5.5%,
-        88% 1%,
-        91% 7%,
-        94% 1.5%,
-        97% 7.5%,
-        100% 3%,
-        100% 100%,
-        0% 100%
+        18rem circle at var(--spot-x, 50%) var(--spot-y, 50%),
+        var(--graphic-tint),
+        transparent 70%
     );
 }
 
 /*
- * Serat pada garis robekan: strip tipis bertekstur yang diletakkan di
- * sepanjang bibir sobekan sachet. Hanya dekorasi (aria-hidden).
+ * Marquee React Bits: dua salinan isi digeser setengah lebar track. Durasi
+ * diatur lewat variabel; `paused` hanya mematikan animasi, bukan isinya.
  */
-@utility fiber-line {
-    background-image: repeating-linear-gradient(
-        90deg,
-        var(--fiber),
-        var(--fiber) 2px,
-        transparent 2px,
-        transparent 5px
-    );
-}
-
-@keyframes reveal-up {
+@keyframes marquee-x {
     from {
-        opacity: 0;
-        transform: translateY(1.25rem);
+        transform: translate3d(0, 0, 0);
     }
-
     to {
-        opacity: 1;
-        transform: translateY(0);
+        transform: translate3d(-50%, 0, 0);
+    }
+}
+
+@utility marquee-track {
+    animation: marquee-x var(--marquee-duration, 36s) linear infinite;
+    will-change: transform;
+
+    &[data-paused='true'] {
+        animation-play-state: paused;
     }
 }
 
 @layer base {
     * {
-        @apply border-border;
+        @apply border-border outline-ring/50;
     }
 
     body {
-        @apply bg-background text-foreground antialiased;
+        @apply bg-background text-foreground font-sans antialiased;
+        min-height: 100vh;
     }
 
     /*
-     * Semua angka uang/nomor order memakai tabular-nums agar sejajar vertikal
-     * (R-FE-008); komponen memakainya lewat utility `tabular-nums`.
+     * Semua angka uang/nomor order memakai tabular-nums agar sejajar vertikal.
      */
     table,
     [data-numeric] {
@@ -524,25 +398,18 @@
         outline-offset: 2px;
     }
 
-    /* Tautan memakai warna aksi dan jarak garis bawah yang dibaca manusiawi. */
     a {
-        text-underline-offset: 0.25em;
+        text-underline-offset: 0.22em;
     }
 
     html {
-        scrollbar-color: var(--brand-edge) var(--ground);
+        scrollbar-color: var(--line-strong) var(--ground);
         scroll-behavior: smooth;
     }
 
-    @media (prefers-reduced-motion: reduce) {
-        html {
-            scroll-behavior: auto;
-        }
-    }
-
     ::-webkit-scrollbar {
-        width: 12px;
-        height: 12px;
+        width: 10px;
+        height: 10px;
     }
 
     ::-webkit-scrollbar-track {
@@ -550,20 +417,14 @@
     }
 
     ::-webkit-scrollbar-thumb {
-        background: var(--brand-edge);
+        background: var(--line-strong);
         border: 3px solid var(--ground);
         border-radius: 999px;
     }
 
-    /* Seleksi teks & caret ikut palet dunia sachet, bukan bawaan browser. */
     ::selection {
-        background: var(--brand);
-        color: #08203a;
-    }
-
-    .dark ::selection {
-        background: var(--night-brand);
-        color: #07172b;
+        background: var(--action);
+        color: var(--action-foreground);
     }
 
     * {
@@ -571,8 +432,22 @@
     }
 }
 
+/*
+ * Gerbang gerak global: setiap animasi dan transisi berhenti di
+ * `prefers-reduced-motion`. Komponen yang punya varian statis tetap
+ * menampilkan konten akhirnya.
+ */
 @media (prefers-reduced-motion: reduce) {
-    .reveal-soft {
-        animation: none;
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
 }

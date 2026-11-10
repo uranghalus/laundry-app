@@ -22,19 +22,17 @@
         {{-- Inline style to set the HTML background color based on our theme in app.css --}}
         <style>
             html {
-                background-color: #fafaf9;
+                background-color: #faf9f6;
             }
 
             html.dark {
-                background-color: #0c0a09;
+                background-color: #0c141b;
             }
         </style>
 
         <link rel="icon" href="/favicon.ico" sizes="any">
         <link rel="icon" href="/favicon.svg" type="image/svg+xml">
         <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-
-        @fonts
 
         @viteReactRefresh
         @vite(['resources/css/app.css', 'resources/js/app.tsx', "resources/js/pages/{$page['component']}.tsx"])
@@ -44,8 +42,5 @@
     </head>
     <body class="font-sans antialiased">
         <x-inertia::app />
-    <!-- impeccable-live-start -->
-<script src="http://localhost:8400/live.js?token=fdc105e5-c4dd-42af-a677-0228df7dd139"></script>
-<!-- impeccable-live-end -->
-</body>
+    </body>
 </html>

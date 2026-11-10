@@ -1,53 +1,59 @@
-import { MessageCircle, CheckCircle } from 'lucide-react';
+import { CheckCheck, MessageCircle } from 'lucide-react';
+
 import { cn } from '@/lib/utils';
 
 /**
- * WhatsApp bubble - bubble pesan persetujuan pelanggan dengan tanda
- * "Diterima", sepadan kartu bukti di sachet hero. Dipakai di SachetPreview
- * dan sel konten fitur. Tidak ada nomor telepon asli yang dirender.
- * Permukaan memakai token Sachet Pop (`brand-foam`, `brand-edge`, `ok`).
+ * WhatsApp bubble — ilustrasi pesan persetujuan pelanggan.
  *
- * @param text - Teks isi bubble (Bahasa Indonesia, produk-true).
- * @param time - Waktu stamp (contoh: '14:32'), ditampilkan sebagai label kecil.
- * @param approved - Jika true, tampilkan ikon centang + 'Diterima'.
+ * Bukan tangkapan layar dan tidak memuat nomor telepon. Dipakai di artefak
+ * bukti dan demo alur; label waktu memakai mono karena merupakan data.
+ *
+ * @param text - Isi pesan (Bahasa Indonesia, produk-true).
+ * @param time - Waktu contoh, mis. `14:32`.
+ * @param approved - Jika true, tampilkan tanda "Disetujui".
+ * @param className - Kelas tambahan.
  */
 export function WaBubble({
     text,
     time = '14:32',
     approved = true,
+    className,
 }: {
     text: string;
     time?: string;
     approved?: boolean;
+    className?: string;
 }) {
     return (
         <div
             className={cn(
-                'bg-brand-foam border-brand-edge relative max-w-xs rounded-[var(--radius-sachet)] rounded-tl-sm border p-3 shadow-card',
-                approved ? 'border-brand/60' : '',
+                'bg-sheet border-line shadow-card relative max-w-xs rounded-lg rounded-tl-sm border p-3.5',
+                className,
             )}
         >
-            <div className="mb-1.5 flex items-start gap-1.5">
-                <div className="bg-action flex size-6 items-center justify-center rounded-md">
-                    <MessageCircle
-                        className="size-3.5 text-white"
-                        aria-hidden="true"
-                    />
-                </div>
-                <p className="text-ink text-sm leading-relaxed font-medium">
-                    {text}
-                </p>
+            <div className="mb-2 flex items-center gap-2">
+                <span className="bg-action text-action-foreground flex size-6 items-center justify-center rounded-sm">
+                    <MessageCircle className="size-3.5" aria-hidden="true" />
+                </span>
+                <span className="text-ink-soft font-mono text-[11px] font-semibold tracking-[0.12em] uppercase">
+                    WhatsApp · pelanggan
+                </span>
             </div>
-            <div className="flex items-end justify-between gap-1 pt-1">
-                <span className="text-ink-soft text-[10px] tabular-nums">
+
+            <p className="text-ink text-sm leading-relaxed font-medium">
+                {text}
+            </p>
+
+            <div className="mt-3 flex items-center justify-between gap-2">
+                <span className="text-ink-soft font-mono text-[11px] tabular-nums">
                     {time}
                 </span>
-                {approved && (
-                    <span className="text-ok inline-flex items-center gap-1 text-[10px] font-bold tabular-nums">
-                        <CheckCircle className="size-3.5" aria-hidden="true" />
-                        Diterima
+                {approved ? (
+                    <span className="text-ok inline-flex items-center gap-1 text-[11px] font-bold">
+                        <CheckCheck className="size-3.5" aria-hidden="true" />
+                        Disetujui
                     </span>
-                )}
+                ) : null}
             </div>
         </div>
     );

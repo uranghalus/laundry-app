@@ -1,15 +1,12 @@
 import { useState } from 'react';
 
 import { Link } from '@inertiajs/react';
-import { ArrowRight, Check, Minus, Sparkles } from 'lucide-react';
+import { ArrowRight, Check, Minus } from 'lucide-react';
 
 import { Container, SectionHeading } from '@/components/marketing/layout';
-import CountUp from '@/components/react-bits/count-up';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { register } from '@/routes';
+import { formatIDR } from '@/lib/format';
+import { dashboard, register } from '@/routes';
 import { cn } from '@/lib/utils';
 
 /** Dua tier yang benar-benar dapat dibeli, sesuai DECISIONS.md Q1 & Q9. */
@@ -18,11 +15,11 @@ const PLANS = [
         key: 'basic',
         name: 'Basic',
         tagline: 'Untuk laundry satu gerai',
+        meta: '1 outlet · 2 user',
         monthlyPrice: 149_000,
         annualPrice: 1_490_000,
         featured: false,
         features: [
-            '1 outlet, 2 user',
             'Order end-to-end + notifikasi WhatsApp',
             'Proof-of-Condition 100 foto/bulan',
             'Laporan harian + deposit member',
@@ -33,16 +30,16 @@ const PLANS = [
     {
         key: 'pro',
         name: 'Pro',
-        tagline: 'Untuk 2-5 outlet, user tak terbatas',
+        tagline: 'Untuk 2–5 outlet, user tak terbatas',
+        meta: 'Sampai 5 outlet',
         monthlyPrice: 499_000,
         annualPrice: 4_990_000,
         featured: true,
         features: [
-            'Sampai 5 outlet, user tak terbatas',
             'Semua fitur Basic',
             'Proof-of-Condition tanpa batas foto',
             'Multi-outlet + RBAC penuh',
-            'Laporan konsolidasi + Audit Log penuh',
+            'Laporan konsolidasi + audit log penuh',
         ],
         excluded: [],
     },
@@ -51,206 +48,261 @@ const PLANS = [
 type Billing = 'bulanan' | 'tahunan';
 
 /**
- * Format nominal Rupiah dengan titik ribuan (format Indonesia) — lokal file
- * ini karena hanya band harga yang menampilkan harga.
+ * Band harga — dua lembar penawaran dengan panel Pro berwarna tinta.
  *
- * @param value - Nominal dalam rupiah utuh.
- */
-function formatRupiah(value: number): string {
-    return value.toLocaleString('id-ID');
-}
-
-/**
- * Ring fokus untuk radio billing — indikator keyboard terlihat di kedua latar.
- */
-const FOCUS_RING =
-    'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-ground';
-
-/**
- * Band Harga — dua sachet paket + strip hemat yang "sobek" (dunia Sachet Pop).
+ * Periode memakai radio natif di dalam fieldset (keyboard dan pembaca layar
+ * gratis dari browser). Nominal tahunan ditampilkan sebagai total penuh dan
+ * penghematan persis, bukan ekuivalen bulanan yang dibulatkan.
  *
- * Toggle periodis memakai fieldset + radio NATIF (kontrak test & a11y), bukan
- * tombol hiasan: `role` dan keyboard behavior gratis dari browser. Hemat
- * tahunan ditampilkan sebagai tear-strip `fiber-line` miring di kartu — bahasa
- * bentuk sobekan harga yang ditempel, dengan angka CountUp saat pertama terlihat.
- *
- * Kejujoran dipertahankan: apa yang TIDAK ada di paket ditulis dengan ikon
- * minus, bukan dihilangkan diam-diam.
+ * @param isAuthenticated - Menentukan CTA menuju dashboard atau registrasi.
  */
-export default function MarketingPricing() {
+export default function MarketingPricing({
+    isAuthenticated = false,
+}: {
+    isAuthenticated?: boolean;
+}) {
     const [billing, setBilling] = useState<Billing>('bulanan');
 
     return (
-        <section id="harga" className="bg-ground scroll-mt-20 py-20 sm:py-24">
+        <section
+            id="harga"
+            aria-labelledby="harga-title"
+            className="bg-ground border-line scroll-mt-24 border-t py-20 sm:py-24"
+        >
             <Container>
-                <SectionHeading
-                    index="05"
-                    eyebrow="Harga"
-                    title="Dua paket, tanpa jaring tersembunyi"
-                    description="Semua fitur Pro dicoba gratis 14 hari (1 outlet, maks 30 order). Setelah itu pilih sachet yang pas — batennya tertulis apa adanya."
-                    className="mx-auto text-center"
-                />
+                <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+                    <SectionHeading
+                        id="harga-title"
+                        title="Harga yang bisa dihitung di buku."
+                        description="Dua paket, tanpa biaya tersembunyi. Trial 14 hari penuh; tidak perlu kartu kredit untuk mulai."
+                    />
 
-                {/* Toggle periodis: fieldset + radio natif. */}
-                <fieldset className="mt-10 flex justify-center">
-                    <legend className="sr-only">Periode tagihan</legend>
-                    <div className="bg-brand-foam border-line inline-flex rounded-[var(--radius-tear)] border p-1">
-                        {(['bulanan', 'tahunan'] as const).map((mode) => (
-                            <label
-                                key={mode}
-                                className={cn(
-                                    'relative flex min-h-11 cursor-pointer items-center gap-2 rounded-md px-5 text-sm font-bold capitalize transition-colors',
-                                    FOCUS_RING,
-                                    billing === mode
-                                        ? 'bg-action text-action-foreground shadow-card'
-                                        : 'text-ink-soft hover:text-ink',
-                                )}
-                            >
-                                <input
-                                    type="radio"
-                                    name="periode-tagihan"
-                                    value={mode}
-                                    checked={billing === mode}
-                                    onChange={() => setBilling(mode)}
-                                    className="peer sr-only"
-                                />
-                                {mode}
-                                {mode === 'tahunan' ? (
+                    <fieldset className="shrink-0">
+                        <legend className="sr-only">
+                            Pilih periode penagihan
+                        </legend>
+                        <div className="bg-muted border-line inline-flex rounded-lg border p-1">
+                            {(
+                                [
+                                    ['bulanan', 'Bulanan'],
+                                    ['tahunan', 'Tahunan'],
+                                ] as const
+                            ).map(([value, label]) => (
+                                <label key={value} className="relative">
+                                    <input
+                                        type="radio"
+                                        name="billing"
+                                        value={value}
+                                        checked={billing === value}
+                                        onChange={() => setBilling(value)}
+                                        className="peer sr-only"
+                                    />
                                     <span
                                         className={cn(
-                                            'rounded-full px-2 py-0.5 text-[10px] font-extrabold',
-                                            billing === 'tahunan'
-                                                ? 'bg-white/20 text-white'
-                                                : 'bg-ok-tint text-ok',
+                                            'flex h-11 cursor-pointer items-center rounded-md px-4 text-sm font-bold transition-colors',
+                                            'text-ink-soft hover:text-ink',
+                                            'peer-checked:bg-ink peer-checked:text-ground',
+                                            'peer-focus-visible:ring-ring peer-focus-visible:ring-offset-muted peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2',
                                         )}
                                     >
-                                        -2 bln
+                                        {label}
                                     </span>
-                                ) : null}
-                            </label>
-                        ))}
-                    </div>
-                </fieldset>
+                                </label>
+                            ))}
+                        </div>
+                    </fieldset>
+                </div>
 
-                {/* Dua sachet paket. */}
-                <div className="mt-12 grid gap-5 lg:grid-cols-2 lg:gap-6">
+                <div className="mt-12 grid gap-6 lg:grid-cols-2 lg:gap-8">
                     {PLANS.map((plan) => {
-                        const price =
+                        const isFeatured = plan.featured;
+                        const amount =
                             billing === 'bulanan'
                                 ? plan.monthlyPrice
-                                : Math.round(plan.annualPrice / 12);
-                        const yearlySaving = plan.monthlyPrice * 12 - plan.annualPrice;
+                                : plan.annualPrice;
+                        const savings =
+                            plan.monthlyPrice * 12 - plan.annualPrice;
+
+                        const tone = isFeatured
+                            ? {
+                                  card: 'bg-night text-night-ink border-night dark:border-night-line',
+                                  tagline: 'text-night-ink-soft',
+                                  meta: 'border-night-line text-night-accent',
+                                  rule: 'border-night-line',
+                                  priceNote: 'text-night-ink-soft',
+                                  includedLabel: 'text-night-ink-soft',
+                                  includedIcon: 'text-night-accent',
+                                  includedText: 'text-night-ink',
+                              }
+                            : {
+                                  card: 'bg-sheet text-ink border-line',
+                                  tagline: 'text-ink-soft',
+                                  meta: 'border-line text-ink-soft',
+                                  rule: 'border-line',
+                                  priceNote: 'text-ink-soft',
+                                  includedLabel: 'text-ink-soft',
+                                  includedIcon: 'text-ok',
+                                  includedText: 'text-ink',
+                              };
+
                         return (
-                            <Card
+                            <div
                                 key={plan.key}
                                 className={cn(
-                                    'relative overflow-hidden gap-0 rounded-[var(--radius-sachet)] border-2 p-6 shadow-card sm:p-8',
-                                    plan.featured
-                                        ? 'bg-sheet border-brand'
-                                        : 'bg-sheet border-line',
+                                    'shadow-card flex flex-col rounded-xl border p-6 sm:p-8',
+                                    tone.card,
                                 )}
                             >
-                                {/* Tear-strip hemat — hanya saat tahunan. */}
-                                {billing === 'tahunan' ? (
-                                    <div
-                                        aria-label={`Hemat Rp${formatRupiah(yearlySaving)} per tahun`}
-                                        className="fiber-line bg-amber-tint text-ink edge-tear-b absolute top-0 right-0 z-10 flex min-h-11 items-center gap-1.5 rounded-bl-[var(--radius-sachet)] border-b-2 border-l-2 border-amber/50 px-4 py-2 text-xs font-extrabold"
-                                    >
-                                        <Sparkles className="size-3.5" aria-hidden="true" />
-                                        HEMAT Rp
-                                        <CountUp
-                                            to={yearlySaving}
-                                            duration={1}
-                                            separator="."
-                                        />
-                                        /THN
-                                    </div>
-                                ) : null}
-
-                                <div className="flex items-start justify-between gap-3">
+                                <div className="flex items-start justify-between gap-4">
                                     <div>
-                                        <p className="text-ink font-display text-xl leading-tight font-extrabold">
+                                        <h3 className="text-2xl font-extrabold tracking-tight">
                                             {plan.name}
-                                        </p>
-                                        <p className="text-ink-soft mt-1 text-sm font-medium">
+                                        </h3>
+                                        <p
+                                            className={cn(
+                                                'mt-1 text-sm font-medium',
+                                                tone.tagline,
+                                            )}
+                                        >
                                             {plan.tagline}
                                         </p>
                                     </div>
-                                    {plan.featured ? (
-                                        <Badge className="bg-action text-action-foreground">
-                                            Paling cocok multi-outlet
-                                        </Badge>
+                                    <span
+                                        className={cn(
+                                            'shrink-0 rounded-sm border px-2 py-1 font-mono text-[11px] font-semibold tracking-[0.08em] uppercase',
+                                            tone.meta,
+                                        )}
+                                    >
+                                        {plan.meta}
+                                    </span>
+                                </div>
+
+                                <div className="mt-8">
+                                    <div className="flex flex-wrap items-end gap-x-2 gap-y-1">
+                                        <span
+                                            data-numeric
+                                            className="text-4xl leading-none font-extrabold tracking-tight sm:text-5xl"
+                                        >
+                                            {formatIDR(amount)}
+                                        </span>
+                                        <span
+                                            className={cn(
+                                                'pb-1 text-sm font-semibold',
+                                                tone.priceNote,
+                                            )}
+                                        >
+                                            /
+                                            {billing === 'bulanan'
+                                                ? 'bulan'
+                                                : 'tahun'}
+                                        </span>
+                                    </div>
+                                    <p
+                                        className={cn(
+                                            'mt-3 min-h-10 text-xs leading-relaxed font-medium',
+                                            tone.priceNote,
+                                        )}
+                                    >
+                                        {billing === 'bulanan'
+                                            ? 'Tagihan per bulan. Trial 14 hari sudah termasuk.'
+                                            : `Hemat ${formatIDR(savings)} dibanding 12 bulan pembayaran bulanan.`}
+                                    </p>
+                                </div>
+
+                                <div
+                                    className={cn(
+                                        'mt-6 border-t pt-6',
+                                        tone.rule,
+                                    )}
+                                >
+                                    <p
+                                        className={cn(
+                                            'font-mono text-[11px] font-semibold tracking-[0.14em] uppercase',
+                                            tone.includedLabel,
+                                        )}
+                                    >
+                                        Termasuk
+                                    </p>
+                                    <ul className="mt-4 space-y-3">
+                                        {plan.features.map((feature) => (
+                                            <li
+                                                key={feature}
+                                                className="flex items-start gap-2.5"
+                                            >
+                                                <Check
+                                                    className={cn(
+                                                        'mt-0.5 size-4 shrink-0',
+                                                        tone.includedIcon,
+                                                    )}
+                                                    aria-hidden="true"
+                                                />
+                                                <span
+                                                    className={cn(
+                                                        'text-sm leading-relaxed font-semibold',
+                                                        tone.includedText,
+                                                    )}
+                                                >
+                                                    {feature}
+                                                </span>
+                                            </li>
+                                        ))}
+                                    </ul>
+
+                                    {plan.excluded.length > 0 ? (
+                                        <ul className="mt-3 space-y-3">
+                                            {plan.excluded.map((feature) => (
+                                                <li
+                                                    key={feature}
+                                                    className="flex items-start gap-2.5"
+                                                >
+                                                    <Minus
+                                                        className="text-ink-soft mt-0.5 size-4 shrink-0"
+                                                        aria-hidden="true"
+                                                    />
+                                                    <span className="text-ink-soft text-sm leading-relaxed font-medium">
+                                                        {feature}
+                                                    </span>
+                                                </li>
+                                            ))}
+                                        </ul>
                                     ) : null}
                                 </div>
 
-                                <div className="mt-6 flex items-end gap-2 tabular-nums">
-                                    <span className="text-ink font-display text-4xl leading-none font-extrabold sm:text-5xl">
-                                        Rp{formatRupiah(price)}
-                                    </span>
-                                    <span className="text-ink-soft pb-1 text-sm font-semibold">
-                                        /bulan
-                                    </span>
+                                <div className="mt-auto pt-8">
+                                    <Button
+                                        asChild
+                                        variant={
+                                            isFeatured ? 'default' : 'outline'
+                                        }
+                                        className={cn(
+                                            'h-12 w-full rounded-md text-sm font-bold',
+                                            isFeatured
+                                                ? 'bg-action text-action-foreground hover:bg-action-strong border-transparent'
+                                                : 'border-line text-ink hover:bg-muted bg-transparent',
+                                        )}
+                                    >
+                                        <Link
+                                            href={
+                                                isAuthenticated
+                                                    ? dashboard()
+                                                    : register()
+                                            }
+                                        >
+                                            {isAuthenticated
+                                                ? 'Buka dashboard'
+                                                : `Mulai ${plan.name}`}
+                                            <ArrowRight aria-hidden="true" />
+                                        </Link>
+                                    </Button>
                                 </div>
-                                <p className="text-ink-soft mt-1 text-xs font-medium tabular-nums">
-                                    {billing === 'tahunan'
-                                        ? `Ditagih Rp${formatRupiah(plan.annualPrice)} per tahun`
-                                        : 'Ditagih bulanan, berhenti kapan saja'}
-                                </p>
-
-                                <Separator className="bg-line my-6" />
-
-                                <CardContent className="flex flex-col gap-3 p-0">
-                                    {plan.features.map((f) => (
-                                        <p
-                                            key={f}
-                                            className="text-ink flex items-start gap-2 text-sm font-medium"
-                                        >
-                                            <Check
-                                                className="text-ok mt-0.5 size-4 shrink-0"
-                                                aria-hidden="true"
-                                            />
-                                            {f}
-                                        </p>
-                                    ))}
-                                    {plan.excluded.map((f) => (
-                                        <p
-                                            key={f}
-                                            className="text-ink-soft flex items-start gap-2 text-sm font-medium line-through decoration-line"
-                                        >
-                                            <Minus
-                                                className="mt-0.5 size-4 shrink-0 opacity-60"
-                                                aria-hidden="true"
-                                            />
-                                            {f}
-                                        </p>
-                                    ))}
-                                </CardContent>
-
-                                <Button
-                                    asChild
-                                    size="lg"
-                                    variant={plan.featured ? 'default' : 'outline'}
-                                    className={cn(
-                                        'mt-8 w-full rounded-[var(--radius-tear)] text-sm font-bold',
-                                        plan.featured
-                                            ? 'bg-action text-action-foreground hover:bg-action-strong shadow-[0_4px_0_0_var(--color-action-strong)]'
-                                            : 'border-2 border-action/60 text-action hover:border-action hover:bg-brand-tint',
-                                    )}
-                                >
-                                    <Link href={register()}>
-                                        Mulai 14 Hari Gratis
-                                        <ArrowRight className="size-4" aria-hidden="true" />
-                                    </Link>
-                                </Button>
-                            </Card>
+                            </div>
                         );
                     })}
                 </div>
 
-                <p className="text-ink-soft mt-8 text-center text-xs font-medium">
-                    Trial 14 hari semua fitur Pro · 1 outlet · maksimal 30
-                    order · tanpa kartu kredit. Pajak termasuk; ganti atau
-                    berhenti kapan saja.
+                <p className="text-ink-soft mt-6 text-xs leading-relaxed font-medium">
+                    Pembayaran lewat tautan Xendit (VA, QRIS, atau e-wallet).
+                    Tidak ada penagihan kartu kredit otomatis.
                 </p>
             </Container>
         </section>

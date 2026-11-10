@@ -1,189 +1,162 @@
-import { useEffect, useRef } from 'react';
-
 import { Link } from '@inertiajs/react';
-import { ArrowRight, Clock, CreditCard, ShieldCheck, Sparkles } from 'lucide-react';
-import { motion, useReducedMotion } from 'motion/react';
+import { ArrowDown, ArrowRight } from 'lucide-react';
 
-import Particles from '@/components/react-bits/particles';
-import SachetPreview from '@/components/marketing/sachet-preview';
-import SplitText from '@/components/marketing/split-text';
+import { Container, MetaLabel } from '@/components/marketing/layout';
+import { ProofCard } from '@/components/marketing/proof-card';
+import { WaBubble } from '@/components/marketing/wa-bubble';
+import Marquee from '@/components/react-bits/marquee';
+import TiltCard from '@/components/react-bits/tilt-card';
 import { Button } from '@/components/ui/button';
-import { register } from '@/routes';
-import { cn } from '@/lib/utils';
+import { dashboard, register } from '@/routes';
 
 /**
- * Mikro-fakta jujur di bawah CTA — angka yang bisa diverifikasi, bukan klaim.
- * Dipakai sebagai chip Sachet Pop di bidang biru hero.
+ * Fakta pembuka yang bisa dipertanggungjawabkan — bukan traction rekaan.
+ * Diletakkan sebagai baris buku besar di bawah CTA.
  */
-const FACT_CHIPS = [
-    { icon: Clock, label: 'Trial 14 hari' },
-    { icon: CreditCard, label: 'Tanpa kartu kredit' },
-    { icon: ShieldCheck, label: 'Cap 30 order/hari' },
-    { icon: Sparkles, label: 'Watermark & jejak audit' },
+const FACTS = [
+    { value: '14 hari', label: 'Trial penuh' },
+    { value: 'Tanpa', label: 'Kartu kredit' },
+    { value: '< 30 menit', label: 'Setup' },
+    { value: '6 status', label: 'Terlacak' },
+] as const;
+
+/** Label pita di bawah hero; mengulang bahasa bukti, bukan logo klien palsu. */
+const MARQUEE_ITEMS = [
+    'Foto kondisi',
+    'Persetujuan pelanggan',
+    'Stempel waktu',
+    'Jejak audit',
+    'Rekap kas',
+    'Notifikasi WhatsApp',
+    'Enam status order',
+    'Multi-outlet',
 ] as const;
 
 /**
- * Hero Repica — rak sachet paling depan (dunia "Sachet Pop — Kemasan Segar").
+ * Hero halaman marketing — halaman depan "Buku Bukti".
  *
- * Kiri: display headline Archivo per-kata (SplitText) di atas BIDANG BIRU
- * #66C3FF penuh; teks ink (kontras ~10:1), CTA primer fill `bg-action`
- * (#1D4ED8, AA), sekunder chip terang. Empat chip mikro-fakta di bawah CTA.
+ * Judul dua warna memakai satu tinta aksi kobalt; artefak bukti dimiringkan
+ * ringan dan bisa mengikuti pointer lewat TiltCard. Semua isi artefak adalah
+ * ilustrasi berlabel `Contoh`, bukan tangkapan layar produk.
  *
- * Kanan: SachetPreview — interaksi tanda tangan halaman (tarik sobekan →
- * bukti tersingkap).
- *
- * Latar: Particles (react-bits, WebGL) warna token yang dibaca dari
- * computed style — tanpa hex polos di file ini; bloom kursor via
- * `field-bloom` yang titik pusatnya mengikuti pointer. Kedua efek aria-hidden,
- * tidak memblokir interaksi, dan dibekukan di `prefers-reduced-motion`.
- *
- * @param isAuthenticated - Menentukan label CTA primer (guest → daftar).
+ * @param isAuthenticated - Menentukan CTA utama antara daftar dan dashboard.
  */
 export default function MarketingHero({
-    isAuthenticated,
+    isAuthenticated = false,
 }: {
     isAuthenticated?: boolean;
 }) {
-    const prefersReducedMotion = useReducedMotion() ?? false;
-    const fieldRef = useRef<HTMLDivElement>(null);
-    const colorsRef = useRef<string[] | undefined>(undefined);
-
-    // Warna partikel dibaca dari token CSS saat mount — sumber kebenaran tetap
-    // satu (app.css), tidak ada hex yang disalin ke TSX.
-    useEffect(() => {
-        const css = getComputedStyle(document.documentElement);
-        const brand = css.getPropertyValue('--brand').trim();
-        const foam = css.getPropertyValue('--brand-foam').trim();
-        const sheet = css.getPropertyValue('--sheet').trim();
-        colorsRef.current = [brand, foam, sheet].filter(Boolean);
-    }, []);
-
-    /** Pindahkan titik pusat bloom mengikuti pointer (murah: dua CSS var). */
-    const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
-        if (prefersReducedMotion || !fieldRef.current) {
-            return;
-        }
-        const rect = fieldRef.current.getBoundingClientRect();
-        fieldRef.current.style.setProperty('--bloom-x', `${event.clientX - rect.left}px`);
-        fieldRef.current.style.setProperty('--bloom-y', `${event.clientY - rect.top}px`);
-    };
-
     return (
-        <section id="hero" className="relative isolate overflow-hidden">
-            {/* Bidang biru + bloom + partikel — satu kesatuan latar hero. */}
+        <section className="bg-ground relative overflow-hidden">
             <div
-                ref={fieldRef}
-                onPointerMove={onPointerMove}
-                className="field-bloom bg-brand absolute inset-0 -z-10"
                 aria-hidden="true"
-            >
-                {/* Dua busur cahaya lembut agar bidang tidak datar (aksen 1-2). */}
-                <div className="bg-brand-foam/50 absolute -top-24 -left-24 size-72 rounded-full blur-3xl" />
-                <div className="bg-sheet/30 absolute -right-20 -bottom-28 size-80 rounded-full blur-3xl" />
-                <Particles
-                    className="absolute inset-0 opacity-60"
-                    particleColors={colorsRef.current}
-                    particleCount={40}
-                    particleSpread={9}
-                    speed={0.1}
-                    particleBaseSize={70}
-                    moveParticlesOnHover={false}
-                    alphaParticles={false}
-                    disableRotation
-                    paused={prefersReducedMotion}
-                />
-            </div>
+                className="ledger-grid pointer-events-none absolute inset-0 opacity-60"
+            />
 
-            <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:py-24 xl:px-8">
-                <div className="flex flex-col items-start">
-                    <span className="bg-sheet text-action mb-6 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold tracking-wide shadow-card">
-                        <ShieldCheck className="size-3.5" aria-hidden="true" />
-                        Sistem operasi laundry dengan bukti per transaksi
-                    </span>
+            <Container className="relative">
+                <div className="border-line text-ink-soft flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b py-3">
+                    <MetaLabel>Repica · Manajemen laundry</MetaLabel>
+                    <MetaLabel>Foto · Persetujuan · Arsip</MetaLabel>
+                </div>
 
-                    {/* Headline display — LCP, langsung terbaca, tanpa tertunda animasi. */}
-                    <h1 className="text-ink font-display font-extrabold tracking-tight">
-                        <SplitText
-                            text="Laundry Anda, dibuktikan — bukan dijanjikan."
-                            delay={0}
-                            duration={0.5}
-                            className="text-display-hero block"
-                        />
-                    </h1>
+                <div className="grid gap-14 pt-12 pb-20 lg:grid-cols-12 lg:items-end lg:gap-10 lg:pt-16 lg:pb-24">
+                    <div className="lg:col-span-7">
+                        <h1 className="text-display-hero font-display text-ink font-extrabold text-balance">
+                            Setiap cucian{' '}
+                            <span className="text-action-text">
+                                punya bukti.
+                            </span>
+                        </h1>
 
-                    <p className="text-ink mt-6 max-w-xl text-lg leading-relaxed font-medium">
-                        Kirim foto kondisi awal, dapatkan estimasi otomatis, dan
-                        terima persetujuan lewat WhatsApp — setiap aksi dicatat
-                        dalam jejak audit agar sengketa baju rusak tidak pernah
-                        menjadi kata satu terhadap kata yang lain.
-                    </p>
+                        <p className="text-ink-soft mt-6 max-w-xl text-lg leading-relaxed font-medium text-pretty sm:text-xl">
+                            Repica mencatat order, foto kondisi, dan persetujuan
+                            pelanggan dalam satu buku yang sama. Sengketa
+                            selesai dengan catatan — bukan dengan saling
+                            mengingat.
+                        </p>
 
-                    {/* CTA pair. */}
-                    <div className="mt-8 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center">
-                        <Link
-                            href={register()}
-                            className={cn(
-                                'bg-action text-action-foreground hover:bg-action-strong inline-flex min-h-11 items-center justify-center gap-2 rounded-[var(--radius-tear)] px-8 py-3.5 text-sm font-bold whitespace-nowrap shadow-[0_4px_0_0_var(--color-action-strong)] transition-colors duration-200',
-                                'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brand',
-                            )}
-                        >
-                            {isAuthenticated
-                                ? 'Ke Dashboard'
-                                : 'Coba Gratis 14 Hari'}
-                            <ArrowRight className="size-4" aria-hidden="true" />
-                        </Link>
-                        <Button
-                            asChild
-                            variant="secondary"
-                            size="lg"
-                            className="rounded-[var(--radius-tear)] text-sm font-bold"
-                        >
-                            <a href="#fitur">Lihat Fitur</a>
-                        </Button>
+                        <div className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4">
+                            <Button
+                                asChild
+                                className="bg-action text-action-foreground hover:bg-action-strong h-12 rounded-md px-6 text-base font-bold"
+                            >
+                                <Link
+                                    href={
+                                        isAuthenticated
+                                            ? dashboard()
+                                            : register()
+                                    }
+                                >
+                                    {isAuthenticated
+                                        ? 'Buka dashboard'
+                                        : 'Mulai trial 14 hari'}
+                                    <ArrowRight aria-hidden="true" />
+                                </Link>
+                            </Button>
+
+                            <a
+                                href="#fitur"
+                                className="text-ink hover:text-action-text focus-visible:ring-ring focus-visible:ring-offset-ground inline-flex min-h-11 items-center gap-2 rounded-md px-1 text-sm font-bold underline decoration-1 underline-offset-4 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+                            >
+                                Lihat contoh bukti
+                                <ArrowDown
+                                    className="size-4"
+                                    aria-hidden="true"
+                                />
+                            </a>
+                        </div>
+
+                        <dl className="border-line bg-line mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-lg border sm:grid-cols-4">
+                            {FACTS.map((fact) => (
+                                <div
+                                    key={fact.label}
+                                    className="bg-sheet flex min-h-20 flex-col justify-between gap-3 px-4 py-4"
+                                >
+                                    <dt className="text-ink-soft font-mono text-[11px] font-semibold tracking-[0.14em] uppercase">
+                                        {fact.label}
+                                    </dt>
+                                    <dd className="text-ink text-lg leading-none font-extrabold tabular-nums">
+                                        {fact.value}
+                                    </dd>
+                                </div>
+                            ))}
+                        </dl>
                     </div>
 
-                    {/* Chip mikro-fakta — angka yang bisa diverifikasi. */}
-                    <ul
-                        className="mt-8 flex flex-wrap items-center gap-2"
-                        aria-label="Fakta trial dan batas gratis"
-                    >
-                        {FACT_CHIPS.map(({ icon: Icon, label }) => (
-                            <li
-                                key={label}
-                                className="border-brand-edge bg-sheet/85 text-ink inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold tabular-nums"
-                            >
-                                <Icon className="text-action size-3.5" aria-hidden="true" />
-                                {label}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+                    <div className="relative lg:col-span-5">
+                        <div
+                            aria-hidden="true"
+                            className="bg-graphic-tint absolute -inset-x-2 top-6 bottom-4 rounded-xl sm:-inset-x-4"
+                        />
 
-                {/* Sachet bukti — interaksi tanda tangan; tetap tampil di mobile. */}
-                <div className="relative">
-                    <SachetPreview />
-                </div>
-            </div>
+                        <TiltCard
+                            maxTilt={3}
+                            className="relative mx-auto w-full max-w-md lg:max-w-none"
+                        >
+                            <div className="relative">
+                                <ProofCard className="-rotate-[1.2deg]" />
 
-            {/* Cue gulir — tidak ada false floor. */}
-            <div className="mx-auto max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
-                {prefersReducedMotion ? (
-                    <span className="text-ink inline-flex items-center gap-2 text-sm font-semibold">
-                        Gulir untuk melihat lebih banyak
-                    </span>
-                ) : (
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.6, duration: 0.5 }}
-                        className="flex items-center gap-2"
-                    >
-                        <span className="bg-ink/60 h-1.5 w-1.5 animate-[bounce_2s_infinite] rounded-full" />
-                        <span className="text-ink text-sm font-semibold">
-                            Gulir untuk melihat lebih banyak
-                        </span>
-                    </motion.div>
-                )}
+                                <WaBubble
+                                    className="absolute top-[36%] right-0 w-[17rem] rotate-[1.8deg] sm:-right-6"
+                                    text="Bukti kondisi order #RC-2391 sudah siap dicek. Setujui agar cucian bisa kami proses."
+                                    time="14:32"
+                                />
+                            </div>
+                        </TiltCard>
+
+                        <MetaLabel className="mt-3 flex justify-end">
+                            Ilustrasi · data contoh
+                        </MetaLabel>
+                    </div>
+                </div>
+            </Container>
+
+            <div className="bg-night text-night-ink border-night-line border-t">
+                <Marquee
+                    items={MARQUEE_ITEMS}
+                    label="Pita ringkasan bukti Repica"
+                    className="py-3.5"
+                />
             </div>
         </section>
     );

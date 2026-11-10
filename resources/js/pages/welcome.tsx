@@ -1,13 +1,13 @@
 import { Head, usePage } from '@inertiajs/react';
 
-import AudienceStrip from '@/components/marketing/audience-strip';
 import MarketingCtaFooter from '@/components/marketing/cta-footer';
-import MarketingFaq from '@/components/marketing/faq';
-import FeatureBento from '@/components/marketing/feature-bento';
+import MarketingFaq, { FAQS } from '@/components/marketing/faq';
 import MarketingHero from '@/components/marketing/hero';
 import MarketingIntegrations from '@/components/marketing/integrations';
 import MarketingPipeline from '@/components/marketing/pipeline';
 import MarketingPricing from '@/components/marketing/pricing';
+import ProblemsLedger from '@/components/marketing/problems-ledger';
+import ProofBand from '@/components/marketing/proof-band';
 import MarketingHeader from '@/components/marketing/site-header';
 import type { Auth } from '@/types/auth';
 
@@ -16,9 +16,9 @@ import type { Auth } from '@/types/auth';
  * susunan band + metadata `Head`; seluruh isi dan styling berada di
  * `components/marketing/*`.
  *
- * Urutan band "Bukti Terkendali" (DESIGN.md v3):
- * Hero → Audience → Feature Bento (#fitur) → Pipeline (#cara-kerja, navy) →
- * Integrations → Pricing (#harga) → FAQ (#faq) → CTA footer (navy).
+ * Urutan band "Buku Bukti":
+ * Hero (+ pita bukti) → Masalah → Bukti (#fitur) → Cara kerja (#cara-kerja,
+ * malam) → Integrasi → Harga (#harga) → FAQ (#faq) → CTA footer (malam).
  *
  * `id` anchor milik masing-masing band harus persis cocok dengan `NAV_LINKS`
  * di `site-header.tsx`.
@@ -29,11 +29,24 @@ export default function Welcome() {
     const { auth } = usePage<{ auth: Auth }>().props;
     const isAuthenticated = Boolean(auth?.user);
 
+    const faqJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: FAQS.map((item) => ({
+            '@type': 'Question',
+            name: item.question,
+            acceptedAnswer: {
+                '@type': 'Answer',
+                text: item.answer,
+            },
+        })),
+    };
+
     return (
-        <div className="welcome-page bg-background text-foreground min-h-screen">
-            <Head title="Repica — SaaS Manajemen Laundry dengan Bukti Kondisi">
+        <div className="welcome-page bg-ground text-ink min-h-screen">
+            <Head title="Repica — Manajemen Laundry dengan Bukti Kondisi">
                 <meta
-                    content="Repica adalah SaaS manajemen laundry dengan bukti kondisi: foto saat masuk + watermark + persetujuan WhatsApp untuk mencegah fraud dan sengketa. Trial 14 hari."
+                    content="Repica mencatat order, foto kondisi, persetujuan pelanggan, dan kas harian dalam satu buku. Sengketa laundry selesai dengan bukti, bukan ingatan. Trial 14 hari tanpa kartu kredit."
                     name="description"
                 />
                 <meta
@@ -41,15 +54,21 @@ export default function Welcome() {
                     property="og:title"
                 />
                 <meta
-                    content="Foto ber-watermark, persetujuan WhatsApp, dan jejak audit untuk setiap order. Trial 14 hari tanpa kartu kredit."
+                    content="Foto berwatermark, persetujuan WhatsApp, dan jejak audit untuk setiap order. Trial 14 hari tanpa kartu kredit."
                     property="og:description"
                 />
                 <meta content="website" property="og:type" />
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify(faqJsonLd),
+                    }}
+                />
             </Head>
 
             <a
                 href="#konten-utama"
-                className="bg-action text-action-foreground focus-visible:ring-ring sr-only rounded-lg px-4 py-2 text-sm font-semibold focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[60] focus-visible:ring-2 focus-visible:ring-offset-2"
+                className="bg-action text-action-foreground focus-visible:ring-ring sr-only rounded-md px-4 py-2 text-sm font-semibold focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[60] focus-visible:ring-2 focus-visible:ring-offset-2"
             >
                 Lewati ke konten
             </a>
@@ -59,8 +78,8 @@ export default function Welcome() {
 
                 <main className="flex-1" id="konten-utama" tabIndex={-1}>
                     <MarketingHero isAuthenticated={isAuthenticated} />
-                    <AudienceStrip />
-                    <FeatureBento />
+                    <ProblemsLedger />
+                    <ProofBand />
                     <MarketingPipeline />
                     <MarketingIntegrations />
                     <MarketingPricing isAuthenticated={isAuthenticated} />

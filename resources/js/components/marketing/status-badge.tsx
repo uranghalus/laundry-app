@@ -1,44 +1,44 @@
-import { CheckCircle, Clock, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 /**
- * Status badge - pill sachet kecil berisi ikon + label, untuk status pipeline
- * (Diterima / Menunggu Persetujuan / Ditolak) maupun sel konten. Varian warna
- * diikat pada token semantik `@theme` Sachet Pop: ok / warn / wait / bad /
- * brand-tint / netral. Tidak ada hex polos dan tidak ada kelas skala v3 yang
- * sudah mati.
+ * Status badge — label status kecil dengan ikon opsional.
  *
- * @param variant - 'success' | 'warning' | 'info' | 'neutral' | 'brand' | 'bad'
+ * Badge statis tidak memakai `role="status"`; live region hanya dipakai
+ * ketika status benar-benar berubah (mis. pada demo alur bukti).
+ *
+ * @param variant - Nada semantik badge.
  * @param label - Teks status yang ditampilkan.
  * @param icon - Ikon lucide opsional di depan label.
+ * @param className - Kelas tambahan.
  */
 export function StatusBadge({
-    variant = 'info',
+    variant = 'neutral',
     label,
     icon: Icon,
+    className,
 }: {
-    variant?: 'success' | 'warning' | 'info' | 'neutral' | 'brand' | 'bad';
+    variant?: 'success' | 'warning' | 'action' | 'neutral' | 'bad';
     label: string;
     icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+    className?: string;
 }) {
-    const base =
-        'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-bold transition-colors duration-200';
     const variants = {
         success: 'bg-ok-tint text-ok border-ok/25',
         warning: 'bg-warn-tint text-warn border-warn/25',
-        info: 'bg-wait-tint text-wait border-wait/25',
+        action: 'bg-graphic-tint text-action-text border-action/20',
         bad: 'bg-bad-tint text-bad border-bad/25',
-        brand: 'bg-brand-tint text-action border-brand-edge',
-        neutral: 'bg-brand-foam text-ink-soft border-line',
-    };
+        neutral: 'bg-muted text-ink-soft border-line',
+    } as const;
 
     return (
         <span
-            className={cn(base, variants[variant])}
-            role="status"
-            aria-label={label}
+            className={cn(
+                'inline-flex items-center gap-1.5 rounded-sm border px-2 py-1 text-[11px] leading-none font-bold',
+                variants[variant],
+                className,
+            )}
         >
-            {Icon && <Icon className="size-3.5" aria-hidden="true" />}
+            {Icon ? <Icon className="size-3.5" aria-hidden="true" /> : null}
             <span className="tabular-nums">{label}</span>
         </span>
     );

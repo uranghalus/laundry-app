@@ -1,72 +1,118 @@
-import { Image, ShieldCheck, Clock } from 'lucide-react';
+import { Camera, Shirt } from 'lucide-react';
+
+import { MetaLabel } from '@/components/marketing/layout';
+import { StatusBadge } from '@/components/marketing/status-badge';
 import { cn } from '@/lib/utils';
 
 /**
- * Proof card - kartu bukti kondisi order di dalam sachet hero (bukan bitmap):
- * permukaan sheet dengan watermark memo simulasi ("15:32 - OUTLET GAMBIR -
- * RC-2391") dan cap status. Kelas warna hanya token Sachet Pop (`ok`,
- * `brand-*`, `line`), elevation satu tingkat (`shadow-card`). Semua elemen
- * media berdimesi eksplisit agar CLS tidak terpengaruh.
+ * Proof card — ilustrasi lembar bukti kondisi satu order.
  *
- * @param orderId - ID order (contoh: 'RC-2391'), ditampilkan sebagai tabular-nums.
- * @param garment - Deskripsi pakaian (contoh: '4 baju, 2 celana').
- * @param weight - Berat cucian (contoh: '6 kg').
- * @param statusLabel - Label status (contoh: 'Diterima').
- * @param time - Waktu stamp (contoh: '15:32').
- * @param outlet - Nama outlet (contoh: 'Outlet Gambir').
+ * Bukan bitmap dan bukan tangkapan layar: foto digambar sebagai bidang
+ * kertas dengan ikon pakaian, lalu diberi tanda air outlet, waktu, dan nomor
+ * order. Label "Contoh" selalu terlihat agar tidak dibaca sebagai data live.
+ *
+ * @param orderId - Nomor order contoh.
+ * @param outlet - Nama outlet contoh.
+ * @param time - Waktu pencatatan contoh.
+ * @param garment - Deskripsi pakaian contoh.
+ * @param weight - Berat cucian contoh.
+ * @param statusLabel - Label status pada lembar.
+ * @param statusVariant - Nada status pada lembar.
+ * @param className - Kelas tambahan.
  */
 export function ProofCard({
     orderId = 'RC-2391',
+    outlet = 'Outlet Gambir',
+    time = '15:32',
     garment = '4 baju, 2 celana',
     weight = '6 kg',
     statusLabel = 'Diterima',
-    time = '15:32',
-    outlet = 'Outlet Gambir',
+    statusVariant = 'success',
+    className,
 }: {
     orderId?: string;
+    outlet?: string;
+    time?: string;
     garment?: string;
     weight?: string;
     statusLabel?: string;
-    time?: string;
-    outlet?: string;
+    statusVariant?: 'success' | 'warning' | 'action' | 'neutral' | 'bad';
+    className?: string;
 }) {
+    const watermark = `${outlet} · ${time} · #${orderId}`;
+
     return (
-        <div className="bg-brand-foam border-brand-edge relative overflow-hidden rounded-[var(--radius-sachet)] border p-5 shadow-card">
-            {/* Tanda air simulasi - tidak ada gambar asli, ukuran eksplisit. */}
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-10 select-none">
-                <Image className="text-ink size-32" aria-hidden="true" />
-            </div>
-            <div className="relative z-10 flex flex-col gap-3">
-                <div className="flex items-start justify-between gap-2">
-                    <span className="text-ink text-xs font-bold tabular-nums">
-                        {outlet}
-                    </span>
-                    <span className="text-action text-xs font-bold tabular-nums">
-                        #{orderId}
-                    </span>
+        <div
+            className={cn(
+                'bg-sheet border-line shadow-card overflow-hidden rounded-lg border',
+                className,
+            )}
+        >
+            <div className="border-line flex items-center justify-between gap-3 border-b px-4 py-3">
+                <div className="flex min-w-0 items-center gap-2">
+                    <span
+                        aria-hidden="true"
+                        className="bg-action size-1.5 shrink-0 rounded-full"
+                    />
+                    <MetaLabel className="truncate">{outlet}</MetaLabel>
                 </div>
-                <div className="flex items-center justify-between gap-2">
-                    <p className="text-ink-soft text-sm leading-none font-medium">
+                <span className="text-ink shrink-0 font-mono text-[11px] font-bold tabular-nums">
+                    #{orderId}
+                </span>
+            </div>
+
+            <div
+                className="bg-paper relative aspect-[4/3] overflow-hidden"
+                role="img"
+                aria-label={`Ilustrasi foto kondisi ${garment} untuk order ${orderId} dari ${outlet}, pukul ${time}.`}
+            >
+                <div
+                    aria-hidden="true"
+                    className="absolute inset-0 flex items-center justify-center"
+                >
+                    <Shirt
+                        className="text-line-strong size-24"
+                        strokeWidth={0.9}
+                    />
+                </div>
+
+                <div
+                    aria-hidden="true"
+                    className="absolute inset-0 flex -rotate-12 flex-col items-center justify-center gap-5 opacity-15"
+                >
+                    {[0, 1, 2].map((line) => (
+                        <p
+                            key={line}
+                            className="text-ink font-mono text-[11px] font-bold tracking-[0.16em] whitespace-nowrap uppercase"
+                        >
+                            {watermark}
+                        </p>
+                    ))}
+                </div>
+
+                <MetaLabel className="bg-sheet/90 border-line absolute top-3 left-3 border px-1.5 py-1">
+                    Foto 1/1
+                </MetaLabel>
+                <MetaLabel className="bg-night text-night-ink absolute top-3 right-3 px-1.5 py-1">
+                    Contoh
+                </MetaLabel>
+
+                <span className="text-ink-soft absolute bottom-3 left-3 inline-flex items-center gap-1.5">
+                    <Camera className="size-3.5" aria-hidden="true" />
+                    <span className="text-[11px] font-bold">Kondisi awal</span>
+                </span>
+            </div>
+
+            <div className="border-line flex items-center justify-between gap-3 border-t px-4 py-3">
+                <div className="min-w-0">
+                    <p className="text-ink truncate text-sm font-bold">
                         {garment} · {weight}
                     </p>
-                    <span
-                        className={cn(
-                            'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold',
-                            statusLabel === 'Diterima'
-                                ? 'bg-ok-tint text-ok border-ok/25'
-                                : 'bg-wait-tint text-wait border-wait/25',
-                        )}
-                    >
-                        <ShieldCheck className="size-3.5" aria-hidden="true" />{' '}
-                        {statusLabel}
-                    </span>
+                    <p className="text-ink-soft mt-0.5 font-mono text-[11px] tabular-nums">
+                        {time}
+                    </p>
                 </div>
-                <div className="text-ink-soft border-line flex items-center gap-2 border-t pt-2 text-[11px] font-medium tabular-nums">
-                    <Clock className="size-3.5" aria-hidden="true" />
-                    <span>
-                        {time} · foto kondisi awal tercap & berwatermark
-                    </span>
-                </div>
+                <StatusBadge variant={statusVariant} label={statusLabel} />
             </div>
         </div>
     );

@@ -1,245 +1,210 @@
 import { useState } from 'react';
 
-import {
-    Inbox,
-    Droplets,
-    Wind,
-    Flame,
-    PackageCheck,
-    Check,
-} from 'lucide-react';
-import { useReducedMotion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 
-import { Container, SectionHeading } from '@/components/marketing/layout';
-import CountUp from '@/components/react-bits/count-up';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import {
+    Container,
+    MetaLabel,
+    SectionHeading,
+} from '@/components/marketing/layout';
+import { PIPELINE_STATUSES } from '@/lib/pipeline-status';
 import { cn } from '@/lib/utils';
 
 /**
- * Enam status pipeline PRD §6.2 sebagai BLOK BERDURASI TERUKUR (donasi ritme
- * "laban"): tiap tahap digambar sebagai balok dengan lebar proporsional ke
- * durasi tipikalnya, bukan sebagai kartu seragam. Durasi menit adalah contoh
- * pelacakan satu order — label "contoh" selalu terlihat agar tidak dibaca
- * sebagai klaim SLA.
+ * Contoh pesan pelanggan pada setiap status. Isinya mengikuti perilaku
+ * notifikasi produk (PRD §5), bukan SLA atau durasi yang direka.
  */
-const STAGES = [
-    {
-        key: 'diterima',
-        label: 'Diterima',
-        icon: Inbox,
-        tint: 'bg-brand',
-        minutes: 10,
-        count: 12,
-        desc: 'Barang diterima di outlet, foto kondisi awal diambil.',
-    },
-    {
-        key: 'dicuci',
-        label: 'Dicuci',
-        icon: Droplets,
-        tint: 'bg-night-brand',
-        minutes: 90,
-        count: 8,
-        desc: 'Masuk proses cuci sesuai jenis layanan.',
-    },
-    {
-        key: 'dikeringkan',
-        label: 'Dikeringkan',
-        icon: Wind,
-        tint: 'bg-mint',
-        minutes: 45,
-        count: 6,
-        desc: 'Selesai dicuci, sedang dikeringkan.',
-    },
-    {
-        key: 'disetrika',
-        label: 'Disetrika',
-        icon: Flame,
-        tint: 'bg-amber',
-        minutes: 40,
-        count: 5,
-        desc: 'Pengeringan selesai, masuk tahap setrika.',
-    },
-    {
-        key: 'siap-diambil',
-        label: 'Siap Diambil',
-        icon: PackageCheck,
-        tint: 'bg-violet',
-        minutes: 15,
-        count: 4,
-        desc: 'Sudah selesai dan siap diambil pelanggan.',
-    },
-    {
-        key: 'selesai',
-        label: 'Selesai',
-        icon: Check,
-        tint: 'bg-ok',
-        minutes: 5,
-        count: 20,
-        desc: 'Barang diserahkan, invoice dan jejak terkunci.',
-    },
-] as const;
-
-/** Total durasi contoh (menit) — dipakai untuk lebar proporsional balok. */
-const TOTAL_MINUTES = STAGES.reduce((sum, s) => sum + s.minutes, 0);
-
-type PipelineFilter = (typeof STAGES)[number]['key'] | 'semua';
+const CUSTOMER_MESSAGES: Record<string, string> = {
+    diterima:
+        'Order #RC-2391 diterima. Foto kondisi sudah dilampirkan — mohon dicek dan disetujui.',
+    dicuci: 'Cucian order #RC-2391 sedang dicuci.',
+    dikeringkan: 'Cucian order #RC-2391 masuk tahap pengeringan.',
+    disetrika: 'Cucian order #RC-2391 sedang disetrika.',
+    siap_diambil:
+        'Cucian order #RC-2391 siap diambil di Outlet Gambir. Total tagihan ada di tautan.',
+    selesai:
+        'Order #RC-2391 sudah diserahkan. Bukti kondisi dan riwayatnya tetap tersimpan.',
+};
 
 /**
- * Band Pipeline — malam `#0B1B33` dengan field biru berpendar (night band).
+ * Band cara kerja — stepper status vertikal yang bisa diklik.
  *
- * Interaksi: ToggleGroup filter (konvensi shadcn yang dipertahankan) menyaring
- * balok tanpa reload; hasilnya diumumkan lewat `aria-live` karena perubahan
- * grid tidak selalu terlihat oleh pembaca layar. Balok nonaktif diredupkan,
- * bukan disembunyikan, supaya proporsi durasi tetap terbaca utuh.
- *
- * Angka durasi & jumlah order masuk sebagai hitungan fisik via CountUp
- * (react-bits) — dihormati `prefers-reduced-motion` oleh komponen itu sendiri.
+ * Enam status memakai definisi bersama di `lib/pipeline-status.ts` supaya
+ * bahasa status sama dengan aplikasi. Tidak ada bilah durasi, jumlah order,
+ * atau timer rekaan; yang ditampilkan hanya urutan dan pesan contoh.
  */
 export default function MarketingPipeline() {
-    const [filter, setFilter] = useState<PipelineFilter>('semua');
-    const prefersReducedMotion = useReducedMotion() ?? false;
+    const [activeIndex, setActiveIndex] = useState(0);
+    const prefersReducedMotion = useReducedMotion();
+    const status = PIPELINE_STATUSES[activeIndex];
+    const ActiveIcon = status.icon;
 
     return (
         <section
             id="cara-kerja"
-            className="bg-night scroll-mt-20 relative overflow-hidden py-20 sm:py-24"
+            aria-labelledby="cara-kerja-title"
+            className="bg-night text-night-ink scroll-mt-24 py-20 sm:py-24"
         >
-            {/* Field biru berpendar — dua busur, bukan wash penuh (aksen 1-2). */}
-            <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-                <div className="bg-brand/15 absolute top-1/4 -left-32 size-96 rounded-full blur-3xl" />
-                <div className="bg-night-brand/10 absolute -right-24 -bottom-16 size-80 rounded-full blur-3xl" />
-            </div>
-
-            <Container className="relative">
-                <SectionHeading
-                    index="03"
-                    eyebrow="Cara kerja"
-                    tone="dark"
-                    title="Sebuah order, dari pintu sampai tangan"
-                    description="Enam status, satu jejak. Lebar tiap balok adalah durasi tipikal tahapnya dalam satu order contoh — waktu tunggu pelanggan berhenti jadi tebak-tebakan."
-                />
-
-                {/* Filter radiogroup — konvensi ToggleGroup shadcn dipertahankan. */}
-                <div className="mt-10 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                    <div className="bg-night-soft border-night-line inline-flex max-w-full items-center overflow-x-auto rounded-[var(--radius-tear)] border p-1">
-                        <ToggleGroup
-                            type="single"
-                            value={filter}
-                            onValueChange={(value: string) =>
-                                setFilter((value || 'semua') as PipelineFilter)
-                            }
-                            aria-label="Filter status pipeline"
-                            className="flex flex-row"
-                        >
-                            <ToggleGroupItem
-                                value="semua"
-                                className={cn(
-                                    'text-night-ink-soft data-[state=on]:bg-night-brand/25 data-[state=on]:text-night-ink min-h-11 rounded-md px-4 text-sm font-bold whitespace-nowrap transition-colors',
-                                )}
-                            >
-                                Semua
-                            </ToggleGroupItem>
-                            {STAGES.map((s) => (
-                                <ToggleGroupItem
-                                    key={s.key}
-                                    value={s.key}
-                                    className={cn(
-                                        'text-night-ink-soft data-[state=on]:bg-night-brand/25 data-[state=on]:text-night-ink min-h-11 rounded-md px-4 text-sm font-bold whitespace-nowrap transition-colors',
-                                    )}
-                                >
-                                    {s.label}
-                                </ToggleGroupItem>
-                            ))}
-                        </ToggleGroup>
-                    </div>
-                    <p
-                        className="text-night-ink-soft text-xs font-semibold tabular-nums"
-                        aria-live="polite"
-                    >
-                        {filter === 'semua'
-                            ? `Menampilkan ${STAGES.length} tahap · total ${TOTAL_MINUTES} menit contoh`
-                            : `Menampilkan 1 tahap dari ${STAGES.length}`}
-                    </p>
+            <Container>
+                <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+                    <SectionHeading
+                        id="cara-kerja-title"
+                        tone="dark"
+                        title="Enam status. Satu urutan yang bisa dibaca."
+                        description="Setiap perubahan status mengirim kabar ke pelanggan dan meninggalkan catatan di order. Pilih status untuk melihat apa yang terjadi."
+                    />
+                    <MetaLabel tone="dark" className="shrink-0 pb-2">
+                        Contoh alur satu order
+                    </MetaLabel>
                 </div>
 
-                {/* Balok durasi — lebar proporsional, ritme horizontal di desktop. */}
-                <ol className="mt-10 flex flex-col gap-3" aria-label="Tahap pipeline dengan durasi">
-                    {STAGES.map((stage) => {
-                        const Icon = stage.icon;
-                        const dim = filter !== 'semua' && filter !== stage.key;
-                        const widthPct = Math.max(
-                            14,
-                            Math.round((stage.minutes / TOTAL_MINUTES) * 100),
-                        );
-                        return (
-                            <li key={stage.key} data-welcome-surface>
-                                <div
-                                    className={cn(
-                                        'border-night-line bg-night-soft flex min-h-11 flex-wrap items-center gap-x-4 gap-y-2 rounded-[var(--radius-tear)] border-2 p-4 transition-opacity duration-200',
-                                        dim
-                                            ? 'opacity-40'
-                                            : 'opacity-100 hover:opacity-100',
-                                        filter === stage.key
-                                            ? 'border-night-brand ring-2 ring-night-brand/50'
-                                            : '',
-                                    )}
-                                    style={
-                                        prefersReducedMotion
-                                            ? undefined
-                                            : {
-                                                  transition:
-                                                      'opacity 200ms ease',
-                                              }
-                                    }
-                                >
-                                    {/* Bar durasi proporsional (bukan teks warna). */}
-                                    <span
-                                        aria-hidden="true"
-                                        className={cn(
-                                            'hidden h-2 shrink-0 rounded-full lg:block',
-                                            stage.tint,
-                                        )}
-                                        style={{ width: `${widthPct * 2.6}px`, maxWidth: '40%' }}
-                                    />
-                                    <span className="text-night-ink flex size-9 shrink-0 items-center justify-center rounded-lg bg-night-brand/20">
-                                        <Icon className="size-4" aria-hidden="true" />
-                                    </span>
-                                    <div className="min-w-0 flex-1">
-                                        <p className="text-night-ink text-sm font-extrabold">
-                                            {stage.label}
-                                        </p>
-                                        <p className="text-night-ink-soft text-xs leading-snug font-medium">
-                                            {stage.desc}
-                                        </p>
-                                    </div>
-                                    <div className="flex shrink-0 items-center gap-5 tabular-nums">
-                                        <span className="text-night-ink font-display text-lg leading-none font-extrabold">
-                                            <CountUp
-                                                to={stage.minutes}
-                                                duration={0.8}
-                                            />
-                                            <span className="text-night-ink-soft text-xs font-bold">
-                                                {' '}
-                                                mnt
-                                            </span>
-                                        </span>
-                                        <span className="text-night-brand bg-night-brand/15 rounded-full px-2.5 py-1 text-xs font-bold">
-                                            <CountUp to={stage.count} duration={0.6} />{' '}
-                                            order
-                                        </span>
-                                    </div>
-                                </div>
-                            </li>
-                        );
-                    })}
-                </ol>
+                <div className="mt-12 grid gap-6 lg:grid-cols-12 lg:gap-10">
+                    <div className="lg:col-span-5">
+                        <ol className="border-night-line overflow-hidden rounded-xl border">
+                            {PIPELINE_STATUSES.map((item, index) => {
+                                const Icon = item.icon;
+                                const isActive = index === activeIndex;
 
-                <p className="text-night-ink-soft mt-6 text-xs font-medium">
-                    Durasi dan jumlah di atas adalah contoh satu hari satu
-                    outlet, bukan janji SLA — angka nyata datang dari mesin
-                    Anda sendiri setelah terhubung.
-                </p>
+                                return (
+                                    <li key={item.key}>
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                setActiveIndex(index)
+                                            }
+                                            aria-current={
+                                                isActive ? 'step' : undefined
+                                            }
+                                            aria-controls="status-panel"
+                                            className={cn(
+                                                'border-night-line flex min-h-14 w-full items-center gap-4 border-b px-4 py-3 text-left transition-colors last:border-b-0',
+                                                'focus-visible:ring-night-accent focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset',
+                                                isActive
+                                                    ? 'bg-night-raised text-night-ink'
+                                                    : 'text-night-ink-soft hover:bg-night-raised/60 hover:text-night-ink',
+                                            )}
+                                        >
+                                            <span
+                                                className={cn(
+                                                    'flex size-9 shrink-0 items-center justify-center rounded-md border',
+                                                    isActive
+                                                        ? 'border-night-accent text-night-accent'
+                                                        : 'border-night-line text-night-ink-soft',
+                                                )}
+                                            >
+                                                <Icon
+                                                    className="size-4"
+                                                    aria-hidden="true"
+                                                />
+                                            </span>
+                                            <span className="flex-1 text-sm font-bold">
+                                                {item.label}
+                                            </span>
+                                            <span className="font-mono text-[11px] font-semibold tabular-nums">
+                                                0{index + 1}
+                                            </span>
+                                        </button>
+                                    </li>
+                                );
+                            })}
+                        </ol>
+                    </div>
+
+                    <div id="status-panel" className="lg:col-span-7">
+                        <p className="sr-only" aria-live="polite">
+                            Status {status.label}: {status.description}
+                        </p>
+
+                        {prefersReducedMotion ? (
+                            <StatusDetail
+                                status={status}
+                                activeIndex={activeIndex}
+                            />
+                        ) : (
+                            <AnimatePresence mode="wait" initial={false}>
+                                <motion.div
+                                    key={status.key}
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -8 }}
+                                    transition={{
+                                        duration: 0.22,
+                                        ease: 'easeOut',
+                                    }}
+                                >
+                                    <StatusDetail
+                                        status={status}
+                                        activeIndex={activeIndex}
+                                    />
+                                </motion.div>
+                            </AnimatePresence>
+                        )}
+
+                        <p className="text-night-ink-soft mt-4 flex items-start gap-2 text-xs leading-relaxed font-medium">
+                            <ActiveIcon
+                                className="text-night-accent mt-0.5 size-4 shrink-0"
+                                aria-hidden="true"
+                            />
+                            Setiap perubahan status tercatat di audit log —
+                            siapa, kapan, dan dari status apa.
+                        </p>
+                    </div>
+                </div>
             </Container>
         </section>
+    );
+}
+
+/**
+ * Panel detail untuk status yang sedang dipilih.
+ *
+ * @param status - Definisi status dari `PIPELINE_STATUSES`.
+ * @param activeIndex - Indeks status aktif untuk penomoran.
+ */
+function StatusDetail({
+    status,
+    activeIndex,
+}: {
+    status: (typeof PIPELINE_STATUSES)[number];
+    activeIndex: number;
+}) {
+    const Icon = status.icon;
+
+    return (
+        <div className="bg-night-raised border-night-line relative overflow-hidden rounded-xl border p-6 sm:p-8">
+            <span
+                aria-hidden="true"
+                className="text-night-ink/5 pointer-events-none absolute -top-8 right-2 font-mono text-[9rem] leading-none font-extrabold tabular-nums select-none"
+            >
+                0{activeIndex + 1}
+            </span>
+
+            <div className="relative">
+                <div className="flex items-start justify-between gap-4">
+                    <span className="bg-night text-night-accent flex size-14 items-center justify-center rounded-lg">
+                        <Icon className="size-6" aria-hidden="true" />
+                    </span>
+                    <MetaLabel tone="dark">
+                        Status 0{activeIndex + 1} / 06
+                    </MetaLabel>
+                </div>
+
+                <h3 className="text-night-ink mt-6 text-3xl font-extrabold tracking-tight text-balance sm:text-4xl">
+                    {status.label}
+                </h3>
+                <p className="text-night-ink-soft mt-3 max-w-lg text-base leading-relaxed font-medium">
+                    {status.description}
+                </p>
+
+                <div className="border-night-line mt-8 border-t pt-5">
+                    <MetaLabel tone="dark">
+                        Pesan ke pelanggan · contoh
+                    </MetaLabel>
+                    <p className="text-night-ink mt-2 max-w-lg text-sm leading-relaxed font-semibold">
+                        “{CUSTOMER_MESSAGES[status.key]}”
+                    </p>
+                </div>
+            </div>
+        </div>
     );
 }

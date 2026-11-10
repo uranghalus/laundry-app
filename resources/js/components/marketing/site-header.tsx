@@ -2,295 +2,294 @@ import { useEffect, useState } from 'react';
 
 import { Link } from '@inertiajs/react';
 import { ArrowRight, Menu, X } from 'lucide-react';
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 
-import RepicaMark, { RepicaWordmark } from '@/components/marketing/repica-mark';
+import RepicaMark from '@/components/marketing/repica-mark';
 import MarketingThemeSwitcher from '@/components/marketing/theme-switcher';
-import { dashboard, login, register } from '@/routes';
+import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
+import { dashboard, home, login, register } from '@/routes';
 
 /**
- * Anchor navigasi halaman publik (Keputusan Q10, DECISIONS.md): urutan
- * bottom-to-top pembacaan halaman — fitur, cara kerja, harga, FAQ. Setiap
- * `href` cocok dengan `id` pada band di `welcome.tsx`; semua band memakai
- * `scroll-mt-20` agar tidak tertutup header sticky.
+ * Anchor navigasi publik. Setiap `href` cocok dengan `id` band di
+ * `welcome.tsx`; semua band memakai `scroll-mt-24` agar tidak tertutup
+ * header sticky setinggi 64px.
  */
 const NAV_LINKS = [
     { href: '#fitur', label: 'Fitur' },
-    { href: '#cara-kerja', label: 'Cara Kerja' },
+    { href: '#cara-kerja', label: 'Cara kerja' },
     { href: '#harga', label: 'Harga' },
     { href: '#faq', label: 'FAQ' },
 ] as const;
 
-/**
- * Offset jarak aman di bawah header (h-16 = 64px) untuk menentukan section
- * aktif saat digulir; menyatu dengan `scroll-mt-20` (80px) pada band.
- */
+/** Jarak aman di bawah header untuk menentukan section aktif. */
 const ACTIVE_SECTION_OFFSET = 96;
 
 /**
- * Ring fokus bersama untuk semua kontrol interaktif header: indikator
- * keyboard selalu terlihat via ring token `--ring` (biru aksi), tanpa pernah
- * menghapus outline bawaan browser.
- */
-const FOCUS_RING =
-    'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-ground';
-
-/**
- * Header halaman publik Repica — bar lembar terang di atas medan biru (Sachet Pop).
+ * Header halaman publik — permukaan kertas solid tanpa blur, satu garis
+ * bawah, dan target sentuh minimal 44px. Menu ponsel memakai dialog Radix
+ * sehingga fokus terkurung, Escape menutup, dan offset panel tidak dihitung
+ * manual.
  *
- * Bar sticky setengah-transparan (`bg-sheet/85` + blur) dengan border rambut
- * dan bayangan pop saat halaman digulir. Tautan aktif memakai pil `bg-brand-tint
- * text-action` ( kontras AA ); CTA primer fill `bg-action` (#1D4ED8), sekunder
- * outline aksi.
- *
- * Menu seluler: drawer mengambang dari kanan dengan backdrop gelap, tutup via
- * tombol / Esc / klik latar. Semua item `min-h-11` (≥44px sentuhan),
- * `aria-expanded`, `aria-controls`, dan ring fokus terlihat.
- *
- * @param isAuthenticated - Menentukan apakah CTA "Buka Dashboard" ditampilkan
- *   (saat sudah login) atau CTA daftar (saat tamu).
+ * @param isAuthenticated - Menentukan CTA menuju dashboard atau registrasi.
  */
 export default function MarketingHeader({
     isAuthenticated = false,
 }: {
     isAuthenticated?: boolean;
 }) {
-    const [scrolled, setScrolled] = useState(false);
-    const [open, setOpen] = useState(false);
-    const [activeSection, setActiveSection] = useState<string>('');
-    const prefersReducedMotion = useReducedMotion() ?? false;
+    const [activeSection, setActiveSection] = useState('');
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     useEffect(() => {
-        const onScroll = () => setScrolled(window.scrollY > 0);
-        window.addEventListener('scroll', onScroll, { passive: true });
-        return () => window.removeEventListener('scroll', onScroll);
-    }, []);
-
-    useEffect(() => {
-        const onScroll = () => {
+        const syncActiveSection = () => {
             const fromTop = window.scrollY + ACTIVE_SECTION_OFFSET;
-            const hit = NAV_LINKS.find(({ href }) => {
-                const el = document.getElementById(href.slice(1));
+            const active = NAV_LINKS.find(({ href }) => {
+                const element = document.getElementById(href.slice(1));
+
                 return (
-                    el &&
-                    el.offsetTop <= fromTop &&
-                    el.offsetTop + el.offsetHeight > fromTop
+                    element !== null &&
+                    element.offsetTop <= fromTop &&
+                    element.offsetTop + element.offsetHeight > fromTop
                 );
             });
-            setActiveSection(hit ? hit.href : '');
+
+            setActiveSection(active?.href ?? '');
         };
-        window.addEventListener('scroll', onScroll, { passive: true });
-        return () => window.removeEventListener('scroll', onScroll);
+
+        syncActiveSection();
+        window.addEventListener('scroll', syncActiveSection, {
+            passive: true,
+        });
+
+        return () => window.removeEventListener('scroll', syncActiveSection);
     }, []);
 
-    const navLinks = (
-        <div className="hidden items-center gap-1 sm:flex">
-            {NAV_LINKS.map((link) => {
-                const isActive = activeSection === link.href;
-                return (
-                    <Link
-                        key={link.label}
-                        href={link.href}
-                        className={cn(
-                            'rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors duration-200',
-                            FOCUS_RING,
-                            isActive
-                                ? 'bg-brand-tint text-action'
-                                : 'text-ink-soft hover:bg-brand-tint/60 hover:text-ink',
-                        )}
-                        aria-current={isActive ? 'page' : undefined}
-                    >
-                        {link.label}
-                    </Link>
-                );
-            })}
-        </div>
-    );
-
-    const authActions = (
-        <div className="hidden items-center gap-2.5 sm:flex">
-            {isAuthenticated ? (
-                <Link
-                    href={dashboard()}
-                    className={cn(
-                        'inline-flex items-center gap-2 rounded-lg bg-action px-5 py-2.5 text-sm font-bold text-action-foreground shadow-[0_3px_0_0_var(--color-action-strong)] transition-colors hover:bg-action-strong',
-                        FOCUS_RING,
-                    )}
-                >
-                    Buka Dashboard
-                    <ArrowRight className="size-4" aria-hidden="true" />
-                </Link>
-            ) : (
-                <>
-                    <Link
-                        href={login()}
-                        className={cn(
-                            'rounded-lg border-2 border-action/60 px-5 py-2.5 text-sm font-bold text-action transition-colors hover:border-action hover:bg-brand-tint',
-                            FOCUS_RING,
-                        )}
-                    >
-                        Masuk
-                    </Link>
-                    <Link
-                        href={register()}
-                        className={cn(
-                            'rounded-lg bg-action px-5 py-2.5 text-sm font-bold text-action-foreground shadow-[0_3px_0_0_var(--color-action-strong)] transition-colors hover:bg-action-strong',
-                            FOCUS_RING,
-                        )}
-                    >
-                        Coba Gratis 14 Hari
-                    </Link>
-                </>
-            )}
-        </div>
-    );
+    const primaryLabel = isAuthenticated ? 'Buka dashboard' : 'Mulai trial';
 
     return (
-        <header
-            className={cn(
-                'sticky top-0 z-50 transition-shadow duration-300',
-                scrolled
-                    ? 'border-line/70 bg-sheet/85 border-b shadow-pop backdrop-blur-md'
-                    : 'border-b border-transparent bg-sheet/60 backdrop-blur-sm',
-            )}
-        >
-            <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-                <div className="flex shrink-0 items-center gap-2">
-                    <Link
-                        href="/"
-                        className={cn('flex items-center gap-2 rounded-lg', FOCUS_RING)}
-                    >
-                        <span className="flex size-8 items-center justify-center rounded-lg bg-brand text-white">
-                            <RepicaMark className="size-5" />
-                        </span>
-                        <RepicaWordmark showDescription={false} />
-                    </Link>
-                </div>
+        <header className="bg-ground border-line sticky top-0 z-50 border-b">
+            <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+                <Link
+                    href={home()}
+                    aria-label="Repica — kembali ke beranda"
+                    className="focus-visible:ring-ring focus-visible:ring-offset-ground flex min-h-11 items-center gap-2.5 rounded-md focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+                >
+                    <RepicaMark className="text-ink size-7" />
+                    <span className="text-ink text-lg font-extrabold tracking-tight">
+                        Repica
+                    </span>
+                    <span className="border-line text-ink-soft ml-1 hidden border-l pl-3 font-mono text-[11px] font-semibold tracking-[0.14em] uppercase xl:inline">
+                        Buku bukti laundry
+                    </span>
+                </Link>
 
-                <div className="hidden items-center gap-1 lg:flex">
-                    {navLinks}
-                    {authActions}
-                </div>
+                <nav
+                    aria-label="Navigasi utama"
+                    className="hidden items-center gap-1 lg:flex"
+                >
+                    {NAV_LINKS.map((link) => {
+                        const isActive = activeSection === link.href;
 
-                <div className="flex shrink-0 items-center gap-2">
-                    <MarketingThemeSwitcher />
-                    <button
-                        onClick={() => setOpen((o) => !o)}
-                        aria-expanded={open}
-                        aria-controls="menu-nav-seluler"
-                        aria-label={open ? 'Tutup navigasi seluler' : 'Buka navigasi seluler'}
-                        className={cn(
-                            'size-11 rounded-lg p-2 text-ink-soft transition-colors hover:bg-brand-tint hover:text-ink lg:hidden',
-                            FOCUS_RING,
-                        )}
-                    >
-                        {open ? (
-                            <X className="size-5" aria-hidden="true" />
-                        ) : (
-                            <Menu className="size-5" aria-hidden="true" />
-                        )}
-                    </button>
-                </div>
-            </div>
+                        return (
+                            <a
+                                key={link.href}
+                                href={link.href}
+                                aria-current={isActive ? 'location' : undefined}
+                                className={cn(
+                                    'focus-visible:ring-ring relative inline-flex min-h-11 items-center rounded-md px-3 text-sm font-bold transition-colors focus-visible:ring-2 focus-visible:outline-none',
+                                    isActive
+                                        ? 'text-ink'
+                                        : 'text-ink-soft hover:text-ink',
+                                )}
+                            >
+                                {link.label}
+                                <span
+                                    aria-hidden="true"
+                                    className={cn(
+                                        'bg-action absolute right-3 bottom-1.5 left-3 h-[2px] transition-opacity',
+                                        isActive ? 'opacity-100' : 'opacity-0',
+                                    )}
+                                />
+                            </a>
+                        );
+                    })}
+                </nav>
 
-            <AnimatePresence mode="wait">
-                {open && (
-                    <motion.div
-                        key="backdrop"
-                        initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0 }}
-                        animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1 }}
-                        exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0 }}
-                        transition={prefersReducedMotion ? {} : { duration: 0.2 }}
-                        className="fixed inset-0 top-16 z-40 bg-ink/40 backdrop-blur-sm"
-                        onClick={() => setOpen(false)}
+                <div className="flex items-center gap-2">
+                    <MarketingThemeSwitcher className="text-ink-soft hover:bg-muted hover:text-ink size-11" />
+
+                    <span
+                        aria-hidden="true"
+                        className="bg-line mx-1 hidden h-6 w-px sm:block"
                     />
-                )}
-                {open && (
-                    <motion.div
-                        key="drawer"
-                        id="menu-nav-seluler"
-                        role="dialog"
-                        aria-modal="true"
-                        aria-label="Navigasi seluler"
-                        initial={prefersReducedMotion ? { x: 0 } : { x: '100%' }}
-                        animate={{ x: 0 }}
-                        exit={prefersReducedMotion ? { x: 0 } : { x: '100%' }}
-                        transition={
-                            prefersReducedMotion
-                                ? {}
-                                : { type: 'spring', damping: 25, stiffness: 300 }
-                        }
-                        className="border-line bg-sheet fixed top-16 right-0 z-50 w-full border-l p-6 shadow-pop sm:max-w-md sm:p-8"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <nav className="flex flex-col gap-1" aria-label="Navigasi seluler">
-                            {NAV_LINKS.map((link) => {
-                                const isActive = activeSection === link.href;
-                                return (
-                                    <Link
-                                        key={link.label}
-                                        href={link.href}
-                                        onClick={() => setOpen(false)}
-                                        className={cn(
-                                            'flex min-h-11 w-full items-center justify-between rounded-lg px-4 py-3 text-sm font-semibold transition-colors',
-                                            FOCUS_RING,
-                                            isActive
-                                                ? 'bg-brand-tint text-action'
-                                                : 'text-ink hover:bg-brand-tint/60',
-                                        )}
-                                        aria-current={isActive ? 'page' : undefined}
+
+                    {isAuthenticated ? (
+                        <Button
+                            asChild
+                            className="bg-ink text-ground hover:bg-ink/90 hidden h-11 rounded-md px-4 font-bold sm:inline-flex"
+                        >
+                            <Link href={dashboard()}>
+                                Buka dashboard
+                                <ArrowRight aria-hidden="true" />
+                            </Link>
+                        </Button>
+                    ) : (
+                        <>
+                            <Link
+                                href={login()}
+                                className="text-ink-soft hover:text-ink focus-visible:ring-ring hidden min-h-11 items-center rounded-md px-3 text-sm font-bold transition-colors focus-visible:ring-2 focus-visible:outline-none sm:inline-flex"
+                            >
+                                Masuk
+                            </Link>
+                            <Button
+                                asChild
+                                className="bg-action text-action-foreground hover:bg-action-strong hidden h-11 rounded-md px-4 text-sm font-bold sm:inline-flex"
+                            >
+                                <Link href={register()}>
+                                    Mulai trial
+                                    <ArrowRight aria-hidden="true" />
+                                </Link>
+                            </Button>
+                        </>
+                    )}
+
+                    <Dialog open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+                        <DialogTrigger asChild>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                aria-label="Buka menu navigasi"
+                                className="border-line text-ink hover:bg-muted size-11 rounded-md bg-transparent lg:hidden"
+                            >
+                                <Menu aria-hidden="true" />
+                            </Button>
+                        </DialogTrigger>
+
+                        <DialogContent
+                            className={cn(
+                                'bg-ground border-line shadow-float fixed inset-y-0 top-0 right-0 left-auto flex h-dvh w-[min(20rem,calc(100vw-3rem))] max-w-none translate-x-0 translate-y-0 flex-col gap-0 rounded-none border-l p-0',
+                                '[&>button]:hidden',
+                            )}
+                        >
+                            <DialogTitle className="sr-only">
+                                Menu navigasi Repica
+                            </DialogTitle>
+                            <DialogDescription className="sr-only">
+                                Pilih bagian halaman atau masuk ke akun Anda.
+                            </DialogDescription>
+
+                            <div className="border-line flex h-16 shrink-0 items-center justify-between border-b px-4">
+                                <span className="text-ink flex items-center gap-2.5">
+                                    <RepicaMark className="size-6" />
+                                    <span className="text-lg font-extrabold tracking-tight">
+                                        Repica
+                                    </span>
+                                </span>
+                                <DialogClose asChild>
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        aria-label="Tutup menu navigasi"
+                                        className="text-ink hover:bg-muted size-11 rounded-md"
                                     >
-                                        {link.label}
-                                        {isActive ? (
-                                            <span className="text-xs font-bold uppercase tracking-wide text-action">
-                                                Aktif
-                                            </span>
-                                        ) : null}
-                                    </Link>
-                                );
-                            })}
-                            <div className="mt-6 flex flex-col gap-3 border-t border-line pt-6">
+                                        <X aria-hidden="true" />
+                                    </Button>
+                                </DialogClose>
+                            </div>
+
+                            <nav
+                                aria-label="Navigasi ponsel"
+                                className="flex-1 overflow-y-auto px-4 py-2"
+                            >
+                                <ul>
+                                    {NAV_LINKS.map((link, index) => (
+                                        <li key={link.href}>
+                                            <a
+                                                href={link.href}
+                                                onClick={() =>
+                                                    setIsMenuOpen(false)
+                                                }
+                                                aria-current={
+                                                    activeSection === link.href
+                                                        ? 'location'
+                                                        : undefined
+                                                }
+                                                className={cn(
+                                                    'border-line focus-visible:ring-ring flex min-h-14 items-center justify-between rounded-sm border-b text-lg font-bold transition-colors focus-visible:ring-2 focus-visible:outline-none',
+                                                    activeSection === link.href
+                                                        ? 'text-ink'
+                                                        : 'text-ink-soft hover:text-ink',
+                                                )}
+                                            >
+                                                {link.label}
+                                                <span className="text-ink-soft font-mono text-xs">
+                                                    0{index + 1}
+                                                </span>
+                                            </a>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </nav>
+
+                            <div className="border-line shrink-0 space-y-3 border-t p-4">
                                 {isAuthenticated ? (
-                                    <Link
-                                        href={dashboard()}
-                                        onClick={() => setOpen(false)}
-                                        className={cn(
-                                            'flex min-h-11 items-center justify-center gap-2 rounded-lg bg-action px-6 py-3 text-sm font-bold text-action-foreground',
-                                            FOCUS_RING,
-                                        )}
+                                    <Button
+                                        asChild
+                                        className="bg-ink text-ground hover:bg-ink/90 h-12 w-full rounded-md font-bold"
                                     >
-                                        Buka Dashboard
-                                    </Link>
+                                        <Link
+                                            href={dashboard()}
+                                            onClick={() => setIsMenuOpen(false)}
+                                        >
+                                            Buka dashboard
+                                            <ArrowRight aria-hidden="true" />
+                                        </Link>
+                                    </Button>
                                 ) : (
                                     <>
-                                        <Link
-                                            href={login()}
-                                            onClick={() => setOpen(false)}
-                                            className={cn(
-                                                'flex min-h-11 items-center justify-center rounded-lg border-2 border-action/60 px-6 py-3 text-sm font-bold text-action',
-                                                FOCUS_RING,
-                                            )}
+                                        <Button
+                                            asChild
+                                            className="bg-action text-action-foreground hover:bg-action-strong h-12 w-full rounded-md font-bold"
                                         >
-                                            Masuk
-                                        </Link>
-                                        <Link
-                                            href={register()}
-                                            onClick={() => setOpen(false)}
-                                            className={cn(
-                                                'flex min-h-11 items-center justify-center rounded-lg bg-action px-6 py-3 text-sm font-bold text-action-foreground',
-                                                FOCUS_RING,
-                                            )}
+                                            <Link
+                                                href={register()}
+                                                onClick={() =>
+                                                    setIsMenuOpen(false)
+                                                }
+                                            >
+                                                {primaryLabel}
+                                                <ArrowRight aria-hidden="true" />
+                                            </Link>
+                                        </Button>
+                                        <Button
+                                            asChild
+                                            variant="outline"
+                                            className="border-line text-ink hover:bg-muted h-12 w-full rounded-md bg-transparent font-bold"
                                         >
-                                            Coba Gratis 14 Hari
-                                        </Link>
+                                            <Link
+                                                href={login()}
+                                                onClick={() =>
+                                                    setIsMenuOpen(false)
+                                                }
+                                            >
+                                                Sudah punya akun? Masuk
+                                            </Link>
+                                        </Button>
                                     </>
                                 )}
                             </div>
-                        </nav>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                        </DialogContent>
+                    </Dialog>
+                </div>
+            </div>
         </header>
     );
 }
