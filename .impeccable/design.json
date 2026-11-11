@@ -76,6 +76,18 @@
                 "canonical": "rgba(0, 141, 213, 0.09)",
                 "purpose": "Latar sorotan spotlight-surface dan tint dekoratif."
             },
+            "accent-warm": {
+                "role": "accent",
+                "displayName": "Aksen Hangat",
+                "canonical": "#C2410C",
+                "purpose": "Warna pelengkap komplementer ke aksi kobalt — dekoratif dan spot-only, bukan fill interaktif (aksi tetap pakai token action). Gelap: #EA580C."
+            },
+            "accent-warm-tint": {
+                "role": "accent",
+                "displayName": "Aksen Hangat Tint",
+                "canonical": "rgba(194, 65, 12, 0.10)",
+                "purpose": "Latar lembut untuk chip dan sorotan dekoratif aksen hangat. Gelap: rgba(234, 88, 12, 0.15)."
+            },
             "ok": {
                 "role": "status",
                 "displayName": "Hijau Selesai",
