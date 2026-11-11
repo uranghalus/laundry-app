@@ -224,28 +224,42 @@ export default function MarketingPricing({
                                         Termasuk
                                     </p>
                                     <ul className="mt-4 space-y-3">
-                                        {plan.features.map((feature) => (
-                                            <li
-                                                key={feature}
-                                                className="flex items-start gap-2.5"
-                                            >
-                                                <Check
-                                                    className={cn(
-                                                        'mt-0.5 size-4 shrink-0',
-                                                        tone.includedIcon,
-                                                    )}
-                                                    aria-hidden="true"
-                                                />
-                                                <span
-                                                    className={cn(
-                                                        'text-sm leading-relaxed font-semibold',
-                                                        tone.includedText,
-                                                    )}
+                                        {plan.features.map(
+                                            (feature, featureIndex) => (
+                                                <li
+                                                    key={feature}
+                                                    className="flex items-start gap-2.5"
                                                 >
-                                                    {feature}
-                                                </span>
-                                            </li>
-                                        ))}
+                                                    <span
+                                                        className={cn(
+                                                            'mt-1 flex size-2.5 shrink-0 items-center justify-center rounded-full',
+                                                            featureIndex === 0
+                                                                ? 'bg-action'
+                                                                : featureIndex ===
+                                                                    1
+                                                                  ? 'bg-ok'
+                                                                  : 'bg-graphic-tint',
+                                                        )}
+                                                        aria-hidden="true"
+                                                    />
+                                                    <Check
+                                                        className={cn(
+                                                            'mt-0.5 size-4 shrink-0',
+                                                            tone.includedIcon,
+                                                        )}
+                                                        aria-hidden="true"
+                                                    />
+                                                    <span
+                                                        className={cn(
+                                                            'text-sm leading-relaxed font-semibold',
+                                                            tone.includedText,
+                                                        )}
+                                                    >
+                                                        {feature}
+                                                    </span>
+                                                </li>
+                                            ),
+                                        )}
                                     </ul>
 
                                     {plan.excluded.length > 0 ? (

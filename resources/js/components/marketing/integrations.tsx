@@ -6,6 +6,7 @@ import {
     SectionHeading,
 } from '@/components/marketing/layout';
 import FadeContent from '@/components/react-bits/fade-content';
+import { cn } from '@/lib/utils';
 
 /**
  * Tiga kanal yang benar-benar dipakai produk. Ditulis sebagai bagian
@@ -64,7 +65,16 @@ export default function MarketingIntegrations() {
                             >
                                 <div className="flex h-full flex-col justify-between gap-8 p-6 sm:p-8">
                                     <div className="flex items-start justify-between gap-4">
-                                        <span className="bg-action text-action-foreground hover:bg-action-strong flex size-12 items-center justify-center rounded-md transition-colors">
+                                        <span
+                                            className={cn(
+                                                'flex size-12 items-center justify-center rounded-md transition-colors',
+                                                index === 0
+                                                    ? 'bg-action text-action-foreground hover:bg-action-strong'
+                                                    : index === 1
+                                                      ? 'bg-ok-tint text-ok hover:bg-ok'
+                                                      : 'bg-warn-tint text-warn hover:bg-warn',
+                                            )}
+                                        >
                                             <Icon
                                                 className="size-5"
                                                 aria-hidden="true"

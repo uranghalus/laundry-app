@@ -12,6 +12,7 @@ import {
     SectionHeading,
 } from '@/components/marketing/layout';
 import FadeContent from '@/components/react-bits/fade-content';
+import { cn } from '@/lib/utils';
 
 /**
  * Empat masalah operasional yang dijawab Repica, diambil dari keluhan pemilik
@@ -87,7 +88,18 @@ export default function ProblemsLedger() {
                                     <div className="md:col-span-5">
                                         <div className="flex items-start gap-4">
                                             <div className="flex shrink-0 flex-col items-center gap-2">
-                                                <span className="bg-graphic-tint text-action-text flex size-11 items-center justify-center rounded-md">
+                                                <span
+                                                    className={cn(
+                                                        'flex size-11 items-center justify-center rounded-md',
+                                                        index === 0
+                                                            ? 'bg-warn-tint text-warn'
+                                                            : index === 1
+                                                              ? 'bg-bad-tint text-bad'
+                                                              : index === 2
+                                                                ? 'bg-ok-tint text-ok'
+                                                                : 'bg-graphic-tint text-action-text',
+                                                    )}
+                                                >
                                                     <Icon
                                                         className="size-5"
                                                         aria-hidden="true"

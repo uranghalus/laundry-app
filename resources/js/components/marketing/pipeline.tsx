@@ -88,7 +88,7 @@ export default function MarketingPipeline() {
                                                 className={cn(
                                                     'flex size-9 shrink-0 items-center justify-center rounded-md border',
                                                     isActive
-                                                        ? 'border-night-accent text-night-accent'
+                                                        ? `border ${item.dotClass}`
                                                         : 'border-night-line text-night-ink-soft',
                                                 )}
                                             >

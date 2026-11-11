@@ -4,6 +4,7 @@ import { ArrowRight, Check, MessageCircle } from 'lucide-react';
 import { Container } from '@/components/marketing/layout';
 import RepicaMark from '@/components/marketing/repica-mark';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { hasWhatsAppContact, siteConfig } from '@/lib/site';
 import { dashboard, login, register } from '@/routes';
 
@@ -103,15 +104,24 @@ export default function MarketingCtaFooter({
                 </div>
 
                 <ul className="border-night-line mt-12 flex flex-wrap gap-x-6 gap-y-3 border-t pt-6">
-                    {TRIAL_FACTS.map((fact) => (
+                    {TRIAL_FACTS.map((fact, index) => (
                         <li
                             key={fact}
                             className="text-night-ink-soft flex items-center gap-2 text-sm font-semibold"
                         >
-                            <Check
-                                className="text-night-accent size-4 shrink-0"
+                            <span
+                                className={cn(
+                                    'flex shrink-0 items-center justify-center rounded-full',
+                                    index === 0
+                                        ? 'bg-action text-action-foreground size-4'
+                                        : index === 1
+                                          ? 'bg-ok-tint text-ok size-4'
+                                          : 'bg-graphic-tint text-action-text size-4',
+                                )}
                                 aria-hidden="true"
-                            />
+                            >
+                                <Check className="size-2.5" />
+                            </span>
                             {fact}
                         </li>
                     ))}

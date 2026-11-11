@@ -7,6 +7,7 @@ import { WaBubble } from '@/components/marketing/wa-bubble';
 import Marquee from '@/components/react-bits/marquee';
 import TiltCard from '@/components/react-bits/tilt-card';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { dashboard, register } from '@/routes';
 
 /**
@@ -119,7 +120,21 @@ export default function MarketingHero({
                                     key={fact.label}
                                     className="bg-sheet flex min-h-20 flex-col justify-between gap-3 px-4 py-4"
                                 >
-                                    <dt className="text-ink-soft font-mono text-[11px] font-semibold tracking-[0.14em] uppercase">
+                                    <dt className="text-ink-soft inline-flex items-center gap-1.5 font-mono text-[11px] font-semibold tracking-[0.14em] uppercase">
+                                        <span
+                                            className={cn(
+                                                'h-1.5 w-1.5 shrink-0 rounded-full',
+                                                fact.label === 'Trial penuh'
+                                                    ? 'bg-ok'
+                                                    : fact.label ===
+                                                        'Kartu kredit'
+                                                      ? 'bg-warn'
+                                                      : fact.label === 'Setup'
+                                                        ? 'bg-action'
+                                                        : 'bg-graphic-tint',
+                                            )}
+                                            aria-hidden="true"
+                                        />
                                         {fact.label}
                                     </dt>
                                     <dd className="text-ink text-lg leading-none font-extrabold tabular-nums">

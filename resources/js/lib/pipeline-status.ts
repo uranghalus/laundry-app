@@ -1,4 +1,5 @@
 import type { LucideIcon } from 'lucide-react';
+
 import {
     Check,
     CircleDashed,
@@ -20,6 +21,9 @@ import {
  * Warna TIDAK PERNAH menjadi satu-satunya pembawa makna (brief §10): setiap
  * usage wajib menampilkan ikon + label teks, penting untuk buta warna
  * merah-hijau yang akan tertukar `Siap Diambil` vs `Dikeringkan`.
+ *
+ * Semua warna pakai token DESIGN.md v6 (ok/warn/bad/action/night-accent),
+ * tidak ada raw hex maupun Tailwind warna bawaan di luar token.
  */
 export const PIPELINE_STATUSES = [
     {
@@ -27,19 +31,20 @@ export const PIPELINE_STATUSES = [
         label: 'Diterima',
         description: 'Barang diterima di outlet, foto kondisi awal diambil.',
         icon: Inbox,
-        /** Badge: latar tint + teks gelap (mode terang) / tint gelap + teks terang. */
+        /** Badge: latar tint + teks gelap (mode terang) / lembut di malam. */
         badgeClass:
-            'bg-stone-200 text-stone-800 dark:bg-stone-800 dark:text-stone-200',
+            'bg-ok-tint text-ok border-ok/25 dark:bg-night-raised dark:text-night-ink-soft dark:border-ok/30',
         /** Titik solid pada timeline, memakai skala warna yang sama. */
-        dotClass: 'bg-stone-500',
+        dotClass: 'bg-ok dark:bg-night-accent',
     },
     {
         key: 'dicuci',
         label: 'Dicuci',
         description: 'Masuk proses cuci sesuai jenis layanan.',
         icon: Droplets,
-        badgeClass: 'bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-200',
-        dotClass: 'bg-sky-600',
+        badgeClass:
+            'bg-action text-action-foreground dark:bg-night-accent dark:text-night-ink dark:border-night-accent',
+        dotClass: 'bg-action dark:bg-night-accent',
     },
     {
         key: 'dikeringkan',
@@ -47,8 +52,8 @@ export const PIPELINE_STATUSES = [
         description: 'Selesai dicuci, sedang dikeringkan.',
         icon: Wind,
         badgeClass:
-            'bg-cyan-100 text-cyan-800 dark:bg-cyan-950 dark:text-cyan-200',
-        dotClass: 'bg-cyan-600',
+            'bg-warn-tint text-warn border-warn/25 dark:bg-night-raised dark:text-night-ink-soft dark:border-warn/30',
+        dotClass: 'bg-warn dark:bg-night-accent',
     },
     {
         key: 'disetrika',
@@ -56,8 +61,8 @@ export const PIPELINE_STATUSES = [
         description: 'Pengeringan selesai, masuk tahap setrika.',
         icon: Flame,
         badgeClass:
-            'bg-violet-100 text-violet-800 dark:bg-violet-950 dark:text-violet-200',
-        dotClass: 'bg-violet-600',
+            'bg-action text-action-foreground dark:bg-night-accent dark:text-night-ink dark:border-night-accent',
+        dotClass: 'bg-action dark:bg-night-accent',
     },
     {
         key: 'siap_diambil',
@@ -65,8 +70,8 @@ export const PIPELINE_STATUSES = [
         description: 'Sudah selesai dan siap diambil pelanggan.',
         icon: PackageCheck,
         badgeClass:
-            'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-200',
-        dotClass: 'bg-green-700',
+            'bg-ok-tint text-ok border-ok/25 dark:bg-night-raised dark:text-night-ink-soft dark:border-ok/30',
+        dotClass: 'bg-ok dark:bg-night-accent',
     },
     {
         key: 'selesai',
@@ -74,8 +79,8 @@ export const PIPELINE_STATUSES = [
         description: 'Barang sudah diserahkan ke pelanggan.',
         icon: Check,
         badgeClass:
-            'bg-stone-800 text-stone-50 dark:bg-stone-200 dark:text-stone-900',
-        dotClass: 'bg-stone-800 dark:bg-stone-300',
+            'bg-action text-action-foreground dark:bg-night-accent dark:text-night-ink dark:border-night-accent',
+        dotClass: 'bg-action dark:bg-night-accent',
     },
 ] as const satisfies readonly {
     key: string;
@@ -100,8 +105,8 @@ export const AWAITING_APPROVAL_STATUS = {
         'Foto kondisi awal sudah diambil, menunggu pelanggan menyetujui lewat WhatsApp.',
     icon: CircleDashed,
     badgeClass:
-        'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-200',
-    dotClass: 'bg-amber-700',
+        'bg-warn-tint text-warn border-warn/25 dark:bg-night-raised dark:text-night-ink-soft dark:border-warn/30',
+    dotClass: 'bg-warn dark:bg-night-accent',
 } as const satisfies {
     key: string;
     label: string;

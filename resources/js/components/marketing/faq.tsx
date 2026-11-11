@@ -104,6 +104,18 @@ export default function MarketingFaq() {
                                             '[&::-webkit-details-marker]:hidden',
                                         )}
                                     >
+                                        <span
+                                            className={cn(
+                                                'flex size-6 shrink-0 items-center justify-center rounded-full border',
+                                                index === 0
+                                                    ? 'bg-action text-action-foreground border-action'
+                                                    : index === 1
+                                                      ? 'bg-ok-tint text-ok border-ok/25'
+                                                      : 'bg-graphic-tint text-action-text border-graphic-tint/30',
+                                            )}
+                                        >
+                                            {index + 1}
+                                        </span>
                                         <span className="text-ink text-base leading-snug font-bold">
                                             {item.question}
                                         </span>
